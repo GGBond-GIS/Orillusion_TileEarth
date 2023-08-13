@@ -1,5 +1,6 @@
 import { Engine3D, Scene3D, Object3D, Camera3D, LitMaterial, BoxGeometry, MeshRenderer, DirectLight, HoverCameraController, Color, Vector3, AtmosphericComponent, View3D, ComponentBase, SphereGeometry } from '@orillusion/core'
 import { CesiumScene } from './ori_map/Scene/CesiumScene'
+import { Stats } from "@orillusion/stats"
 await Engine3D.init();
 //@ts-ignore
 let scene3D: CesiumScene = window.scene = new CesiumScene({})
@@ -9,7 +10,7 @@ let scene3D: CesiumScene = window.scene = new CesiumScene({})
 // let controller = camera.object3D.addComponent(HoverCameraController)
 // controller.setCamera(0, 0, 15)
 // scene3D.addChild(scene3D.cameraObj as Object3D);
-
+scene3D.addComponent(Stats);
 // create light
 let light: Object3D = new Object3D()
 // add direct light component
@@ -24,6 +25,7 @@ scene3D.addChild(light)
 class ControllerUpdate extends ComponentBase {
   public onUpdate() {
       // update lifecycle codes
+      scene3D.render()
       scene3D.screenSpaceCameraController.update()
       // updateViewMatrix(cesium_camera)
   }
@@ -50,7 +52,8 @@ Sphere.transform.rotationX += 180;
 const rencoll:Object3D = new Object3D();
 rencoll.addChild(Sphere);
 
-scene3D.addChild(rencoll)
+setTimeout(,1000)
+// scene3D.addChild(rencoll)
 // create a object
 const obj: Object3D = new Object3D()
 // add MeshRenderer to the object
@@ -67,7 +70,8 @@ scene3D.addChild(obj)
 // add an Atmospheric sky enviroment
 scene3D.addComponent(AtmosphericComponent).sunY = 0.6
 // create a view with target scene and camera
-let view = new View3D()
+//@ts-ignore
+let view =window.view = new View3D()
 view.scene = scene3D
 view.camera = scene3D.cameraObj._camera;
 // start render
