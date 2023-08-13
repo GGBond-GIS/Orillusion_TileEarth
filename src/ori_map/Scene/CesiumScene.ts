@@ -32,6 +32,7 @@ import { ScreenSpaceCameraController } from './ScreenSpaceCameraController';
 import { SkyAtmosphere } from './SkyAtmosphere';
 import { SkyBox } from './SkyBox';
 import { Engine3D, Scene3D, webGPUContext,Object3D } from '@orillusion/core';
+import { Ellipsoid } from '../Core/Ellipsoid';
 
 interface SceneOptions {
     renderState?: RenderStateParameters;
@@ -119,7 +120,7 @@ function prePassesUpdate (scene:CesiumScene) {
     const frameState = scene._frameState;
 
     if (defined(scene.globe)) {
-        scene.globe.update(frameState);
+        scene.globe.update2(frameState);
     }
 
 }
@@ -139,11 +140,12 @@ function render (scene:CesiumScene) {
 
     frameState.passes.render = true;
     // us.update(frameState);
+    // console.log(defined(scene.globe))
     if (defined(scene.globe)) {
         scene.globe.beginFrame(frameState);
     }
     scene.updateEnvironment();
-    scene.updateAndExecuteCommands(scene.backgroundColor);
+    scene.updateAndExecuteCommands();
 
     if (defined(scene.globe)) {
         scene.globe.endFrame(frameState);
@@ -208,7 +210,10 @@ function updateAndRenderPrimitives (scene: CesiumScene) {
     }
 
     for (const command of frameState.commandList) {
-        scene._renderCollection.addChild(command);
+        if(command.show){
+            scene._renderCollection.addChild(command);
+        }
+
     }
 }
 
@@ -226,7 +231,7 @@ const executeComputeCommands = (scene: CesiumScene) => {
  * @param scene
  * @param backgroundColor
  */
-function executeCommandsInViewport (firstViewport: boolean, scene:CesiumScene, backgroundColor: CesiumColor) {
+function executeCommandsInViewport (firstViewport: boolean, scene:CesiumScene) {
  
 
     if (firstViewport) {
@@ -240,7 +245,7 @@ function executeCommandsInViewport (firstViewport: boolean, scene:CesiumScene, b
     updateAndRenderPrimitives(scene);
 
 
-    scene.skyBox.render();
+    // scene.skyBox.render();
     // scene.effectComposerCollection.render();
 }
 
@@ -291,7 +296,14 @@ class CesiumScene extends Scene3D {
             near: 0.1,
             far: 10000000000
         });
-
+        const ellipsoid = defaultValue(
+            this.mapProjection.ellipsoid,
+            Ellipsoid.WGS84
+        );
+        if (!defined(this._globe )) {
+            this._globe = new Globe(ellipsoid);
+            // globe.visible = false;
+        }
         this._camera.constrainedAxis = Cartesian3.UNIT_Z;
 
         this.addChild(this._camera.frustum);
@@ -406,9 +418,11 @@ class CesiumScene extends Scene3D {
         };
     }
     get canvas():HTMLCanvasElement{
-        return webGPUContext.canvas
+        return webGPUContext.canvas;
     }
-
+    get context(){
+        return webGPUContext;
+    }
     get cameraObj (): PerspectiveFrustumCamera {
         return this._camera.frustum;
     }
@@ -461,17 +475,17 @@ class CesiumScene extends Scene3D {
         updateGlobeListeners(this, globe);
     }
 
-    // get drawingBufferSize (): Vector2 {
-    //     return this.renderer.drawingBufferSize;
-    // }
+    get drawingBufferSize (): Vector2 {
+        return new Vector2(webGPUContext.windowWidth,webGPUContext.windowHeight);
+    }
 
-    // get drawingBufferWidth (): number {
-    //     return this.drawingBufferSize.width;
-    // }
+    get drawingBufferWidth (): number {
+        return webGPUContext.windowWidth;
+    }
 
-    // get drawingBufferHeight (): number {
-    //     return this.drawingBufferSize.height;
-    // }
+    get drawingBufferHeight (): number {
+        return webGPUContext.windowHeight;
+    }
 
     get imageryLayers ():ImageryLayerCollection {
         return this.globe.imageryLayers;
@@ -529,7 +543,7 @@ class CesiumScene extends Scene3D {
         this.camera._updateCameraChanged();
     }
 
-    render (time: number): void{
+    render (): void{
         const frameState = this._frameState;
         frameState.newFrame = false;
 
@@ -545,7 +559,6 @@ class CesiumScene extends Scene3D {
 
         if (shouldRender) {
             this._renderRequested = false;
-
             const frameNumber = incrementWrap(
                 frameState.frameNumber,
                 15000000.0,
@@ -571,16 +584,69 @@ class CesiumScene extends Scene3D {
         //     }
         // }
 
-        this.postUpdate.raiseEvent(this, time);
+        // this.postUpdate.raiseEvent(this, time);
 
         if (shouldRender) {
-            this.preRender.raiseEvent(this, time);
+            // this.preRender.raiseEvent(this, time);
             // frameState.creditDisplay.beginFrame();
             tryAndCatchError(this, render);
         }
 
-        tryAndCatchError(this, postPassesUpdate);
+        // tryAndCatchError(this, postPassesUpdate);
     }
+
+    // render (time: number): void{
+    //     const frameState = this._frameState;
+    //     frameState.newFrame = false;
+
+    //     const cameraChanged = true;
+
+    //     const shouldRender =
+    //     !this.requestRenderMode ||
+    //     this._renderRequested ||
+    //     cameraChanged ||
+    //     // this._logDepthBufferDirty ||
+    //     // this._hdrDirty ||
+    //         this.mode === SceneMode.MORPHING;
+
+    //     if (shouldRender) {
+    //         this._renderRequested = false;
+
+    //         const frameNumber = incrementWrap(
+    //             frameState.frameNumber,
+    //             15000000.0,
+    //             1.0
+    //         );
+    //         updateFrameNumber(this, frameNumber);
+    //         frameState.newFrame = true;
+    //     }
+
+    //     tryAndCatchError(this, prePassesUpdate);
+
+    //     /**
+    //      *
+    //      * Passes update. Add any passes here
+    //      *
+    //      */
+    //     // if (this.primitives.show) {
+    //     //     tryAndCatchError(this, updateMostDetailedRayPicks);
+    //     //     tryAndCatchError(this, updatePreloadPass);
+    //     //     tryAndCatchError(this, updatePreloadFlightPass);
+    //     //     if (!shouldRender) {
+    //     //         tryAndCatchError(this, updateRequestRenderModeDeferCheckPass);
+    //     //     }
+    //     // }
+
+    //     this.postUpdate.raiseEvent(this, time);
+
+    //     if (shouldRender) {
+    //         this.preRender.raiseEvent(this, time);
+    //         // frameState.creditDisplay.beginFrame();
+    //         tryAndCatchError(this, render);
+    //     }
+
+    //     tryAndCatchError(this, postPassesUpdate);
+    // }
 
     updateFrameState (): void {
         const camera = this.camera;
@@ -592,22 +658,50 @@ class CesiumScene extends Scene3D {
         frameState.mapProjection = this.mapProjection;
         frameState.mode = this._mode;
         frameState.cameraUnderground = this._cameraUnderground;
+        this._renderCollection.removeAllChild();
         this._renderCollection.entityChildren = [];
         frameState.cullingVolume = camera.frustum.computeCullingVolume(
             camera.positionWC,
             camera.directionWC,
             camera.upWC
         );
+
+        //@ts-ignore
+        // frameState.camera.frustum._camera.frustum.planes = frameState.cullingVolume.planes
+     frameState.camera.frustum._camera.frustum.planes[0].x =  frameState.cullingVolume.planes[0].x
+     frameState.camera.frustum._camera.frustum.planes[1].x =  frameState.cullingVolume.planes[1].x
+     frameState.camera.frustum._camera.frustum.planes[2].x =  frameState.cullingVolume.planes[2].x
+     frameState.camera.frustum._camera.frustum.planes[3].x =  frameState.cullingVolume.planes[3].x
+     frameState.camera.frustum._camera.frustum.planes[4].x =  frameState.cullingVolume.planes[4].x
+     frameState.camera.frustum._camera.frustum.planes[5].x =  frameState.cullingVolume.planes[5].x
+     frameState.camera.frustum._camera.frustum.planes[0].y =  frameState.cullingVolume.planes[0].y
+     frameState.camera.frustum._camera.frustum.planes[1].y =  frameState.cullingVolume.planes[1].y
+     frameState.camera.frustum._camera.frustum.planes[2].y =  frameState.cullingVolume.planes[2].y
+     frameState.camera.frustum._camera.frustum.planes[3].y =  frameState.cullingVolume.planes[3].y
+     frameState.camera.frustum._camera.frustum.planes[4].y =  frameState.cullingVolume.planes[4].y
+     frameState.camera.frustum._camera.frustum.planes[5].y =  frameState.cullingVolume.planes[5].y
+     frameState.camera.frustum._camera.frustum.planes[0].z =  frameState.cullingVolume.planes[0].z
+     frameState.camera.frustum._camera.frustum.planes[1].z =  frameState.cullingVolume.planes[1].z
+     frameState.camera.frustum._camera.frustum.planes[2].z =  frameState.cullingVolume.planes[2].z
+     frameState.camera.frustum._camera.frustum.planes[3].z =  frameState.cullingVolume.planes[3].z
+     frameState.camera.frustum._camera.frustum.planes[4].z =  frameState.cullingVolume.planes[4].z
+     frameState.camera.frustum._camera.frustum.planes[5].z =  frameState.cullingVolume.planes[5].z
+     frameState.camera.frustum._camera.frustum.planes[0].w =  frameState.cullingVolume.planes[0].w
+     frameState.camera.frustum._camera.frustum.planes[1].w =  frameState.cullingVolume.planes[1].w
+     frameState.camera.frustum._camera.frustum.planes[2].w =  frameState.cullingVolume.planes[2].w
+     frameState.camera.frustum._camera.frustum.planes[3].w =  frameState.cullingVolume.planes[3].w
+     frameState.camera.frustum._camera.frustum.planes[4].w =  frameState.cullingVolume.planes[4].w
+     frameState.camera.frustum._camera.frustum.planes[5].w =  frameState.cullingVolume.planes[5].w
         frameState.globeTranslucencyState = this._globeTranslucencyState;
 
         this.clearPasses(frameState.passes);
     }
 
-    updateAndExecuteCommands (backgroundColor:CesiumColor): void {
+    updateAndExecuteCommands (): void {
         const frameState = this._frameState;
         const mode = frameState.mode;
 
-        executeCommandsInViewport(true, this, backgroundColor);
+        executeCommandsInViewport(true, this,);
     }
 
     updateEnvironment () {

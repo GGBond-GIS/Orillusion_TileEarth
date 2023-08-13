@@ -311,13 +311,6 @@ class QuadtreePrimitive {
         this._tilesInvalidated = true;
     }
 
-    /**
- * Invokes a specified function for each {@link QuadtreeTile} that is partially
- * or completely loaded.
- *
- * @param {Function} tileFunction The function to invoke for each loaded tile.  The
- *        function is passed a reference to the tile as its only parameter.
- */
     forEachLoadedTile (tileFunction:any): void {
         let tile = this._tileReplacementQueue.head;
         while (defined(tile)) {
@@ -342,14 +335,6 @@ class QuadtreePrimitive {
         }
     }
 
-    /**
-     * Calls the callback when a new tile is rendered that contains the given cartographic. The only parameter
-     * is the cartesian position on the tile.
-     *
-     * @param {Cartographic} cartographic The cartographic position.
-     * @param {Function} callback The function to be called when a new tile is loaded containing cartographic.
-     * @returns {Function} The function to remove this callback from the quadtree.
-     */
     updateHeight (cartographic: any, callback: any): any {
         const primitive = this;
         const object: any = {
@@ -375,20 +360,12 @@ class QuadtreePrimitive {
         return object.removeFunc;
     }
 
-    /**
-     * Updates the tile provider imagery and continues to process the tile load queue.
-     * @private
-     */
     update (frameState: FrameState): void {
         if (defined(this._tileProvider.update)) {
             this._tileProvider.update(frameState);
         }
     }
 
-    /**
-     * Initializes values for a new render frame and prepare the tile load queue.
-     * @private
-     */
     beginFrame (frameState: FrameState): void {
         const passes = frameState.passes;
         if (!passes.render) {
@@ -412,10 +389,6 @@ class QuadtreePrimitive {
         this._tileReplacementQueue.markStartOfRenderFrame();
     }
 
-    /**
-   * Selects new tiles to load based on the frame state and creates render commands.
-   * @private
-   */
     render (frameState: FrameState): void {
         const passes = frameState.passes;
         const tileProvider: any = this._tileProvider;
@@ -434,10 +407,7 @@ class QuadtreePrimitive {
         }
     }
 
-    /**
- * Updates terrain heights.
- * @private
- */
+
     endFrame (frameState: any) {
         const passes = frameState.passes;
         if (!passes.render || frameState.mode === SceneMode.MORPHING) {
@@ -452,42 +422,12 @@ class QuadtreePrimitive {
         updateTileLoadProgress(this, frameState);
     }
 
-  /**
-   * Returns true if this object was destroyed; otherwise, false.
-   * <br /><br />
-   * If this object was destroyed, it should not be used; calling any function other than
-   * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
-   *
-   * @memberof QuadtreePrimitive
-   *
-   * @returns {Boolean} True if this object was destroyed; otherwise, false.
-   *
-   * @see QuadtreePrimitive#destroy
-   */
-  isDestroyed = function () {
+  isDestroyed () {
       return false;
   };
 
-  /**
-   * Destroys the WebGL resources held by this object.  Destroying an object allows for deterministic
-   * release of WebGL resources, instead of relying on the garbage collector to destroy this object.
-   * <br /><br />
-   * Once an object is destroyed, it should not be used; calling any function other than
-   * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
-   * assign the return value (<code>undefined</code>) to the object as done in the example.
-   *
-   * @memberof QuadtreePrimitive
-   *
-   * @exception {DeveloperError} This object was destroyed, i.e., destroy() was called.
-   *
-   *
-   * @example
-   * primitive = primitive && primitive.destroy();
-   *
-   * @see QuadtreePrimitive#isDestroyed
-   */
-  destroy = function () {
-      this._tileProvider = this._tileProvider && this._tileProvider.destroy();
+  destroy () {
+    //   this._tileProvider = this._tileProvider && this._tileProvider.destroy();
   };
 }
 

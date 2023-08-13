@@ -32,6 +32,7 @@ import { Imagery } from './Imagery';
 import { Ellipsoid } from '../Core/Ellipsoid';
 import { BufferUsage } from '../Renderer/BufferUsage';
 import { Buffer } from '../Renderer/Buffer';
+import { GeometryBase, VertexAttributeName } from '@orillusion/core';
 
 function disposeArray () {
 
@@ -484,28 +485,59 @@ class GlobeSurfaceTile {
             ++indexBuffer.referenceCount;
         }
 
-        const geometry = new BufferGeometry();
+        const geometry = new GeometryBase();
 
-        if ((mesh.encoding as TerrainEncoding).quantization === TerrainQuantization.BITS12) {
-            // const vertexBuffer = new Float32BufferAttribute(typedArray, 4).onUpload(disposeArray);
-            // geometry.setAttribute('compressed0', vertexBuffer);
-            const vertexBuffer = new InterleavedBuffer(typedArray, attributes[0].componentsPerAttribute);
-            vertexBuffer.setUsage(StaticDrawUsage);
-            const compressed0 = new InterleavedBufferAttribute(vertexBuffer, attributes[0].componentsPerAttribute, 0, false);
-            geometry.setAttribute('compressed0', compressed0);
-        } else {
+        // if ((mesh.encoding as TerrainEncoding).quantization === TerrainQuantization.BITS12) {
+        //     // const vertexBuffer = new Float32BufferAttribute(typedArray, 4).onUpload(disposeArray);
+        //     // geometry.setAttribute('compressed0', vertexBuffer);
+        //     const vertexBuffer = new InterleavedBuffer(typedArray, attributes[0].componentsPerAttribute);
+        //     vertexBuffer.setUsage(StaticDrawUsage);
+        //     const compressed0 = new InterleavedBufferAttribute(vertexBuffer, attributes[0].componentsPerAttribute, 0, false);
+        //     // geometry.setAttribute('compressed0', compressed0);
+        //     mesh.show = false;
+        //     //压缩定点算法还没做这里取消渲染
+        // } else {
             const vertexBuffer = new InterleavedBuffer(typedArray, attributes[0].componentsPerAttribute + attributes[1].componentsPerAttribute);
 
             vertexBuffer.setUsage(StaticDrawUsage);
 
-            const position3DAndHeight = new InterleavedBufferAttribute(vertexBuffer, attributes[0].componentsPerAttribute, 0, false);
-            const textureCoordAndEncodedNormals = new InterleavedBufferAttribute(vertexBuffer, attributes[1].componentsPerAttribute, attributes[0].componentsPerAttribute, false);
+            const position3DAndHeight = new InterleavedBufferAttribute(vertexBuffer, attributes[0].componentsPerAttribute - 1, 0, false);
+            const textureCoordAndEncodedNormals = new InterleavedBufferAttribute(vertexBuffer, attributes[1].componentsPerAttribute - 1, attributes[0].componentsPerAttribute, false);
+            let positon = [];
+            let uv =[];
+            for (let index = 0; index < vertexBuffer.array.length; index+=7) {
+                const element = vertexBuffer.array[index];
+                const element1 = vertexBuffer.array[index+1];
+                const element2 = vertexBuffer.array[index+2];
+                const element3 = vertexBuffer.array[index+3];
+                const element4 = vertexBuffer.array[index+4];
+                const element5 = vertexBuffer.array[index+5];
+                const element6 = vertexBuffer.array[index+6];
+                positon.push(...[element,element1,element2]);
+                uv.push(...[element4,element6])
+            }
+            let feop = new Float32Array(positon);
 
-            geometry.setAttribute('position3DAndHeight', position3DAndHeight);
-            geometry.setAttribute('textureCoordAndEncodedNormals', textureCoordAndEncodedNormals);
-        }
+            // for (let index = 0; index < positon.length; index+=3) {
+            //     feop[index] = positon[index]+mesh.center.x;
+            //     feop[index+1] = positon[index+1]+mesh.center.y;
+            //     feop[index+2] =positon[index+2]+mesh.center.z;
+            // }
+            geometry.setIndices(mesh.indices);
+            geometry.setAttribute(VertexAttributeName.position, feop as Float32Array);
+            geometry.setAttribute(VertexAttributeName.uv, new Float32Array(uv) as Float32Array);
+            mesh.show = true;
 
-        geometry.setIndex(Array.from(mesh.indices));
+            // geometry.setAttribute('textureCoordAndEncodedNormals', textureCoordAndEncodedNormals);
+        // }
+
+     
+        geometry.addSubGeometry({
+            indexStart: 0,
+            indexCount: mesh.indices.length,
+            vertexStart: 0,
+            index: 0,
+        });
         (mesh as any).geometry = geometry;
         // debugger;
         return geometry;
@@ -596,8 +628,10 @@ class GlobeSurfaceTile {
             //     (indexBuffer as BufferAttribute).array = [];
             //     indexBuffer = null;
             // }
-
-            vertexArray.dispose();
+            // console.log(vertexArray);
+            // vertexArray.
+            // console.log(vertexArray);
+            // vertexArray.destroy(true);
         }
     }
 

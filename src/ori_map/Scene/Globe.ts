@@ -16,16 +16,16 @@ import { Ray } from '../Core/Ray';
 import { Rectangle } from '../Core/Rectangle';
 import { SceneMode } from '../Core/SceneMode';
 import { ShaderSource } from '../Renderer/ShaderSource';
-import GlobeFS from '../Shader/GlobeFS.glsl';
-import GlobeVS from '../Shader/GlobeVS.glsl';
+// import GlobeFS from '../Shader/GlobeFS.glsl';
+// import GlobeVS from '../Shader/GlobeVS.glsl';
 import GroundAtmosphere from '../Shader/GroundAtmosphere';
-import { Mesh, Raycaster, SphereBufferGeometry, Vector2 } from 'three';
+import { Raycaster, Vector2 } from 'three';
 import { FrameState } from './FrameState';
 import { GlobeSurfaceShaderSet } from './GlobeSurfaceShaderSet';
 import { GlobeSurfaceTileProvider } from './GlobeSurfaceTileProvider';
 import { ImageryLayerCollection } from './ImageryLayerCollection';
 import { QuadtreePrimitive } from './QuadtreePrimitive';
-import { Scene } from './CesiumScene';
+import { CesiumScene } from './CesiumScene';
 
 const scratchGetHeightCartesian = new Cartesian3();
 const scratchGetHeightIntersection = new Cartesian3();
@@ -43,7 +43,7 @@ const intersectionPoint = new Cartesian3();
 const raycaster = new Raycaster();
 const mouse = new Vector2();
 
-const pickEarth = new Mesh(new SphereBufferGeometry(6378137, 32, 32));
+// const pickEarth = new Mesh(new SphereBufferGeometry(6378137, 32, 32));
 
 function tileIfContainsCartographic (tile: any, cartographic: any) {
     return defined(tile) && Rectangle.contains(tile.rectangle, cartographic)
@@ -65,43 +65,43 @@ function createComparePickTileFunction (rayOrigin: Cartesian3) {
         return aDist - bDist;
     };
 }
-const makeShadersDirty = (globe: Globe) => {
-    const defines: any[] = [];
+// const makeShadersDirty = (globe: Globe) => {
+//     const defines: any[] = [];
 
-    // const requireNormals =
-    //   defined(globe._material) &&
-    //   (globe._material.shaderSource.match(/slope/) ||
-    //     globe._material.shaderSource.match('normalEC'));
+//     // const requireNormals =
+//     //   defined(globe._material) &&
+//     //   (globe._material.shaderSource.match(/slope/) ||
+//     //     globe._material.shaderSource.match('normalEC'));
 
-    const requireNormals = false;
+//     const requireNormals = false;
 
-    const fragmentSources = [GroundAtmosphere];
-    // if (
-    //     defined(globe._material) &&
-    //   (!requireNormals || globe._terrainProvider.requestVertexNormals)
-    // ) {
-    //     fragmentSources.push(globe._material.shaderSource);
-    //     defines.push('APPLY_MATERIAL');
-    //     globe._surface._tileProvider.materialUniformMap = globe._material._uniforms;
-    // } else {
-    //     globe._surface._tileProvider.materialUniformMap = undefined;
-    // }
+//     const fragmentSources = [GroundAtmosphere];
+//     // if (
+//     //     defined(globe._material) &&
+//     //   (!requireNormals || globe._terrainProvider.requestVertexNormals)
+//     // ) {
+//     //     fragmentSources.push(globe._material.shaderSource);
+//     //     defines.push('APPLY_MATERIAL');
+//     //     globe._surface._tileProvider.materialUniformMap = globe._material._uniforms;
+//     // } else {
+//     //     globe._surface._tileProvider.materialUniformMap = undefined;
+//     // }
 
-    globe._surface._tileProvider.materialUniformMap = undefined;
+//     globe._surface._tileProvider.materialUniformMap = undefined;
 
-    fragmentSources.push(GlobeFS);
+//     fragmentSources.push(GlobeFS);
 
-    globe._surfaceShaderSet.baseVertexShaderSource = new ShaderSource({
-        sources: [GroundAtmosphere, GlobeVS],
-        defines: defines
-    });
+//     globe._surfaceShaderSet.baseVertexShaderSource = new ShaderSource({
+//         sources: [GroundAtmosphere, GlobeVS],
+//         defines: defines
+//     });
 
-    globe._surfaceShaderSet.baseFragmentShaderSource = new ShaderSource({
-        sources: fragmentSources,
-        defines: defines
-    });
-    // globe._surfaceShaderSet.material = globe._material;
-};
+//     globe._surfaceShaderSet.baseFragmentShaderSource = new ShaderSource({
+//         sources: fragmentSources,
+//         defines: defines
+//     });
+//     // globe._surfaceShaderSet.material = globe._material;
+// };
 
 class Globe extends Object3DCollection {
     _ellipsoid:Ellipsoid
@@ -122,8 +122,10 @@ class Globe extends Object3DCollection {
     enableLighting = false;
     dynamicAtmosphereLighting = false;
     dynamicAtmosphereLightingFromSun = false;
+    visible: boolean;
     constructor (ellipsoid = Ellipsoid.WGS84) {
         super();
+        this.visible = true;
         const terrainProvider = new EllipsoidTerrainProvider({
             ellipsoid: ellipsoid
         });
@@ -206,7 +208,7 @@ class Globe extends Object3DCollection {
             1.0
         );
 
-        makeShadersDirty(this);
+        // makeShadersDirty(this);
 
         this.terrainProvider = new EllipsoidTerrainProvider();
     }
@@ -410,7 +412,6 @@ class Globe extends Object3DCollection {
             surface.tileCacheSize = this.tileCacheSize;
 
             tileProvider.terrainProvider = this.terrainProvider;
-
             surface.beginFrame(frameState);
         }
     }
@@ -425,7 +426,7 @@ class Globe extends Object3DCollection {
         }
     }
 
-    update (frameState: FrameState): void {
+    update2 (frameState: FrameState): void {
         if (!this.visible) {
             return;
         }
@@ -436,7 +437,7 @@ class Globe extends Object3DCollection {
     }
 
     pickWorldCoordinates (ray: Ray,
-        scene: Scene,
+        scene: CesiumScene,
         cullBackFaces = true,
         result?: Cartesian3): Cartesian3 | undefined {
         cullBackFaces = defaultValue(cullBackFaces, true);

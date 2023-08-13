@@ -9,13 +9,14 @@ export class PerspectiveCamera extends Object3D{
 
         this._cameraObj = new Object3D();
         this._camera = this._cameraObj.addComponent(Camera3D);
-        this._camera.perspective(options?.fov || 60, options?.aspect || Engine3D.aspect, options?.near || 1, options?.far || 100000000)
+        this._camera.perspective(options.fov , options?.aspect || Engine3D.aspect, 0.01,  10000000000)
         let hc =  this._cameraObj.addComponent(HoverCameraController);
         hc.setCamera(0,0,1);
         setTimeout(()=>{
             hc.destroy();
             this._camera.transform.z = 0;
         },1000);
+        this._camera.frustum.update = ()=>{};
         this.addChild(this._cameraObj);
 
     }

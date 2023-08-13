@@ -46,7 +46,8 @@ import { TerrainState } from './TerrainState';
 import { TileBoundingRegion } from './TileBoundingRegion';
 import { TileImagery } from './TileImagery';
 import TileSelectionResult from './TileSelectionResult';
-
+import { GPUPrimitiveTopology, LitMaterial } from '@orillusion/core';
+import * as Orillusion from '@orillusion/core'
 const readyImageryScratch: any[] = [];
 const canRenderTraversalStack: any[] = [];
 
@@ -372,20 +373,20 @@ const createMaterialMap = (frameState: FrameState, tileProvider: any, surfaceSha
         // wireframe: true
         // depthTest: false
     }, surfaceShaderSetOptions);
-    material.defines.INCLUDE_WEB_MERCATOR_Y = '';
-    if (quantization === TerrainQuantization.NONE) {
-        return material;
-    }
+    // material.defines.INCLUDE_WEB_MERCATOR_Y = '';
+    // if (quantization === TerrainQuantization.NONE) {
+    //     return material;
+    // }
 
-    material.defines.QUANTIZATION_BITS12 = '';
-
+    // material.defines.QUANTIZATION_BITS12 = '';
+    // const material = new LitMaterial();
     return material;
 };
 
 const setUniform = (command: DrawMeshCommand, uniformMap: any, globeSurfaceMaterial: any) => {
     const properties = uniformMap.properties;
 
-    const material = command.material as GlobeSurfaceTileMaterial;
+    // const material = command.material as GlobeSurfaceTileMaterial;
 
     const uniforms = globeSurfaceMaterial.uniforms;
 
@@ -610,7 +611,7 @@ const createTileUniformMap = (frameState: FrameState, globeSurfaceTileProvider: 
         },
         u_undergroundColor: function () {
             const undergroundColor = this.properties.undergroundColor;
-            this.properties_three.undergroundColor.set(undergroundColor.red, undergroundColor.green, undergroundColor.blue, undergroundColor.alpha);
+            // this.properties_three.undergroundColor.set(undergroundColor.red, undergroundColor.green, undergroundColor.blue, undergroundColor.alpha);
             return this.properties_three.undergroundColor;
         },
         u_undergroundColorAlphaByDistance: function () {
@@ -919,11 +920,15 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
 
         surfaceShaderSetOptions.numberOfDayTextures = dayTextures.length;
 
+        
+
         if (tileProvider._drawCommands.length <= tileProvider._usedDrawCommands) {
             command = new DrawMeshCommand();
             command.owner = tile;
-            command.frustumCulled = false;
+            // command.frustumCulled = false;
             command.boundingVolume = new BoundingSphere();
+            command.localPosition = new Orillusion.Vector3(rtc.x,rtc.y,rtc.z);
+
             command.orientedBoundingBox = undefined;
 
             material = createMaterialMap(frameState, tileProvider, surfaceShaderSetOptions, quantization);
@@ -944,12 +949,14 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
             uniformMap = createTileUniformMap(frameState, tileProvider);
         }
 
+        command.localPosition = new Orillusion.Vector3(rtc.x,rtc.y,rtc.z);
+
         if (material.defines.TEXTURE_UNITS !== material.dayTextures.length ||
             imageryLen !== material.dayTextures.length ||
             quantization === TerrainQuantization.BITS12 && !defined(material.defines.QUANTIZATION_BITS12) ||
             quantization === TerrainQuantization.NONE && defined(material.defines.QUANTIZATION_BITS12)
         ) {
-            material.dispose();
+            
             material = createMaterialMap(frameState, tileProvider, surfaceShaderSetOptions, quantization);
 
             globeSurfaceMaterial.dispose();
@@ -964,8 +971,11 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
         material.dayTextureTranslationAndScale = dayTextureTranslationAndScale;
         material.dayTextureTexCoordsRectangle = dayTextureTexCoordsRectangle;
         Cartesian4.clone(initialColor, material.initialColor);
-
-        const viewMatrix = frameState.camera.viewMatrix;
+ 
+        //@ts-ignore
+        const viewMatrix = window.view.camera.viewMatrix.rawData;
+        // console.log(viewMatrix);
+        //@ts-ignore
         const projectionMatrix = frameState.camera.frustum.cesiumProjectMatrix;
         const centerEye = CesiumMatrix4.multiplyByPoint(
             viewMatrix,
@@ -977,20 +987,42 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
             centerEye,
             modifiedModelViewProjectionScratch
         );
-        CesiumMatrix4.multiply(
-            projectionMatrix,
-            modifiedModelViewProjectionScratch,
-            modifiedModelViewProjectionScratch
-        );
+        // CesiumMatrix4.multiply(
+        //     projectionMatrix,
+        //     modifiedModelViewProjectionScratch,
+        //     modifiedModelViewProjectionScratch
+        // );
+       let vm = new Orillusion.Matrix4();
+       vm.rawData = new Float32Array([
+        modifiedModelViewProjectionScratch[0],
+        modifiedModelViewProjectionScratch[1],
+        modifiedModelViewProjectionScratch[2],
+        modifiedModelViewProjectionScratch[3],
+        modifiedModelViewProjectionScratch[4],
+        modifiedModelViewProjectionScratch[5],
+        modifiedModelViewProjectionScratch[6],
+        modifiedModelViewProjectionScratch[7],
+        modifiedModelViewProjectionScratch[8],
+        modifiedModelViewProjectionScratch[9],
+        modifiedModelViewProjectionScratch[10],
+        modifiedModelViewProjectionScratch[11],
+        modifiedModelViewProjectionScratch[12],
+        modifiedModelViewProjectionScratch[13],
+        modifiedModelViewProjectionScratch[14],
+        modifiedModelViewProjectionScratch[15],
+       ])
+        //@ts-ignore
+        material.modifiedModelView.setMatrix('matrixMVP_RTE', vm);
+        material.modifiedModelView.apply();
+        material.shaderState.topology = GPUPrimitiveTopology.line_list;
+        // CesiumMatrix4.transformToThreeMatrix4(modifiedModelViewProjectionScratch, material.modifiedModelViewProjectionScratch);
 
-        CesiumMatrix4.transformToThreeMatrix4(modifiedModelViewProjectionScratch, material.modifiedModelViewProjectionScratch);
+        // material.tileRectangle = tileRectangle;
 
-        material.tileRectangle = tileRectangle;
+        // material.minMaxHeight.x = encoding.minimumHeight;
+        // material.minMaxHeight.y = encoding.maximumHeight;
 
-        material.minMaxHeight.x = encoding.minimumHeight;
-        material.minMaxHeight.y = encoding.maximumHeight;
-
-        material.scaleAndBias = encoding.threeMatrix4;
+        // material.scaleAndBias = encoding.threeMatrix4;
 
         const uniformMapProperties = uniformMap.properties;
         Cartesian4.clone(initialColor, uniformMapProperties.initialColor);
@@ -1365,13 +1397,26 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
         surfaceShaderSetOptions.showUndergroundColor = showUndergroundColor;
         surfaceShaderSetOptions.translucent = translucent;
 
-        const shaderProgram = tileProvider._surfaceShaderSet.getShaderProgram(
-            surfaceShaderSetOptions
-        );
-        command.geometry.dispose();
+        // const shaderProgram = tileProvider._surfaceShaderSet.getShaderProgram(
+        //     surfaceShaderSetOptions
+        // );
+        // console.log( command.geometry);
+        // if(command.geometry){
 
-        command.geometry = mesh.geometry;
-        command.material = material;
+        // }
+        //     // console.log(mesh.geometry)
+
+            command._mesh.geometry = mesh.geometry;
+                command._mesh.material = material;
+            if(mesh.show){
+                
+                //@ts-ignore
+                command.show = true;
+            }else{
+                //@ts-ignore
+                command.show = false;
+            }
+
 
         // setUniform(command, uniformMap, globeSurfaceMaterial);
         // command.material = globeSurfaceMaterial;
@@ -1379,11 +1424,12 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
         // (command.material as GlobeSurfaceTileMaterial).vertexShader = shaderProgram._vertexShaderText;
         // (command.material as GlobeSurfaceTileMaterial).fragmentShader = shaderProgram._fragmentShaderText;
 
-        setUniform(command, uniformMap, shaderProgram.material);
+        // setUniform(command, uniformMap, shaderProgram.material);
         // command.material = shaderProgram.material;
 
         const boundingVolume = command.boundingVolume;
         const orientedBoundingBox = command.orientedBoundingBox;
+        // command.localPosition = new Orillusion.Vector3(rtc.x,rtc.y,rtc.z);
         command.boundingVolume = BoundingSphere.clone(surfaceTile.boundingSphere3D, boundingVolume);
         command.orientedBoundingBox = OrientedBoundingBox.clone(surfaceTile.orientedBoundingBox, orientedBoundingBox);
 

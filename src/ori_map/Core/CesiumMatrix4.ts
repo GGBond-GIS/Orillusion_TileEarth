@@ -516,12 +516,12 @@ class CesiumMatrix4 {
         if (!defined(matrix)) {
             return undefined;
         }
-        CesiumMatrix4.toArray(matrix, threeMatrix.elements);
+        CesiumMatrix4.toArray(matrix, threeMatrix.rawData);
         return threeMatrix;
     }
 
     static setFromThreeMatrix4 (threeMatrix4: any, cesiumMatrix4: CesiumMatrix4): CesiumMatrix4 {
-        CesiumMatrix4.toArray(threeMatrix4.elements, cesiumMatrix4 as number[]);
+        CesiumMatrix4.toArray(threeMatrix4.rawData, cesiumMatrix4 as number[]);
         return cesiumMatrix4;
     }
 

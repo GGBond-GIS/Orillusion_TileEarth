@@ -114,12 +114,11 @@ function updateViewMatrix (camera: Camera) {
     let qu4 = new Vector3();
     let sc3 = new Vector3();
     mat.decompose(Orientation3D.QUATERNION, [v3, qu4, sc3]);
-    console.log(v3, qu4, sc3);
+
     camera.frustum.localQuaternion = new Quaternion(qu4.x,qu4.y,qu4.z,qu4.w);
     camera.frustum.localPosition = v3;
     camera.frustum.localScale = sc3;
-    // CesiumMatrix4.transformToThreeMatrix4(camera._invViewMatrix, camera.frustum.matrixWorld);
-    // camera.frustum.matrixWorld.decompose(camera.frustum.position, camera.frustum.quaternion, camera.frustum.scale);
+
 }
 
 class Camera {

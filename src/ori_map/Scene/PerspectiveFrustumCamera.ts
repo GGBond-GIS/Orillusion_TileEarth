@@ -280,6 +280,7 @@ class PerspectiveFrustumCamera extends PerspectiveCamera {
     }
 
     get cesiumProjectMatrix (): CesiumMatrix4 {
+        // console.log(this.projectionMatrix);
         return CesiumMatrix4.setFromThreeMatrix4(this.projectionMatrix, cesiumProjectMatrix);
     }
 
