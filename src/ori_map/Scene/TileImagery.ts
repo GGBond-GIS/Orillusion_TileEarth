@@ -93,12 +93,11 @@ class TileImagery {
                 (this.readyImagery as Imagery).releaseReference();
             }
             this.readyImagery = this.loadingImagery;
-            this.loadingImagery = undefined;
             this.textureTranslationAndScale = imageryLayer._calculateTextureTranslationAndScale(
                 tile,
                 this
             );
-            return true; // done loading
+            // return true; // done loading
         }
 
         // Find some ancestor imagery we can use while this imagery is still loading.

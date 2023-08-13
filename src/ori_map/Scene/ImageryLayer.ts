@@ -960,37 +960,44 @@ class ImageryLayer {
 
          needGeographicProjection = defaultValue(needGeographicProjection, true);
 
+
+        //  imagery.texture = texture;
+         imagery.state = ImageryState.READY;
          // Reproject this texture if it is not already in a geographic projection and
          // the pixels are more than 1e-5 radians apart.  The pixel spacing cutoff
          // avoids precision problems in the reprojection transformation while making
          // no noticeable difference in the georeferencing of the image.
-         if (needGeographicProjection &&
-            !(this._imageryProvider.tilingScheme.projection instanceof GeographicProjection) &&
-            rectangle.width / texture.image.width > 1e-5) {
-             const that = this;
-             imagery.addReference();
-             const computeCommand = new ComputeCommand({
-                 persists: true,
-                 owner: this,
-                 // Update render resources right before execution instead of now.
-                 // This allows different ImageryLayers to share the same vao and buffers.
-                 preExecute: function (command: ComputeCommand) {
-                     reprojectToGeographic(command, context, texture, imagery.rectangle);
-                 },
-                 postExecute: function (outputTexture: any) {
-                     imagery.texture = outputTexture;
-                     finalizeReprojectTexture(that, context, imagery, outputTexture);
-                     imagery.releaseReference();
-                 }
-             });
+        //  if (needGeographicProjection &&
+        //     !(this._imageryProvider.tilingScheme.projection instanceof GeographicProjection) &&
+        //     rectangle.width / texture.image.width > 1e-5) {
+        //      const that = this;
+        //      imagery.addReference();
+        //     //  finalizeReprojectTexture(that, context, imagery);
+        //      console.log(imagery)
+        //     //  imagery.releaseReference()
+        //      const computeCommand = new ComputeCommand({
+        //          persists: true,
+        //          owner: this,
+        //          // Update render resources right before execution instead of now.
+        //          // This allows different ImageryLayers to share the same vao and buffers.
+        //          preExecute: function (command: ComputeCommand) {
+        //              reprojectToGeographic(command, context, texture, imagery.rectangle);
+        //          },
+        //          postExecute: function (outputTexture: any) {
+        //              imagery.texture = outputTexture;
+        //              finalizeReprojectTexture(that, context, imagery, outputTexture);
+        //              imagery.releaseReference();
+        //          }
+        //      });
 
-             this._reprojectComputeCommands.push(computeCommand);
-         } else {
-             if (needGeographicProjection) {
-                 imagery.texture = texture;
-             }
-             finalizeReprojectTexture(this, context, imagery, texture);
-         }
+        //      this._reprojectComputeCommands.push(computeCommand);
+        //  } else {
+        //      if (needGeographicProjection) {
+        //          imagery.texture = texture;
+                 
+        //      }
+        //      finalizeReprojectTexture(this, context, imagery, texture);
+        //  }
      }
 
      /**

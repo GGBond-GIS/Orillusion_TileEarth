@@ -1,6 +1,8 @@
 import { Engine3D, Scene3D, Object3D, Camera3D, LitMaterial, BoxGeometry, MeshRenderer, DirectLight, HoverCameraController, Color, Vector3, AtmosphericComponent, View3D, ComponentBase, SphereGeometry } from '@orillusion/core'
 import { CesiumScene } from './ori_map/Scene/CesiumScene'
 import { Stats } from "@orillusion/stats"
+import { UrlTemplateImageryProvider } from './ori_map/Scene/UrlTemplateImageryProvider';
+import { TileCoordinatesImageryProvider } from './ori_map/Scene/TileCoordinatesImageryProvider';
 await Engine3D.init();
 //@ts-ignore
 let scene3D: CesiumScene = window.scene = new CesiumScene({})
@@ -52,7 +54,18 @@ Sphere.transform.rotationX += 180;
 const rencoll:Object3D = new Object3D();
 rencoll.addChild(Sphere);
 
-setTimeout(,1000)
+const urlTemplateImageryProvide = new UrlTemplateImageryProvider({
+  // url: 'http://www.google.cn/maps/vt?lyrs=s@800&x={x}&y={y}&z={z}'
+  // tilingScheme: new WebMercatorTilingScheme({}),
+  // minimumLevel: 1,
+  // maximumLevel: 20
+  url: 'https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}'
+});
+scene3D.imageryLayers.addImageryProvider(
+  urlTemplateImageryProvide
+);
+// scene3D.imageryLayers.addImageryProvider(new (TileCoordinatesImageryProvider as any)());
+
 // scene3D.addChild(rencoll)
 // create a object
 const obj: Object3D = new Object3D()

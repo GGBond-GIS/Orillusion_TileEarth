@@ -355,7 +355,7 @@ class GlobeSurfaceTile {
             terrainProvider,
             frameState
         );
-
+            console.log(isImageryDoneLoading);
         if (isTerrainDoneLoading && isImageryDoneLoading) {
             const callbacks = tile._loadedCallbacks;
             const newCallbacks = {};
@@ -438,7 +438,6 @@ class GlobeSurfaceTile {
         }
 
         tile.upsampledFromParent = isUpsampledOnly;
-
         // Allow rendering if any available layers are loaded
         tile.renderable = tile.renderable && (isAnyTileLoaded || isDoneLoading);
 
