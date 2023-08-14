@@ -4,7 +4,9 @@ import { defaultValue } from '../Core/defaultValue';
 import { defined } from '../Core/defined';
 import { Event } from '../Core/Event';
 import { GeographicTilingScheme } from '../Core/GeographicTilingScheme';
+import { Resource } from '../Core/Resource';
 import { when } from '../ThirdParty/when';
+import { CanvasTexture } from 'three';
 // import { defaultValue } from './../core/defaultValue.js';
 // import { defined } from './../core/defined.js';
 // import { Event } from '../viewer2D2/src/Core/Event.js';
@@ -244,11 +246,11 @@ TileCoordinatesImageryProvider.prototype.getTileCredits = function (x: any, y: a
      *          should be retried later.  The resolved image may be either an
      *          Image or a Canvas DOM object.
      */
-TileCoordinatesImageryProvider.prototype.requestImage = function (x: number, y: number, level: number): HTMLCanvasElement {
-    const canvas = document.createElement('canvas');
+TileCoordinatesImageryProvider.prototype.requestImage = function (x: any, y: any, level: any, request?: any) {
+    const canvas: any = document.createElement('canvas');
     canvas.width = 256;
     canvas.height = 256;
-    const context = canvas.getContext('2d') as CanvasRenderingContext2D;
+    const context: any = canvas.getContext('2d');
 
     const cssColor = this._color.toCssColorString();
 
@@ -256,13 +258,17 @@ TileCoordinatesImageryProvider.prototype.requestImage = function (x: number, y: 
     context.lineWidth = 2;
     context.strokeRect(1, 1, 255, 255);
 
+    const label = 'L' + level + 'X' + x + 'Y' + y;
     context.font = 'bold 25px Arial';
     context.textAlign = 'center';
+    context.fillStyle = 'black';
+    context.fillText(label, 127, 127);
     context.fillStyle = cssColor;
-    context.fillText('L: ' + level, 124, 86);
-    context.fillText('X: ' + x, 124, 136);
-    context.fillText('Y: ' + y, 124, 186);
-    return canvas;
+    context.fillText(label, 124, 124);
+
+    canvas.levelId = `${level}/${x}/${y}`;
+
+    return new CanvasTexture(canvas);
 };
 
 /**

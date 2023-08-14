@@ -76,13 +76,13 @@ class Imagery {
             }
 
             if (defined(this.texture)) {
-                this.texture.dispose();
-                this.texture = null;
+                // this.texture.dispose();
+                // this.texture = null;
             }
 
             if (defined(this.textureWebMercator) && this.texture !== this.textureWebMercator) {
-                this.textureWebMercator.dispose();
-                this.textureWebMercator = null;
+                // this.textureWebMercator.dispose();
+                // this.textureWebMercator = null;
             }
 
             destroyObject(this);

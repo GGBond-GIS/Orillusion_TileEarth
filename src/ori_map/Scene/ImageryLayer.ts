@@ -10,7 +10,7 @@ import { RequestState } from '../Core/RequestState';
 import { TerrainProvider } from '../Core/TerrainProvider';
 import { TileProviderError } from '../Core/TileProviderError';
 import { GeographicReprojectMaterial } from '../Material/GeographicReprojectMaterial';
-import { BufferAttribute, CanvasTexture, StaticDrawUsage, Texture } from 'three';
+import { BufferAttribute, CanvasTexture, StaticDrawUsage } from 'three';
 import { Context } from './Context';
 import { FrameState } from './FrameState';
 import { Imagery } from './Imagery';
@@ -26,6 +26,7 @@ import { WebMapTileServiceImageryProvider } from './WebMapTileServiceImageryProv
 import { ContextLimits } from './ContextLimits';
 import { WebMercatorProjection } from '../Core/WebMercatorProjection';
 import { CesiumColor } from '../Core/CesiumColor';
+import { Engine3D, GPUAddressMode, Texture, Vector4 } from '@orillusion/core';
 
 const imageryBoundsScratch = new Rectangle();
 const tileImageryBoundsScratch = new Rectangle();
@@ -168,12 +169,12 @@ const reprojectToGeographic = (command: any, context: Context, texture: any, rec
     const oneOverMercatorHeight = 1.0 / (northMercatorY - southMercatorY);
 
     const outputTexture = new Texture(undefined);
-    outputTexture.isRenderTargetTexture = true;
-    outputTexture.image = {
-        width: width,
-        height: height,
-        depth: 1
-    };
+    // outputTexture.isRenderTargetTexture = true;
+    // outputTexture.image = {
+    //     width: width,
+    //     height: height,
+    //     depth: 1
+    // };
 
     // Allocate memory for the mipmaps.  Failure to do this before rendering
     // to the texture via the FBO, and calling generateMipmap later,
@@ -834,6 +835,7 @@ class ImageryLayer {
                  imagery.level,
                  request
              );
+             imagery.imageUrl = request.url;
 
              if (!defined(imagePromise)) {
                  // Too many parallel requests, so postpone loading tile.
@@ -954,15 +956,21 @@ class ImageryLayer {
      * @param {Boolean} [needGeographicProjection=true] True to reproject to geographic, or false if Web Mercator is fine.
      */
      _reprojectTexture (frameState: FrameState, imagery: Imagery, needGeographicProjection = true): void {
+        console.log(imagery.imageUrl);
          const texture = imagery.textureWebMercator || imagery.texture;
          const rectangle = imagery.rectangle;
          const context = frameState.context;
 
          needGeographicProjection = defaultValue(needGeographicProjection, true);
 
-
-        //  imagery.texture = texture;
-         imagery.state = ImageryState.READY;
+         Engine3D.res.loadTexture(imagery.imageUrl).then(res=>{
+            res.addressModeU = GPUAddressMode.clamp_to_edge;
+            res.addressModeV = GPUAddressMode.clamp_to_edge;
+            imagery.texture = res;
+            console.log(res);
+            debugger
+            imagery.state = ImageryState.READY;
+         })
          // Reproject this texture if it is not already in a geographic projection and
          // the pixels are more than 1e-5 radians apart.  The pixel spacing cutoff
          // avoids precision problems in the reprojection transformation while making
@@ -1011,7 +1019,7 @@ class ImageryLayer {
      * @returns {Cartesian4} The translation and scale where X and Y are the translation and Z and W
      *          are the scale.
      */
-     _calculateTextureTranslationAndScale (tile: any, tileImagery: any): Cartesian4 {
+     _calculateTextureTranslationAndScale (tile: any, tileImagery: any): Vector4 {
          let imageryRectangle = tileImagery.readyImagery.rectangle;
          let terrainRectangle = tile.rectangle;
 
@@ -1026,7 +1034,7 @@ class ImageryLayer {
 
          const scaleX = terrainWidth / imageryRectangle.width;
          const scaleY = terrainHeight / imageryRectangle.height;
-         return new Cartesian4(
+         return new Vector4(
              scaleX * (terrainRectangle.west - imageryRectangle.west) / terrainWidth,
              scaleY * (terrainRectangle.south - imageryRectangle.south) / terrainHeight,
              scaleX,

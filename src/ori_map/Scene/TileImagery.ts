@@ -8,7 +8,7 @@ import { FrameState } from './FrameState';
 import { Imagery } from './Imagery';
 import { ImageryState } from './ImageryState';
 import { QuadtreeTile } from './QuadtreeTile';
-
+import * as Orillusion from '@orillusion/core';
 class TileImagery {
     readyImagery: Imagery | undefined;
     loadingImagery: Imagery | undefined;
@@ -21,8 +21,17 @@ class TileImagery {
     constructor (imagery:Imagery, textureCoordinateRectangle?: Cartesian4, useWebMercatorT?: boolean) {
         this.readyImagery = undefined;
         this.loadingImagery = imagery;
-        this.textureCoordinateRectangle = textureCoordinateRectangle;
+        console.log(textureCoordinateRectangle)
+        if(textureCoordinateRectangle){
+ //@ts-ignore
+ this.textureCoordinateRectangle = new Orillusion.Vector4(textureCoordinateRectangle?.x,textureCoordinateRectangle?.y,textureCoordinateRectangle?.z,textureCoordinateRectangle.w);
 
+        }else{
+            //@ts-ignore
+
+        this.textureCoordinateRectangle = new Orillusion.Vector4();
+        }
+ 
         this.textureTranslationAndScale = undefined;
         this.useWebMercatorT = useWebMercatorT;
     }
@@ -96,8 +105,8 @@ class TileImagery {
             this.textureTranslationAndScale = imageryLayer._calculateTextureTranslationAndScale(
                 tile,
                 this
-            );
-            // return true; // done loading
+            ) as any;
+            return true; // done loading
         }
 
         // Find some ancestor imagery we can use while this imagery is still loading.

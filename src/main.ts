@@ -41,8 +41,8 @@ mrs.geometry = new SphereGeometry(6378137, 50, 50)
 // set a pbr lit material
 mrs.material = new LitMaterial();
 
-let texture = await Engine3D.res.loadTexture('http://127.0.0.1:5173/earth.jpg');
-mrs.material.baseMap = texture;
+// let texture = await Engine3D.res.loadTexture('http://127.0.0.1:5173/earth.jpg');
+// mrs.material.baseMap = texture;
 Sphere.transform.x = 0
 Sphere.transform.y = 0
 Sphere.transform.z = 0

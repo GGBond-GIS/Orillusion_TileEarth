@@ -21,8 +21,7 @@ class DrawMeshCommand extends Object3D {
     constructor (geometry?: BufferGeometry, material?: Material) {
         super();
         // this.name = ''
-      this._mesh =  this.addComponent(MeshRenderer);
- 
+        this._mesh =  this.addComponent(MeshRenderer);
         this.derivedCommands = {
             // originalMaterial: this.material,
             oit: undefined,

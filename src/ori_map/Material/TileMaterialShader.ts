@@ -12,12 +12,17 @@ export let TileMaterialShader: string = /*wgsl*/ `
     var baseMap: texture_2d<f32>;
 
 
+
     struct MVPMatrix {
         matrixMVP_RTE: mat4x4<f32>,
     };
     
     @group(2) @binding(0)
     var<uniform> modifiedModelView: MVPMatrix;
+
+    @group(3) @binding(0)
+    var baseMap2: texture_2d<f32>;
+    
 
     
     fn Tile_ORI_Vert(vertex:VertexAttributes){
@@ -47,7 +52,7 @@ export let TileMaterialShader: string = /*wgsl*/ `
         var worldPos = (ORI_MATRIX_M * vec4<f32>(vertexPosition.xyz, 1.0));
         var viewPosition = ORI_MATRIX_V  * worldPos;
         var clipPosition = ORI_MATRIX_P *  modifiedModelView.matrixMVP_RTE * vec4<f32>(vertexPosition.xyz, 1.0) ;
-        clipPosition = applyLogarithmicDepth(clipPosition,1,10000000000.0);
+        clipPosition = applyLogarithmicDepth(clipPosition,0.1,10000000000.0);
         ORI_CameraWorldDir = normalize(ORI_CAMERAMATRIX[3].xyz - worldPos.xyz) ;
     
         ORI_VertexOut.varying_UV0 = vertex.uv.xy ;

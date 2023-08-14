@@ -60,10 +60,10 @@ const cornerPositionsScratch = [
 
 const tileDirectionScratch = new Cartesian3();
 
-function computeOccludeePoint (
-    tileProvider:GlobeSurfaceTileProvider,
-    center:Cartesian3,
-    rectangle:Rectangle,
+function computeOccludeePoint(
+    tileProvider: GlobeSurfaceTileProvider,
+    center: Cartesian3,
+    rectangle: Rectangle,
     minimumHeight: number,
     maximumHeight: number,
     result: Cartesian3
@@ -109,7 +109,7 @@ function computeOccludeePoint (
     );
 }
 
-function updateTileBoundingRegion (tile: QuadtreeTile, tileProvider:GlobeSurfaceTileProvider, frameState:FrameState) {
+function updateTileBoundingRegion(tile: QuadtreeTile, tileProvider: GlobeSurfaceTileProvider, frameState: FrameState) {
     let surfaceTile = tile.data;
     if (surfaceTile === undefined) {
         surfaceTile = tile.data = new GlobeSurfaceTile();
@@ -140,16 +140,16 @@ function updateTileBoundingRegion (tile: QuadtreeTile, tileProvider:GlobeSurface
     const terrainData = surfaceTile.terrainData;
     if (
         mesh !== undefined &&
-      mesh.minimumHeight !== undefined &&
-      mesh.maximumHeight !== undefined
+        mesh.minimumHeight !== undefined &&
+        mesh.maximumHeight !== undefined
     ) {
         tileBoundingRegion.minimumHeight = mesh.minimumHeight;
         tileBoundingRegion.maximumHeight = mesh.maximumHeight;
         hasBoundingVolumesFromMesh = true;
     } else if (
         terrainData !== undefined &&
-      terrainData._minimumHeight !== undefined &&
-      terrainData._maximumHeight !== undefined
+        terrainData._minimumHeight !== undefined &&
+        terrainData._maximumHeight !== undefined
     ) {
         tileBoundingRegion.minimumHeight = terrainData._minimumHeight;
         tileBoundingRegion.maximumHeight = terrainData._maximumHeight;
@@ -166,16 +166,16 @@ function updateTileBoundingRegion (tile: QuadtreeTile, tileProvider:GlobeSurface
                 const ancestorTerrainData = ancestorSurfaceTile.terrainData;
                 if (
                     ancestorMesh !== undefined &&
-            ancestorMesh.minimumHeight !== undefined &&
-            ancestorMesh.maximumHeight !== undefined
+                    ancestorMesh.minimumHeight !== undefined &&
+                    ancestorMesh.maximumHeight !== undefined
                 ) {
                     tileBoundingRegion.minimumHeight = ancestorMesh.minimumHeight;
                     tileBoundingRegion.maximumHeight = ancestorMesh.maximumHeight;
                     break;
                 } else if (
                     ancestorTerrainData !== undefined &&
-            ancestorTerrainData._minimumHeight !== undefined &&
-            ancestorTerrainData._maximumHeight !== undefined
+                    ancestorTerrainData._minimumHeight !== undefined &&
+                    ancestorTerrainData._maximumHeight !== undefined
                 ) {
                     tileBoundingRegion.minimumHeight = ancestorTerrainData._minimumHeight;
                     tileBoundingRegion.maximumHeight = ancestorTerrainData._maximumHeight;
@@ -191,7 +191,7 @@ function updateTileBoundingRegion (tile: QuadtreeTile, tileProvider:GlobeSurface
     if (sourceTile !== undefined) {
         const exaggeration = frameState.terrainExaggeration;
         const exaggerationRelativeHeight =
-        frameState.terrainExaggerationRelativeHeight;
+            frameState.terrainExaggerationRelativeHeight;
         const hasExaggeration = exaggeration !== 1.0;
         if (hasExaggeration) {
             hasBoundingVolumesFromMesh = false;
@@ -236,11 +236,11 @@ function updateTileBoundingRegion (tile: QuadtreeTile, tileProvider:GlobeSurface
             }
         } else {
             const needsBounds =
-          tileBoundingRegion._orientedBoundingBox === undefined ||
-          tileBoundingRegion._boundingSphere === undefined;
+                tileBoundingRegion._orientedBoundingBox === undefined ||
+                tileBoundingRegion._boundingSphere === undefined;
             const heightChanged =
-          tileBoundingRegion.minimumHeight !== oldMinimumHeight ||
-          tileBoundingRegion.maximumHeight !== oldMaximumHeight;
+                tileBoundingRegion.minimumHeight !== oldMinimumHeight ||
+                tileBoundingRegion.maximumHeight !== oldMaximumHeight;
             if (heightChanged || needsBounds) {
                 // Bounding volumes need to be recomputed in some circumstances
                 tileBoundingRegion.computeBoundingVolumes(ellipsoid);
@@ -268,7 +268,7 @@ const splitCartographicLimitRectangleScratch = new Rectangle();
 const rectangleCenterScratch = new Cartographic();
 
 // cartographicLimitRectangle may span the IDL, but tiles never will.
-function clipRectangleAntimeridian (tileRectangle:Rectangle, cartographicLimitRectangle:Rectangle):Rectangle {
+function clipRectangleAntimeridian(tileRectangle: Rectangle, cartographicLimitRectangle: Rectangle): Rectangle {
     if (cartographicLimitRectangle.west < cartographicLimitRectangle.east) {
         return cartographicLimitRectangle;
     }
@@ -285,7 +285,7 @@ function clipRectangleAntimeridian (tileRectangle:Rectangle, cartographicLimitRe
     return splitRectangle;
 }
 
-function isUndergroundVisible (tileProvider:GlobeSurfaceTileProvider, frameState: FrameState): boolean {
+function isUndergroundVisible(tileProvider: GlobeSurfaceTileProvider, frameState: FrameState): boolean {
     // if (frameState.cameraUnderground) {
     //     return true;
     // }
@@ -353,7 +353,7 @@ const surfaceShaderSetOptionsScratch: any = {
     hasExaggeration: undefined
 };
 
-function sortTileImageryByLayerIndex (a: any, b: any) {
+function sortTileImageryByLayerIndex(a: any, b: any) {
     let aImagery = a.loadingImagery;
     if (!defined(aImagery)) {
         aImagery = a.readyImagery;
@@ -720,214 +720,95 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
         surfaceTile.fill.update(tileProvider, frameState);
     }
 
-    let maxTextures = ContextLimits.maximumTextureImageUnits;
-
-    let waterMaskTexture = surfaceTile.waterMaskTexture;
-    let waterMaskTranslationAndScale = surfaceTile.waterMaskTranslationAndScale;
-    if (!defined(waterMaskTexture) && defined(surfaceTile.fill)) {
-        waterMaskTexture = surfaceTile.fill.waterMaskTexture;
-        waterMaskTranslationAndScale =
-        surfaceTile.fill.waterMaskTranslationAndScale;
-    }
-
-    const cameraUnderground = frameState.cameraUnderground;
-
-    const globeTranslucencyState = frameState.globeTranslucencyState as GlobeTranslucencyState;
-    const translucent = globeTranslucencyState.translucent;
-    const frontFaceAlphaByDistance =
-      globeTranslucencyState.frontFaceAlphaByDistance;
-    const backFaceAlphaByDistance = globeTranslucencyState.backFaceAlphaByDistance;
-    const translucencyRectangle = globeTranslucencyState.rectangle;
-
-    const undergroundColor = defaultValue(
-        tileProvider.undergroundColor,
-        defaultUndergroundColor
-    ) as CesiumColor;
-    const undergroundColorAlphaByDistance = defaultValue(
-        tileProvider.undergroundColorAlphaByDistance,
-        defaultundergroundColorAlphaByDistance
-    ) as NearFarScalar;
-    const showUndergroundColor =
-        isUndergroundVisible(tileProvider, frameState) &&
-        frameState.mode === SceneMode.SCENE3D &&
-        undergroundColor.alpha > 0.0 &&
-        (undergroundColorAlphaByDistance.nearValue > 0.0 ||
-          undergroundColorAlphaByDistance.farValue > 0.0);
-
-    const showReflectiveOcean = tileProvider.hasWaterMask && defined(waterMaskTexture);
-    const oceanNormalMap = tileProvider.oceanNormalMap;
-    const showOceanWaves = showReflectiveOcean && defined(oceanNormalMap);
-    const hasVertexNormals =
-        tileProvider.terrainProvider.ready &&
-        tileProvider.terrainProvider.hasVertexNormals;
-    const enableFog = frameState.fog.enabled && !cameraUnderground;
-    const showGroundAtmosphere =
-        tileProvider.showGroundAtmosphere && frameState.mode === SceneMode.SCENE3D;
-    const castShadows =
-        ShadowMode.castShadows(tileProvider.shadows) && !translucent;
-    const receiveShadows =
-        ShadowMode.receiveShadows(tileProvider.shadows) && !translucent;
-
-    const hueShift = tileProvider.hueShift;
-    const saturationShift = tileProvider.saturationShift;
-    const brightnessShift = tileProvider.brightnessShift;
-
-    let colorCorrect = !(
-        CesiumMath.equalsEpsilon(hueShift, 0.0, CesiumMath.EPSILON7) &&
-        CesiumMath.equalsEpsilon(saturationShift, 0.0, CesiumMath.EPSILON7) &&
-        CesiumMath.equalsEpsilon(brightnessShift, 0.0, CesiumMath.EPSILON7)
-    );
-
-    let perFragmentGroundAtmosphere = false;
-    if (showGroundAtmosphere) {
-        const cameraDistance = Cartesian3.magnitude(frameState.camera.positionWC);
-        const fadeOutDistance = tileProvider.nightFadeOutDistance;
-        perFragmentGroundAtmosphere = cameraDistance > fadeOutDistance;
-    }
-
-    if (showReflectiveOcean) {
-        --maxTextures;
-    }
-    if (showOceanWaves) {
-        --maxTextures;
-    }
-    if (
-        defined(frameState.shadowState) &&
-        frameState.shadowState.shadowsEnabled
-    ) {
-        --maxTextures;
-    }
-    // if (
-    //     defined(tileProvider.clippingPlanes) &&
-    //     tileProvider.clippingPlanes.enabled
-    // ) {
-    //     --maxTextures;
-    // }
-
-    maxTextures -= globeTranslucencyState.numberOfTextureUniforms;
-
     const mesh = surfaceTile.renderedMesh;
-    const rtc = mesh.center;
+    let rtc = mesh.center;
     const encoding = mesh.encoding;
-    const tileBoundingRegion = surfaceTile.tileBoundingRegion;
 
-    const exaggeration = frameState.terrainExaggeration;
-    const exaggerationRelativeHeight = frameState.terrainExaggerationRelativeHeight;
-    const hasExaggeration = exaggeration !== 1.0;
-    const hasGeodeticSurfaceNormals = encoding.hasGeodeticSurfaceNormals;
     // Not used in 3D.
     const tileRectangle = tileRectangleScratch;
 
-    // Only used for Mercator projections.
-    const southLatitude = 0.0;
-    const northLatitude = 0.0;
-    const southMercatorY = 0.0;
-    const oneOverMercatorHeight = 0.0;
-
     const useWebMercatorProjection = false;
+
+    if (frameState.mode !== SceneMode.SCENE3D) {
+        const projection = frameState.mapProjection;
+        const southwest = projection.project(Rectangle.southwest(tile.rectangle), southwestScratch);
+        const northeast = projection.project(Rectangle.northeast(tile.rectangle), northeastScratch);
+
+        tileRectangle.x = southwest.x;
+        tileRectangle.y = southwest.y;
+        tileRectangle.z = northeast.x;
+        tileRectangle.w = northeast.y;
+
+        // In 2D and Columbus View, use the center of the tile for RTC rendering.
+        if (frameState.mode !== SceneMode.MORPHING) {
+            rtc = rtcScratch;
+            rtc.x = 0.0;
+            rtc.y = (tileRectangle.z + tileRectangle.x) * 0.5;
+            rtc.z = (tileRectangle.w + tileRectangle.y) * 0.5;
+            tileRectangle.x -= rtc.y;
+            tileRectangle.y -= rtc.z;
+            tileRectangle.z -= rtc.y;
+            tileRectangle.w -= rtc.z;
+        }
+    }
 
     const surfaceShaderSetOptions = surfaceShaderSetOptionsScratch;
     surfaceShaderSetOptions.frameState = frameState;
     surfaceShaderSetOptions.surfaceTile = surfaceTile;
-    surfaceShaderSetOptions.showReflectiveOcean = showReflectiveOcean;
-    surfaceShaderSetOptions.showOceanWaves = showOceanWaves;
-    surfaceShaderSetOptions.enableLighting = tileProvider.enableLighting;
-    surfaceShaderSetOptions.dynamicAtmosphereLighting =
-        tileProvider.dynamicAtmosphereLighting;
-    surfaceShaderSetOptions.dynamicAtmosphereLightingFromSun =
-        tileProvider.dynamicAtmosphereLightingFromSun;
-    surfaceShaderSetOptions.showGroundAtmosphere = showGroundAtmosphere;
-    surfaceShaderSetOptions.perFragmentGroundAtmosphere = perFragmentGroundAtmosphere;
-    surfaceShaderSetOptions.hasVertexNormals = hasVertexNormals;
-    surfaceShaderSetOptions.useWebMercatorProjection = useWebMercatorProjection;
-    surfaceShaderSetOptions.clippedByBoundaries = surfaceTile.clippedByBoundaries;
-    surfaceShaderSetOptions.hasGeodeticSurfaceNormals = hasGeodeticSurfaceNormals;
-    surfaceShaderSetOptions.hasExaggeration = hasExaggeration;
 
     const quantization = encoding.quantization;
+    surfaceShaderSetOptions.enableLighting = tileProvider.enableLighting;
+    surfaceShaderSetOptions.useWebMercatorProjection = useWebMercatorProjection;
 
     const tileImageryCollection = surfaceTile.imagery;
     let imageryIndex = 0;
     const imageryLen = tileImageryCollection.length;
 
-    const showSkirts =
-    tileProvider.showSkirts && !cameraUnderground && !translucent;
-    const backFaceCulling =
-    tileProvider.backFaceCulling && !cameraUnderground && !translucent;
-    // const firstPassRenderState = backFaceCulling
-    //     ? tileProvider._renderState
-    //     : tileProvider._disableCullingRenderState;
-    // const otherPassesRenderState = backFaceCulling
-    //     ? tileProvider._blendRenderState
-    //     : tileProvider._disableCullingBlendRenderState;
-    // const renderState = firstPassRenderState;
-
     let initialColor = tileProvider._firstPassInitialColor;
-
-    const context = frameState.context;
-
-    const materialUniformMapChanged =
-        tileProvider._materialUniformMap !== tileProvider.materialUniformMap;
-    if (materialUniformMapChanged) {
-        tileProvider._materialUniformMap = tileProvider.materialUniformMap;
-        const drawCommandsLength = tileProvider._drawCommands.length;
-        for (let i = 0; i < drawCommandsLength; ++i) {
-            // tileProvider._uniformMaps[i] = createTileUniformMap(
-            //     frameState,
-            //     tileProvider
-            // );
-        }
-    }
 
     do {
         let numberOfDayTextures = 0;
 
         let command: DrawMeshCommand;
+
+        let uniformMap;
         let material: TileMaterial;
 
         let globeSurfaceMaterial: GlobeSurfaceTileMaterial;
-
-        let uniformMap: any;
-
         const dayTextures = [];
         const dayTextureTranslationAndScale = [];
         const dayTextureTexCoordsRectangle = [];
-        while (numberOfDayTextures < maxTextures && imageryIndex < imageryLen) {
+        const dayTextureUseWebMercatorT = [];
+        while (imageryIndex < imageryLen) {
+            
             const tileImagery = tileImageryCollection[imageryIndex];
-            const imagery = tileImagery.readyImagery;
+            const imagery = tileImagery?.readyImagery || undefined;
             ++imageryIndex;
-
             if (!defined(imagery)) {
                 continue;
             }
-
-            const texture = tileImagery.useWebMercatorT
-                ? imagery.textureWebMercator
-                : imagery.texture;
-
+            const texture = imagery.texture
             const imageryLayer = imagery.imageryLayer;
 
             if (!defined(tileImagery.textureTranslationAndScale)) {
                 tileImagery.textureTranslationAndScale = imageryLayer._calculateTextureTranslationAndScale(tile, tileImagery);
             }
+            
+                dayTextures[numberOfDayTextures] = texture;
+                dayTextureTranslationAndScale[numberOfDayTextures] = tileImagery.textureTranslationAndScale;
+                dayTextureTexCoordsRectangle[numberOfDayTextures] = tileImagery.textureCoordinateRectangle;
+                dayTextureUseWebMercatorT[numberOfDayTextures] = tileImagery.useWebMercatorT;
+                ++numberOfDayTextures;
 
-            dayTextures[numberOfDayTextures] = texture;
-            dayTextureTranslationAndScale[numberOfDayTextures] = tileImagery.textureTranslationAndScale;
-            dayTextureTexCoordsRectangle[numberOfDayTextures] = tileImagery.textureCoordinateRectangle;
-
-            ++numberOfDayTextures;
         }
-
         surfaceShaderSetOptions.numberOfDayTextures = dayTextures.length;
-
-        
 
         if (tileProvider._drawCommands.length <= tileProvider._usedDrawCommands) {
             command = new DrawMeshCommand();
             command.owner = tile;
             // command.frustumCulled = false;
             command.boundingVolume = new BoundingSphere();
-            command.localPosition = new Orillusion.Vector3(rtc.x,rtc.y,rtc.z);
+            command.localPosition = new Orillusion.Vector3(rtc.x, rtc.y, rtc.z);
 
             command.orientedBoundingBox = undefined;
 
@@ -948,30 +829,16 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
 
             uniformMap = createTileUniformMap(frameState, tileProvider);
         }
-
         command.localPosition = new Orillusion.Vector3(rtc.x,rtc.y,rtc.z);
 
-        if (material.defines.TEXTURE_UNITS !== material.dayTextures.length ||
-            imageryLen !== material.dayTextures.length ||
-            quantization === TerrainQuantization.BITS12 && !defined(material.defines.QUANTIZATION_BITS12) ||
-            quantization === TerrainQuantization.NONE && defined(material.defines.QUANTIZATION_BITS12)
-        ) {
-            
-            material = createMaterialMap(frameState, tileProvider, surfaceShaderSetOptions, quantization);
-
-            globeSurfaceMaterial.dispose();
-            uniformMap = createTileUniformMap(frameState, tileProvider);
-            globeSurfaceMaterial = new GlobeSurfaceTileMaterial();
-        }
-
-        command.owner = tile;
         ++tileProvider._usedDrawCommands;
-
-        material.dayTextures = dayTextures;
+        debugger
         material.dayTextureTranslationAndScale = dayTextureTranslationAndScale;
         material.dayTextureTexCoordsRectangle = dayTextureTexCoordsRectangle;
-        Cartesian4.clone(initialColor, material.initialColor);
- 
+        material.shader.setTexture(`baseMap`,dayTextures[0]);
+        material.dayTextures = dayTextures;
+        // material.baseMap = dayTextures[0];
+        debugger
         //@ts-ignore
         const viewMatrix = window.view.camera.viewMatrix.rawData;
         // console.log(viewMatrix);
@@ -987,429 +854,34 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
             centerEye,
             modifiedModelViewProjectionScratch
         );
-        // CesiumMatrix4.multiply(
-        //     projectionMatrix,
-        //     modifiedModelViewProjectionScratch,
-        //     modifiedModelViewProjectionScratch
-        // );
-       let vm = new Orillusion.Matrix4();
-       vm.rawData = new Float32Array([
-        modifiedModelViewProjectionScratch[0],
-        modifiedModelViewProjectionScratch[1],
-        modifiedModelViewProjectionScratch[2],
-        modifiedModelViewProjectionScratch[3],
-        modifiedModelViewProjectionScratch[4],
-        modifiedModelViewProjectionScratch[5],
-        modifiedModelViewProjectionScratch[6],
-        modifiedModelViewProjectionScratch[7],
-        modifiedModelViewProjectionScratch[8],
-        modifiedModelViewProjectionScratch[9],
-        modifiedModelViewProjectionScratch[10],
-        modifiedModelViewProjectionScratch[11],
-        modifiedModelViewProjectionScratch[12],
-        modifiedModelViewProjectionScratch[13],
-        modifiedModelViewProjectionScratch[14],
-        modifiedModelViewProjectionScratch[15],
-       ])
+        let vm = new Orillusion.Matrix4();
+        vm.rawData = new Float32Array([
+            modifiedModelViewProjectionScratch[0],
+            modifiedModelViewProjectionScratch[1],
+            modifiedModelViewProjectionScratch[2],
+            modifiedModelViewProjectionScratch[3],
+            modifiedModelViewProjectionScratch[4],
+            modifiedModelViewProjectionScratch[5],
+            modifiedModelViewProjectionScratch[6],
+            modifiedModelViewProjectionScratch[7],
+            modifiedModelViewProjectionScratch[8],
+            modifiedModelViewProjectionScratch[9],
+            modifiedModelViewProjectionScratch[10],
+            modifiedModelViewProjectionScratch[11],
+            modifiedModelViewProjectionScratch[12],
+            modifiedModelViewProjectionScratch[13],
+            modifiedModelViewProjectionScratch[14],
+            modifiedModelViewProjectionScratch[15],
+        ])
         //@ts-ignore
         material.modifiedModelView.setMatrix('matrixMVP_RTE', vm);
         material.modifiedModelView.apply();
-        material.shaderState.topology = GPUPrimitiveTopology.line_list;
-        // CesiumMatrix4.transformToThreeMatrix4(modifiedModelViewProjectionScratch, material.modifiedModelViewProjectionScratch);
+        // material.shaderState.topology = GPUPrimitiveTopology.line_list;
 
-        // material.tileRectangle = tileRectangle;
-
-        // material.minMaxHeight.x = encoding.minimumHeight;
-        // material.minMaxHeight.y = encoding.maximumHeight;
-
-        // material.scaleAndBias = encoding.threeMatrix4;
-
-        const uniformMapProperties = uniformMap.properties;
-        Cartesian4.clone(initialColor, uniformMapProperties.initialColor);
-        uniformMapProperties.oceanNormalMap = oceanNormalMap;
-        uniformMapProperties.lightingFadeDistance.x =
-          tileProvider.lightingFadeOutDistance;
-        uniformMapProperties.lightingFadeDistance.y =
-          tileProvider.lightingFadeInDistance;
-        uniformMapProperties.nightFadeDistance.x =
-          tileProvider.nightFadeOutDistance;
-        uniformMapProperties.nightFadeDistance.y = tileProvider.nightFadeInDistance;
-        uniformMapProperties.zoomedOutOceanSpecularIntensity =
-          tileProvider.zoomedOutOceanSpecularIntensity;
-
-        const frontFaceAlphaByDistanceFinal = cameraUnderground
-            ? backFaceAlphaByDistance
-            : frontFaceAlphaByDistance;
-        const backFaceAlphaByDistanceFinal = cameraUnderground
-            ? frontFaceAlphaByDistance
-            : backFaceAlphaByDistance;
-
-        if (defined(frontFaceAlphaByDistanceFinal)) {
-            Cartesian4.fromElements(
-                frontFaceAlphaByDistanceFinal.near,
-                frontFaceAlphaByDistanceFinal.nearValue,
-                frontFaceAlphaByDistanceFinal.far,
-                frontFaceAlphaByDistanceFinal.farValue,
-                uniformMapProperties.frontFaceAlphaByDistance
-            );
-            Cartesian4.fromElements(
-                backFaceAlphaByDistanceFinal.near,
-                backFaceAlphaByDistanceFinal.nearValue,
-                backFaceAlphaByDistanceFinal.far,
-                backFaceAlphaByDistanceFinal.farValue,
-                uniformMapProperties.backFaceAlphaByDistance
-            );
-        }
-
-        Cartesian4.fromElements(
-            undergroundColorAlphaByDistance.near,
-            undergroundColorAlphaByDistance.nearValue,
-            undergroundColorAlphaByDistance.far,
-            undergroundColorAlphaByDistance.farValue,
-            uniformMapProperties.undergroundColorAlphaByDistance
-        );
-        CesiumColor.clone(undergroundColor, uniformMapProperties.undergroundColor);
-
-        const highlightFillTile =
-          !defined(surfaceTile.vertexArray) &&
-          defined(tileProvider.fillHighlightColor) &&
-          (tileProvider.fillHighlightColor as CesiumColor).alpha > 0.0;
-        if (highlightFillTile) {
-            CesiumColor.clone(
-                (tileProvider.fillHighlightColor as CesiumColor),
-                uniformMapProperties.fillHighlightColor
-            );
-        }
-
-        uniformMapProperties.terrainExaggerationAndRelativeHeight.x = exaggeration;
-        uniformMapProperties.terrainExaggerationAndRelativeHeight.y = exaggerationRelativeHeight;
-
-        uniformMapProperties.center3D.set(mesh.center.x, mesh.center.y, mesh.center.z);
-        Cartesian3.clone(rtc, uniformMapProperties.rtc);
-
-        Cartesian4.clone(tileRectangle, uniformMapProperties.tileRectangle);
-        uniformMapProperties.southAndNorthLatitude.x = southLatitude;
-        uniformMapProperties.southAndNorthLatitude.y = northLatitude;
-        uniformMapProperties.southMercatorYAndOneOverHeight.x = southMercatorY;
-        uniformMapProperties.southMercatorYAndOneOverHeight.y = oneOverMercatorHeight;
-
-        // Convert tile limiter rectangle from cartographic to texture space using the tileRectangle.
-        const localizedCartographicLimitRectangle = localizedCartographicLimitRectangleScratch;
-        const cartographicLimitRectangle = clipRectangleAntimeridian(
-            tile.rectangle,
-            tileProvider.cartographicLimitRectangle
-        );
-
-        const localizedTranslucencyRectangle = localizedTranslucencyRectangleScratch;
-        const clippedTranslucencyRectangle = clipRectangleAntimeridian(
-            tile.rectangle,
-            translucencyRectangle
-        );
-
-        Cartesian3.fromElements(
-            hueShift,
-            saturationShift,
-            brightnessShift,
-            uniformMapProperties.hsbShift
-        );
-
-        const cartographicTileRectangle = tile.rectangle;
-        const inverseTileWidth = 1.0 / cartographicTileRectangle.width;
-        const inverseTileHeight = 1.0 / cartographicTileRectangle.height;
-        localizedCartographicLimitRectangle.x =
-          (cartographicLimitRectangle.west - cartographicTileRectangle.west) *
-          inverseTileWidth;
-        localizedCartographicLimitRectangle.y =
-          (cartographicLimitRectangle.south - cartographicTileRectangle.south) *
-          inverseTileHeight;
-        localizedCartographicLimitRectangle.z =
-          (cartographicLimitRectangle.east - cartographicTileRectangle.west) *
-          inverseTileWidth;
-        localizedCartographicLimitRectangle.w =
-          (cartographicLimitRectangle.north - cartographicTileRectangle.south) *
-          inverseTileHeight;
-
-        Cartesian4.clone(
-            localizedCartographicLimitRectangle,
-            uniformMapProperties.localizedCartographicLimitRectangle
-        );
-
-        localizedTranslucencyRectangle.x =
-          (clippedTranslucencyRectangle.west - cartographicTileRectangle.west) *
-          inverseTileWidth;
-        localizedTranslucencyRectangle.y =
-          (clippedTranslucencyRectangle.south - cartographicTileRectangle.south) *
-          inverseTileHeight;
-        localizedTranslucencyRectangle.z =
-          (clippedTranslucencyRectangle.east - cartographicTileRectangle.west) *
-          inverseTileWidth;
-        localizedTranslucencyRectangle.w =
-          (clippedTranslucencyRectangle.north - cartographicTileRectangle.south) *
-          inverseTileHeight;
-
-        Cartesian4.clone(
-            localizedTranslucencyRectangle,
-            uniformMapProperties.localizedTranslucencyRectangle
-        );
-
-        // For performance, use fog in the shader only when the tile is in fog.
-        const applyFog =
-          enableFog &&
-          CesiumMath.fog(tile._distance, frameState.fog.density) >
-            CesiumMath.EPSILON3;
-        colorCorrect = colorCorrect && (applyFog || showGroundAtmosphere);
-
-        let applyBrightness = false;
-        let applyContrast = false;
-        let applyHue = false;
-        let applySaturation = false;
-        let applyGamma = false;
-        let applyAlpha = false;
-        let applyDayNightAlpha = false;
-        let applySplit = false;
-        let applyCutout = false;
-        let applyColorToAlpha = false;
-
-        let numberOfDayTextures2 = 0;
-        let imageryIndex2 = 0;
-
-        while (numberOfDayTextures2 < maxTextures && imageryIndex2 < imageryLen) {
-            const tileImagery = tileImageryCollection[imageryIndex2];
-            const imagery = tileImagery.readyImagery;
-            ++imageryIndex2;
-
-            if (!defined(imagery) || imagery.imageryLayer.alpha === 0.0) {
-                continue;
-            }
-
-            const texture = tileImagery.useWebMercatorT
-                ? imagery.textureWebMercator
-                : imagery.texture;
-
-            // >>includeStart('debug', pragmas.debug);
-            if (!defined(texture)) {
-                // Our "ready" texture isn't actually ready.  This should never happen.
-                //
-                // Side note: It IS possible for it to not be in the READY ImageryState, though.
-                // This can happen when a single imagery tile is shared by two terrain tiles (common)
-                // and one of them (A) needs a geographic version of the tile because it is near the poles,
-                // and the other (B) does not.  B can and will transition the imagery tile to the READY state
-                // without reprojecting to geographic.  Then, later, A will deem that same tile not-ready-yet
-                // because it only has the Web Mercator texture, and flip it back to the TRANSITIONING state.
-                // The imagery tile won't be in the READY state anymore, but it's still READY enough for B's
-                // purposes.
-                throw new DeveloperError('readyImagery is not actually ready!');
-            }
-            // >>includeEnd('debug');
-
-            const imageryLayer = imagery.imageryLayer;
-
-            if (!defined(tileImagery.textureTranslationAndScale)) {
-                tileImagery.textureTranslationAndScale = imageryLayer._calculateTextureTranslationAndScale(
-                    tile,
-                    tileImagery
-                );
-            }
-
-            uniformMapProperties.dayTextures[numberOfDayTextures2] = texture;
-            uniformMapProperties.dayTextureTranslationAndScale[numberOfDayTextures2] =
-              tileImagery.textureTranslationAndScale_vector4;
-            uniformMapProperties.dayTextureTexCoordsRectangle[numberOfDayTextures2] =
-              tileImagery.textureCoordinateRectangle_vector4;
-            uniformMapProperties.dayTextureUseWebMercatorT[numberOfDayTextures2] =
-              tileImagery.useWebMercatorT;
-
-            uniformMapProperties.dayTextureAlpha[numberOfDayTextures2] =
-              imageryLayer.alpha;
-            applyAlpha =
-              applyAlpha ||
-              uniformMapProperties.dayTextureAlpha[numberOfDayTextures2] !== 1.0;
-
-            uniformMapProperties.dayTextureNightAlpha[numberOfDayTextures2] =
-              imageryLayer.nightAlpha;
-            applyDayNightAlpha =
-              applyDayNightAlpha ||
-              uniformMapProperties.dayTextureNightAlpha[numberOfDayTextures2] !== 1.0;
-
-            uniformMapProperties.dayTextureDayAlpha[numberOfDayTextures2] =
-              imageryLayer.dayAlpha;
-            applyDayNightAlpha =
-              applyDayNightAlpha ||
-              uniformMapProperties.dayTextureDayAlpha[numberOfDayTextures2] !== 1.0;
-
-            uniformMapProperties.dayTextureBrightness[numberOfDayTextures2] =
-              imageryLayer.brightness;
-            applyBrightness =
-              applyBrightness ||
-              uniformMapProperties.dayTextureBrightness[numberOfDayTextures2] !==
-                ImageryLayer.DEFAULT_BRIGHTNESS;
-
-            uniformMapProperties.dayTextureContrast[numberOfDayTextures2] =
-              imageryLayer.contrast;
-            applyContrast =
-              applyContrast ||
-              uniformMapProperties.dayTextureContrast[numberOfDayTextures2] !==
-                ImageryLayer.DEFAULT_CONTRAST;
-
-            uniformMapProperties.dayTextureHue[numberOfDayTextures2] =
-              imageryLayer.hue;
-            applyHue =
-              applyHue ||
-              uniformMapProperties.dayTextureHue[numberOfDayTextures2] !==
-                ImageryLayer.DEFAULT_HUE;
-
-            uniformMapProperties.dayTextureSaturation[numberOfDayTextures2] =
-              imageryLayer.saturation;
-            applySaturation =
-              applySaturation ||
-              uniformMapProperties.dayTextureSaturation[numberOfDayTextures2] !==
-                ImageryLayer.DEFAULT_SATURATION;
-
-            uniformMapProperties.dayTextureOneOverGamma[numberOfDayTextures2] =
-              1.0 / imageryLayer.gamma;
-            applyGamma =
-              applyGamma ||
-              uniformMapProperties.dayTextureOneOverGamma[numberOfDayTextures2] !==
-                1.0 / ImageryLayer.DEFAULT_GAMMA;
-
-            uniformMapProperties.dayTextureSplit[numberOfDayTextures2] =
-              imageryLayer.splitDirection;
-            applySplit =
-              applySplit ||
-              uniformMapProperties.dayTextureSplit[numberOfDayTextures2] !== 0.0;
-
-            // Update cutout rectangle
-            let dayTextureCutoutRectangle =
-              uniformMapProperties.dayTextureCutoutRectangles[numberOfDayTextures2];
-            if (!defined(dayTextureCutoutRectangle)) {
-                dayTextureCutoutRectangle = uniformMapProperties.dayTextureCutoutRectangles[
-                    numberOfDayTextures2
-                ] = new Vector4();
-            }
-
-            Cartesian4.clone(Cartesian4.ZERO, dayTextureCutoutRectangle);
-            if (defined(imageryLayer.cutoutRectangle)) {
-                const cutoutRectangle = clipRectangleAntimeridian(
-                    cartographicTileRectangle,
-                    imageryLayer.cutoutRectangle
-                );
-                const intersection = Rectangle.simpleIntersection(
-                    cutoutRectangle,
-                    cartographicTileRectangle,
-                    rectangleIntersectionScratch
-                );
-                applyCutout = defined(intersection) || applyCutout;
-
-                dayTextureCutoutRectangle.x =
-                (cutoutRectangle.west - cartographicTileRectangle.west) *
-                inverseTileWidth;
-                dayTextureCutoutRectangle.y =
-                (cutoutRectangle.south - cartographicTileRectangle.south) *
-                inverseTileHeight;
-                dayTextureCutoutRectangle.z =
-                (cutoutRectangle.east - cartographicTileRectangle.west) *
-                inverseTileWidth;
-                dayTextureCutoutRectangle.w =
-                (cutoutRectangle.north - cartographicTileRectangle.south) *
-                inverseTileHeight;
-            }
-
-            // Update color to alpha
-            let colorToAlpha =
-              uniformMapProperties.colorsToAlpha[numberOfDayTextures2];
-            if (!defined(colorToAlpha)) {
-                colorToAlpha = uniformMapProperties.colorsToAlpha[
-                    numberOfDayTextures2
-                ] = new Vector4();
-            }
-
-            const hasColorToAlpha =
-              defined(imageryLayer.colorToAlpha) &&
-              imageryLayer.colorToAlphaThreshold > 0.0;
-            applyColorToAlpha = applyColorToAlpha || hasColorToAlpha;
-
-            if (hasColorToAlpha) {
-                const color = imageryLayer.colorToAlpha;
-                colorToAlpha.x = color.red;
-                colorToAlpha.y = color.green;
-                colorToAlpha.z = color.blue;
-                colorToAlpha.w = imageryLayer.colorToAlphaThreshold;
-            } else {
-                colorToAlpha.w = -1.0;
-            }
-
-            // if (defined(imagery.credits)) {
-            //     const credits = imagery.credits;
-            //     for (
-            //         let creditIndex = 0, creditLength = credits.length;
-            //         creditIndex < creditLength;
-            //         ++creditIndex
-            //     ) {
-            //         creditDisplay.addCredit(credits[creditIndex]);
-            //     }
-            // }
-
-            ++numberOfDayTextures2;
-        }
-
-        // trim texture array to the used length so we don't end up using old textures
-        // which might get destroyed eventually
-        uniformMapProperties.dayTextures.length = numberOfDayTextures2;
-        uniformMapProperties.waterMask = waterMaskTexture;
-        Cartesian4.clone(
-            waterMaskTranslationAndScale,
-            uniformMapProperties.waterMaskTranslationAndScale
-        );
-
-        uniformMapProperties.minMaxHeight.x = encoding.minimumHeight;
-        uniformMapProperties.minMaxHeight.y = encoding.maximumHeight;
-
-        uniformMapProperties.scaleAndBias.copy(encoding.threeMatrix4);
-
-        // update clipping planes
-        //     const clippingPlanes = tileProvider._clippingPlanes;
-        //     const clippingPlanesEnabled =
-        //   defined(clippingPlanes) && clippingPlanes.enabled && tile.isClipped;
-        //     if (clippingPlanesEnabled) {
-        //         uniformMapProperties.clippingPlanesEdgeColor = Color.clone(
-        //             clippingPlanes.edgeColor,
-        //             uniformMapProperties.clippingPlanesEdgeColor
-        //         );
-        //         uniformMapProperties.clippingPlanesEdgeWidth = clippingPlanes.edgeWidth;
-        //     }
-
-        surfaceShaderSetOptions.numberOfDayTextures = numberOfDayTextures2;
-        surfaceShaderSetOptions.applyBrightness = applyBrightness;
-        surfaceShaderSetOptions.applyContrast = applyContrast;
-        surfaceShaderSetOptions.applyHue = applyHue;
-        surfaceShaderSetOptions.applySaturation = applySaturation;
-        surfaceShaderSetOptions.applyGamma = applyGamma;
-        surfaceShaderSetOptions.applyAlpha = applyAlpha;
-        surfaceShaderSetOptions.applyDayNightAlpha = applyDayNightAlpha;
-        surfaceShaderSetOptions.applySplit = applySplit;
-        surfaceShaderSetOptions.enableFog = applyFog;
-        surfaceShaderSetOptions.enableClippingPlanes = false;
-        // surfaceShaderSetOptions.clippingPlanes = clippingPlanes;
-        surfaceShaderSetOptions.hasImageryLayerCutout = applyCutout;
-        surfaceShaderSetOptions.colorCorrect = colorCorrect;
-        surfaceShaderSetOptions.highlightFillTile = highlightFillTile;
-        surfaceShaderSetOptions.colorToAlpha = applyColorToAlpha;
-        surfaceShaderSetOptions.showUndergroundColor = showUndergroundColor;
-        surfaceShaderSetOptions.translucent = translucent;
-
-        // const shaderProgram = tileProvider._surfaceShaderSet.getShaderProgram(
-        //     surfaceShaderSetOptions
-        // );
-        // console.log( command.geometry);
-        // if(command.geometry){
-
-        // }
-        //     // console.log(mesh.geometry)
-
-            command._mesh.geometry = mesh.geometry;
-                command._mesh.material = material;
+        command._mesh.geometry = mesh.geometry;
+        command._mesh.material = material;
             if(mesh.show){
-                
+
                 //@ts-ignore
                 command.show = true;
             }else{
@@ -1417,26 +889,702 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
                 command.show = false;
             }
 
-
-        // setUniform(command, uniformMap, globeSurfaceMaterial);
-        // command.material = globeSurfaceMaterial;
-
-        // (command.material as GlobeSurfaceTileMaterial).vertexShader = shaderProgram._vertexShaderText;
-        // (command.material as GlobeSurfaceTileMaterial).fragmentShader = shaderProgram._fragmentShaderText;
-
-        // setUniform(command, uniformMap, shaderProgram.material);
-        // command.material = shaderProgram.material;
-
-        const boundingVolume = command.boundingVolume;
-        const orientedBoundingBox = command.orientedBoundingBox;
-        // command.localPosition = new Orillusion.Vector3(rtc.x,rtc.y,rtc.z);
-        command.boundingVolume = BoundingSphere.clone(surfaceTile.boundingSphere3D, boundingVolume);
-        command.orientedBoundingBox = OrientedBoundingBox.clone(surfaceTile.orientedBoundingBox, orientedBoundingBox);
-
         frameState.commandList.push(command);
-
-        initialColor = otherPassesInitialColor;
     } while (imageryIndex < imageryLen);
+    // const surfaceTile = tile.data;
+
+    // if (!defined(surfaceTile.vertexArray)) {
+    //     if (surfaceTile.fill === undefined) {
+    //         // No fill was created for this tile, probably because this tile is not connected to
+    //         // any renderable tiles. So create a simple tile in the middle of the tile's possible
+    //         // height range.
+    //         surfaceTile.fill = new (TerrainFillMesh as any)(tile);
+    //     }
+    //     surfaceTile.fill.update(tileProvider, frameState);
+    // }
+
+    // let maxTextures = ContextLimits.maximumTextureImageUnits;
+
+    // let waterMaskTexture = surfaceTile.waterMaskTexture;
+    // let waterMaskTranslationAndScale = surfaceTile.waterMaskTranslationAndScale;
+    // if (!defined(waterMaskTexture) && defined(surfaceTile.fill)) {
+    //     waterMaskTexture = surfaceTile.fill.waterMaskTexture;
+    //     waterMaskTranslationAndScale =
+    //     surfaceTile.fill.waterMaskTranslationAndScale;
+    // }
+
+    // const cameraUnderground = frameState.cameraUnderground;
+
+    // const globeTranslucencyState = frameState.globeTranslucencyState as GlobeTranslucencyState;
+    // const translucent = globeTranslucencyState.translucent;
+    // const frontFaceAlphaByDistance =
+    //   globeTranslucencyState.frontFaceAlphaByDistance;
+    // const backFaceAlphaByDistance = globeTranslucencyState.backFaceAlphaByDistance;
+    // const translucencyRectangle = globeTranslucencyState.rectangle;
+
+    // const undergroundColor = defaultValue(
+    //     tileProvider.undergroundColor,
+    //     defaultUndergroundColor
+    // ) as CesiumColor;
+    // const undergroundColorAlphaByDistance = defaultValue(
+    //     tileProvider.undergroundColorAlphaByDistance,
+    //     defaultundergroundColorAlphaByDistance
+    // ) as NearFarScalar;
+    // const showUndergroundColor =
+    //     isUndergroundVisible(tileProvider, frameState) &&
+    //     frameState.mode === SceneMode.SCENE3D &&
+    //     undergroundColor.alpha > 0.0 &&
+    //     (undergroundColorAlphaByDistance.nearValue > 0.0 ||
+    //       undergroundColorAlphaByDistance.farValue > 0.0);
+
+    // const showReflectiveOcean = tileProvider.hasWaterMask && defined(waterMaskTexture);
+    // const oceanNormalMap = tileProvider.oceanNormalMap;
+    // const showOceanWaves = showReflectiveOcean && defined(oceanNormalMap);
+    // const hasVertexNormals =
+    //     tileProvider.terrainProvider.ready &&
+    //     tileProvider.terrainProvider.hasVertexNormals;
+    // const enableFog = frameState.fog.enabled && !cameraUnderground;
+    // const showGroundAtmosphere =
+    //     tileProvider.showGroundAtmosphere && frameState.mode === SceneMode.SCENE3D;
+    // const castShadows =
+    //     ShadowMode.castShadows(tileProvider.shadows) && !translucent;
+    // const receiveShadows =
+    //     ShadowMode.receiveShadows(tileProvider.shadows) && !translucent;
+
+    // const hueShift = tileProvider.hueShift;
+    // const saturationShift = tileProvider.saturationShift;
+    // const brightnessShift = tileProvider.brightnessShift;
+
+    // let colorCorrect = !(
+    //     CesiumMath.equalsEpsilon(hueShift, 0.0, CesiumMath.EPSILON7) &&
+    //     CesiumMath.equalsEpsilon(saturationShift, 0.0, CesiumMath.EPSILON7) &&
+    //     CesiumMath.equalsEpsilon(brightnessShift, 0.0, CesiumMath.EPSILON7)
+    // );
+
+    // let perFragmentGroundAtmosphere = false;
+    // if (showGroundAtmosphere) {
+    //     const cameraDistance = Cartesian3.magnitude(frameState.camera.positionWC);
+    //     const fadeOutDistance = tileProvider.nightFadeOutDistance;
+    //     perFragmentGroundAtmosphere = cameraDistance > fadeOutDistance;
+    // }
+
+    // if (showReflectiveOcean) {
+    //     --maxTextures;
+    // }
+    // if (showOceanWaves) {
+    //     --maxTextures;
+    // }
+    // if (
+    //     defined(frameState.shadowState) &&
+    //     frameState.shadowState.shadowsEnabled
+    // ) {
+    //     --maxTextures;
+    // }
+    // // if (
+    // //     defined(tileProvider.clippingPlanes) &&
+    // //     tileProvider.clippingPlanes.enabled
+    // // ) {
+    // //     --maxTextures;
+    // // }
+
+    // maxTextures -= globeTranslucencyState.numberOfTextureUniforms;
+
+    // const mesh = surfaceTile.renderedMesh;
+    // const rtc = mesh.center;
+    // const encoding = mesh.encoding;
+    // const tileBoundingRegion = surfaceTile.tileBoundingRegion;
+
+    // const exaggeration = frameState.terrainExaggeration;
+    // const exaggerationRelativeHeight = frameState.terrainExaggerationRelativeHeight;
+    // const hasExaggeration = exaggeration !== 1.0;
+    // const hasGeodeticSurfaceNormals = encoding.hasGeodeticSurfaceNormals;
+    // // Not used in 3D.
+    // const tileRectangle = tileRectangleScratch;
+
+    // // Only used for Mercator projections.
+    // const southLatitude = 0.0;
+    // const northLatitude = 0.0;
+    // const southMercatorY = 0.0;
+    // const oneOverMercatorHeight = 0.0;
+
+    // const useWebMercatorProjection = false;
+
+    // const surfaceShaderSetOptions = surfaceShaderSetOptionsScratch;
+    // surfaceShaderSetOptions.frameState = frameState;
+    // surfaceShaderSetOptions.surfaceTile = surfaceTile;
+    // surfaceShaderSetOptions.showReflectiveOcean = showReflectiveOcean;
+    // surfaceShaderSetOptions.showOceanWaves = showOceanWaves;
+    // surfaceShaderSetOptions.enableLighting = tileProvider.enableLighting;
+    // surfaceShaderSetOptions.dynamicAtmosphereLighting =
+    //     tileProvider.dynamicAtmosphereLighting;
+    // surfaceShaderSetOptions.dynamicAtmosphereLightingFromSun =
+    //     tileProvider.dynamicAtmosphereLightingFromSun;
+    // surfaceShaderSetOptions.showGroundAtmosphere = showGroundAtmosphere;
+    // surfaceShaderSetOptions.perFragmentGroundAtmosphere = perFragmentGroundAtmosphere;
+    // surfaceShaderSetOptions.hasVertexNormals = hasVertexNormals;
+    // surfaceShaderSetOptions.useWebMercatorProjection = useWebMercatorProjection;
+    // surfaceShaderSetOptions.clippedByBoundaries = surfaceTile.clippedByBoundaries;
+    // surfaceShaderSetOptions.hasGeodeticSurfaceNormals = hasGeodeticSurfaceNormals;
+    // surfaceShaderSetOptions.hasExaggeration = hasExaggeration;
+
+    // const quantization = encoding.quantization;
+
+    // const tileImageryCollection = surfaceTile.imagery;
+    // let imageryIndex = 0;
+    // const imageryLen = tileImageryCollection.length;
+
+    // const showSkirts =
+    // tileProvider.showSkirts && !cameraUnderground && !translucent;
+    // const backFaceCulling =
+    // tileProvider.backFaceCulling && !cameraUnderground && !translucent;
+    // // const firstPassRenderState = backFaceCulling
+    // //     ? tileProvider._renderState
+    // //     : tileProvider._disableCullingRenderState;
+    // // const otherPassesRenderState = backFaceCulling
+    // //     ? tileProvider._blendRenderState
+    // //     : tileProvider._disableCullingBlendRenderState;
+    // // const renderState = firstPassRenderState;
+
+    // let initialColor = tileProvider._firstPassInitialColor;
+
+    // const context = frameState.context;
+
+    // const materialUniformMapChanged =
+    //     tileProvider._materialUniformMap !== tileProvider.materialUniformMap;
+    // if (materialUniformMapChanged) {
+    //     tileProvider._materialUniformMap = tileProvider.materialUniformMap;
+    //     const drawCommandsLength = tileProvider._drawCommands.length;
+    //     for (let i = 0; i < drawCommandsLength; ++i) {
+    //         // tileProvider._uniformMaps[i] = createTileUniformMap(
+    //         //     frameState,
+    //         //     tileProvider
+    //         // );
+    //     }
+    // }
+
+    // do {
+    //     let numberOfDayTextures = 0;
+
+    //     let command: DrawMeshCommand;
+    //     let material: TileMaterial;
+
+    //     let globeSurfaceMaterial: GlobeSurfaceTileMaterial;
+
+    //     let uniformMap: any;
+
+    //     const dayTextures = [];
+    //     const dayTextureTranslationAndScale = [];
+    //     const dayTextureTexCoordsRectangle = [];
+    //     while (numberOfDayTextures < maxTextures && imageryIndex < imageryLen) {
+    //         const tileImagery = tileImageryCollection[imageryIndex];
+    //         const imagery = tileImagery.readyImagery;
+    //         ++imageryIndex;
+
+    //         if (!defined(imagery)) {
+    //             continue;
+    //         }
+
+    //         const texture = tileImagery.useWebMercatorT
+    //             ? imagery.textureWebMercator
+    //             : imagery.texture;
+
+    //         const imageryLayer = imagery.imageryLayer;
+
+    //         if (!defined(tileImagery.textureTranslationAndScale)) {
+    //             tileImagery.textureTranslationAndScale = imageryLayer._calculateTextureTranslationAndScale(tile, tileImagery);
+    //         }
+
+    //         dayTextures[numberOfDayTextures] = texture;
+    //         dayTextureTranslationAndScale[numberOfDayTextures] = tileImagery.textureTranslationAndScale;
+    //         dayTextureTexCoordsRectangle[numberOfDayTextures] = tileImagery.textureCoordinateRectangle;
+
+    //         ++numberOfDayTextures;
+    //     }
+
+    //     surfaceShaderSetOptions.numberOfDayTextures = dayTextures.length;
+
+
+
+    //     if (tileProvider._drawCommands.length <= tileProvider._usedDrawCommands) {
+    //         command = new DrawMeshCommand();
+    //         command.owner = tile;
+    //         // command.frustumCulled = false;
+    //         command.boundingVolume = new BoundingSphere();
+    //         command.localPosition = new Orillusion.Vector3(rtc.x,rtc.y,rtc.z);
+
+    //         command.orientedBoundingBox = undefined;
+
+    //         material = createMaterialMap(frameState, tileProvider, surfaceShaderSetOptions, quantization);
+
+    //         uniformMap = createTileUniformMap(frameState, tileProvider);
+
+    //         globeSurfaceMaterial = new GlobeSurfaceTileMaterial();
+
+    //         tileProvider._drawCommands.push(command);
+    //         tileProvider._materialMaps.push(material);
+    //         tileProvider._uniformMaps.push(globeSurfaceMaterial);
+    //     } else {
+    //         command = tileProvider._drawCommands[tileProvider._usedDrawCommands];
+    //         material = tileProvider._materialMaps[tileProvider._usedDrawCommands];
+
+    //         globeSurfaceMaterial = tileProvider._uniformMaps[tileProvider._usedDrawCommands];
+
+    //         uniformMap = createTileUniformMap(frameState, tileProvider);
+    //     }
+
+    //     command.localPosition = new Orillusion.Vector3(rtc.x,rtc.y,rtc.z);
+
+    //     if (material.defines.TEXTURE_UNITS !== material.dayTextures.length ||
+    //         imageryLen !== material.dayTextures.length ||
+    //         quantization === TerrainQuantization.BITS12 && !defined(material.defines.QUANTIZATION_BITS12) ||
+    //         quantization === TerrainQuantization.NONE && defined(material.defines.QUANTIZATION_BITS12)
+    //     ) {
+
+    //         material = createMaterialMap(frameState, tileProvider, surfaceShaderSetOptions, quantization);
+
+    //         globeSurfaceMaterial.dispose();
+    //         uniformMap = createTileUniformMap(frameState, tileProvider);
+    //         globeSurfaceMaterial = new GlobeSurfaceTileMaterial();
+    //     }
+
+    //     command.owner = tile;
+    //     ++tileProvider._usedDrawCommands;
+
+    //     material.dayTextures = dayTextures;
+    //     material.dayTextureTranslationAndScale = dayTextureTranslationAndScale;
+    //     material.dayTextureTexCoordsRectangle = dayTextureTexCoordsRectangle;
+    //     Cartesian4.clone(initialColor, material.initialColor);
+
+    //     //@ts-ignore
+    //     const viewMatrix = window.view.camera.viewMatrix.rawData;
+    //     // console.log(viewMatrix);
+    //     //@ts-ignore
+    //     const projectionMatrix = frameState.camera.frustum.cesiumProjectMatrix;
+    //     const centerEye = CesiumMatrix4.multiplyByPoint(
+    //         viewMatrix,
+    //         rtc,
+    //         centerEyeScratch
+    //     );
+    //     CesiumMatrix4.setTranslation(
+    //         viewMatrix,
+    //         centerEye,
+    //         modifiedModelViewProjectionScratch
+    //     );
+    //    let vm = new Orillusion.Matrix4();
+    //    vm.rawData = new Float32Array([
+    //     modifiedModelViewProjectionScratch[0],
+    //     modifiedModelViewProjectionScratch[1],
+    //     modifiedModelViewProjectionScratch[2],
+    //     modifiedModelViewProjectionScratch[3],
+    //     modifiedModelViewProjectionScratch[4],
+    //     modifiedModelViewProjectionScratch[5],
+    //     modifiedModelViewProjectionScratch[6],
+    //     modifiedModelViewProjectionScratch[7],
+    //     modifiedModelViewProjectionScratch[8],
+    //     modifiedModelViewProjectionScratch[9],
+    //     modifiedModelViewProjectionScratch[10],
+    //     modifiedModelViewProjectionScratch[11],
+    //     modifiedModelViewProjectionScratch[12],
+    //     modifiedModelViewProjectionScratch[13],
+    //     modifiedModelViewProjectionScratch[14],
+    //     modifiedModelViewProjectionScratch[15],
+    //    ])
+    //     //@ts-ignore
+    //     material.modifiedModelView.setMatrix('matrixMVP_RTE', vm);
+    //     material.modifiedModelView.apply();
+    //     material.shaderState.topology = GPUPrimitiveTopology.line_list;
+
+    //     const uniformMapProperties = uniformMap.properties;
+    //     Cartesian4.clone(initialColor, uniformMapProperties.initialColor);
+    //     uniformMapProperties.oceanNormalMap = oceanNormalMap;
+    //     uniformMapProperties.lightingFadeDistance.x =
+    //       tileProvider.lightingFadeOutDistance;
+    //     uniformMapProperties.lightingFadeDistance.y =
+    //       tileProvider.lightingFadeInDistance;
+    //     uniformMapProperties.nightFadeDistance.x =
+    //       tileProvider.nightFadeOutDistance;
+    //     uniformMapProperties.nightFadeDistance.y = tileProvider.nightFadeInDistance;
+    //     uniformMapProperties.zoomedOutOceanSpecularIntensity =
+    //       tileProvider.zoomedOutOceanSpecularIntensity;
+
+    //     const frontFaceAlphaByDistanceFinal = cameraUnderground
+    //         ? backFaceAlphaByDistance
+    //         : frontFaceAlphaByDistance;
+    //     const backFaceAlphaByDistanceFinal = cameraUnderground
+    //         ? frontFaceAlphaByDistance
+    //         : backFaceAlphaByDistance;
+
+    //     if (defined(frontFaceAlphaByDistanceFinal)) {
+    //         Cartesian4.fromElements(
+    //             frontFaceAlphaByDistanceFinal.near,
+    //             frontFaceAlphaByDistanceFinal.nearValue,
+    //             frontFaceAlphaByDistanceFinal.far,
+    //             frontFaceAlphaByDistanceFinal.farValue,
+    //             uniformMapProperties.frontFaceAlphaByDistance
+    //         );
+    //         Cartesian4.fromElements(
+    //             backFaceAlphaByDistanceFinal.near,
+    //             backFaceAlphaByDistanceFinal.nearValue,
+    //             backFaceAlphaByDistanceFinal.far,
+    //             backFaceAlphaByDistanceFinal.farValue,
+    //             uniformMapProperties.backFaceAlphaByDistance
+    //         );
+    //     }
+
+    //     Cartesian4.fromElements(
+    //         undergroundColorAlphaByDistance.near,
+    //         undergroundColorAlphaByDistance.nearValue,
+    //         undergroundColorAlphaByDistance.far,
+    //         undergroundColorAlphaByDistance.farValue,
+    //         uniformMapProperties.undergroundColorAlphaByDistance
+    //     );
+    //     CesiumColor.clone(undergroundColor, uniformMapProperties.undergroundColor);
+
+    //     const highlightFillTile =
+    //       !defined(surfaceTile.vertexArray) &&
+    //       defined(tileProvider.fillHighlightColor) &&
+    //       (tileProvider.fillHighlightColor as CesiumColor).alpha > 0.0;
+    //     if (highlightFillTile) {
+    //         CesiumColor.clone(
+    //             (tileProvider.fillHighlightColor as CesiumColor),
+    //             uniformMapProperties.fillHighlightColor
+    //         );
+    //     }
+
+    //     uniformMapProperties.terrainExaggerationAndRelativeHeight.x = exaggeration;
+    //     uniformMapProperties.terrainExaggerationAndRelativeHeight.y = exaggerationRelativeHeight;
+
+    //     uniformMapProperties.center3D.set(mesh.center.x, mesh.center.y, mesh.center.z);
+    //     Cartesian3.clone(rtc, uniformMapProperties.rtc);
+
+    //     Cartesian4.clone(tileRectangle, uniformMapProperties.tileRectangle);
+    //     uniformMapProperties.southAndNorthLatitude.x = southLatitude;
+    //     uniformMapProperties.southAndNorthLatitude.y = northLatitude;
+    //     uniformMapProperties.southMercatorYAndOneOverHeight.x = southMercatorY;
+    //     uniformMapProperties.southMercatorYAndOneOverHeight.y = oneOverMercatorHeight;
+
+    //     // Convert tile limiter rectangle from cartographic to texture space using the tileRectangle.
+    //     const localizedCartographicLimitRectangle = localizedCartographicLimitRectangleScratch;
+    //     const cartographicLimitRectangle = clipRectangleAntimeridian(
+    //         tile.rectangle,
+    //         tileProvider.cartographicLimitRectangle
+    //     );
+
+    //     const localizedTranslucencyRectangle = localizedTranslucencyRectangleScratch;
+    //     const clippedTranslucencyRectangle = clipRectangleAntimeridian(
+    //         tile.rectangle,
+    //         translucencyRectangle
+    //     );
+
+    //     Cartesian3.fromElements(
+    //         hueShift,
+    //         saturationShift,
+    //         brightnessShift,
+    //         uniformMapProperties.hsbShift
+    //     );
+
+    //     const cartographicTileRectangle = tile.rectangle;
+    //     const inverseTileWidth = 1.0 / cartographicTileRectangle.width;
+    //     const inverseTileHeight = 1.0 / cartographicTileRectangle.height;
+    //     localizedCartographicLimitRectangle.x =
+    //       (cartographicLimitRectangle.west - cartographicTileRectangle.west) *
+    //       inverseTileWidth;
+    //     localizedCartographicLimitRectangle.y =
+    //       (cartographicLimitRectangle.south - cartographicTileRectangle.south) *
+    //       inverseTileHeight;
+    //     localizedCartographicLimitRectangle.z =
+    //       (cartographicLimitRectangle.east - cartographicTileRectangle.west) *
+    //       inverseTileWidth;
+    //     localizedCartographicLimitRectangle.w =
+    //       (cartographicLimitRectangle.north - cartographicTileRectangle.south) *
+    //       inverseTileHeight;
+
+    //     Cartesian4.clone(
+    //         localizedCartographicLimitRectangle,
+    //         uniformMapProperties.localizedCartographicLimitRectangle
+    //     );
+
+    //     localizedTranslucencyRectangle.x =
+    //       (clippedTranslucencyRectangle.west - cartographicTileRectangle.west) *
+    //       inverseTileWidth;
+    //     localizedTranslucencyRectangle.y =
+    //       (clippedTranslucencyRectangle.south - cartographicTileRectangle.south) *
+    //       inverseTileHeight;
+    //     localizedTranslucencyRectangle.z =
+    //       (clippedTranslucencyRectangle.east - cartographicTileRectangle.west) *
+    //       inverseTileWidth;
+    //     localizedTranslucencyRectangle.w =
+    //       (clippedTranslucencyRectangle.north - cartographicTileRectangle.south) *
+    //       inverseTileHeight;
+
+    //     Cartesian4.clone(
+    //         localizedTranslucencyRectangle,
+    //         uniformMapProperties.localizedTranslucencyRectangle
+    //     );
+
+    //     // For performance, use fog in the shader only when the tile is in fog.
+    //     const applyFog =
+    //       enableFog &&
+    //       CesiumMath.fog(tile._distance, frameState.fog.density) >
+    //         CesiumMath.EPSILON3;
+    //     colorCorrect = colorCorrect && (applyFog || showGroundAtmosphere);
+
+    //     let applyBrightness = false;
+    //     let applyContrast = false;
+    //     let applyHue = false;
+    //     let applySaturation = false;
+    //     let applyGamma = false;
+    //     let applyAlpha = false;
+    //     let applyDayNightAlpha = false;
+    //     let applySplit = false;
+    //     let applyCutout = false;
+    //     let applyColorToAlpha = false;
+
+    //     let numberOfDayTextures2 = 0;
+    //     let imageryIndex2 = 0;
+
+    //     while (numberOfDayTextures2 < maxTextures && imageryIndex2 < imageryLen) {
+    //         const tileImagery = tileImageryCollection[imageryIndex2];
+    //         const imagery = tileImagery.readyImagery;
+    //         ++imageryIndex2;
+
+    //         if (!defined(imagery) || imagery.imageryLayer.alpha === 0.0) {
+    //             continue;
+    //         }
+
+    //         const texture = tileImagery.useWebMercatorT
+    //             ? imagery.textureWebMercator
+    //             : imagery.texture;
+
+    //         // >>includeStart('debug', pragmas.debug);
+    //         if (!defined(texture)) {
+    //             // Our "ready" texture isn't actually ready.  This should never happen.
+    //             //
+    //             // Side note: It IS possible for it to not be in the READY ImageryState, though.
+    //             // This can happen when a single imagery tile is shared by two terrain tiles (common)
+    //             // and one of them (A) needs a geographic version of the tile because it is near the poles,
+    //             // and the other (B) does not.  B can and will transition the imagery tile to the READY state
+    //             // without reprojecting to geographic.  Then, later, A will deem that same tile not-ready-yet
+    //             // because it only has the Web Mercator texture, and flip it back to the TRANSITIONING state.
+    //             // The imagery tile won't be in the READY state anymore, but it's still READY enough for B's
+    //             // purposes.
+    //             throw new DeveloperError('readyImagery is not actually ready!');
+    //         }
+    //         // >>includeEnd('debug');
+
+    //         const imageryLayer = imagery.imageryLayer;
+
+    //         if (!defined(tileImagery.textureTranslationAndScale)) {
+    //             tileImagery.textureTranslationAndScale = imageryLayer._calculateTextureTranslationAndScale(
+    //                 tile,
+    //                 tileImagery
+    //             );
+    //         }
+
+    //         uniformMapProperties.dayTextures[numberOfDayTextures2] = texture;
+    //         uniformMapProperties.dayTextureTranslationAndScale[numberOfDayTextures2] =
+    //           tileImagery.textureTranslationAndScale_vector4;
+    //         uniformMapProperties.dayTextureTexCoordsRectangle[numberOfDayTextures2] =
+    //           tileImagery.textureCoordinateRectangle_vector4;
+    //         uniformMapProperties.dayTextureUseWebMercatorT[numberOfDayTextures2] =
+    //           tileImagery.useWebMercatorT;
+
+    //         uniformMapProperties.dayTextureAlpha[numberOfDayTextures2] =
+    //           imageryLayer.alpha;
+    //         applyAlpha =
+    //           applyAlpha ||
+    //           uniformMapProperties.dayTextureAlpha[numberOfDayTextures2] !== 1.0;
+
+    //         uniformMapProperties.dayTextureNightAlpha[numberOfDayTextures2] =
+    //           imageryLayer.nightAlpha;
+    //         applyDayNightAlpha =
+    //           applyDayNightAlpha ||
+    //           uniformMapProperties.dayTextureNightAlpha[numberOfDayTextures2] !== 1.0;
+
+    //         uniformMapProperties.dayTextureDayAlpha[numberOfDayTextures2] =
+    //           imageryLayer.dayAlpha;
+    //         applyDayNightAlpha =
+    //           applyDayNightAlpha ||
+    //           uniformMapProperties.dayTextureDayAlpha[numberOfDayTextures2] !== 1.0;
+
+    //         uniformMapProperties.dayTextureBrightness[numberOfDayTextures2] =
+    //           imageryLayer.brightness;
+    //         applyBrightness =
+    //           applyBrightness ||
+    //           uniformMapProperties.dayTextureBrightness[numberOfDayTextures2] !==
+    //             ImageryLayer.DEFAULT_BRIGHTNESS;
+
+    //         uniformMapProperties.dayTextureContrast[numberOfDayTextures2] =
+    //           imageryLayer.contrast;
+    //         applyContrast =
+    //           applyContrast ||
+    //           uniformMapProperties.dayTextureContrast[numberOfDayTextures2] !==
+    //             ImageryLayer.DEFAULT_CONTRAST;
+
+    //         uniformMapProperties.dayTextureHue[numberOfDayTextures2] =
+    //           imageryLayer.hue;
+    //         applyHue =
+    //           applyHue ||
+    //           uniformMapProperties.dayTextureHue[numberOfDayTextures2] !==
+    //             ImageryLayer.DEFAULT_HUE;
+
+    //         uniformMapProperties.dayTextureSaturation[numberOfDayTextures2] =
+    //           imageryLayer.saturation;
+    //         applySaturation =
+    //           applySaturation ||
+    //           uniformMapProperties.dayTextureSaturation[numberOfDayTextures2] !==
+    //             ImageryLayer.DEFAULT_SATURATION;
+
+    //         uniformMapProperties.dayTextureOneOverGamma[numberOfDayTextures2] =
+    //           1.0 / imageryLayer.gamma;
+    //         applyGamma =
+    //           applyGamma ||
+    //           uniformMapProperties.dayTextureOneOverGamma[numberOfDayTextures2] !==
+    //             1.0 / ImageryLayer.DEFAULT_GAMMA;
+
+    //         uniformMapProperties.dayTextureSplit[numberOfDayTextures2] =
+    //           imageryLayer.splitDirection;
+    //         applySplit =
+    //           applySplit ||
+    //           uniformMapProperties.dayTextureSplit[numberOfDayTextures2] !== 0.0;
+
+    //         // Update cutout rectangle
+    //         let dayTextureCutoutRectangle =
+    //           uniformMapProperties.dayTextureCutoutRectangles[numberOfDayTextures2];
+    //         if (!defined(dayTextureCutoutRectangle)) {
+    //             dayTextureCutoutRectangle = uniformMapProperties.dayTextureCutoutRectangles[
+    //                 numberOfDayTextures2
+    //             ] = new Vector4();
+    //         }
+
+    //         Cartesian4.clone(Cartesian4.ZERO, dayTextureCutoutRectangle);
+    //         if (defined(imageryLayer.cutoutRectangle)) {
+    //             const cutoutRectangle = clipRectangleAntimeridian(
+    //                 cartographicTileRectangle,
+    //                 imageryLayer.cutoutRectangle
+    //             );
+    //             const intersection = Rectangle.simpleIntersection(
+    //                 cutoutRectangle,
+    //                 cartographicTileRectangle,
+    //                 rectangleIntersectionScratch
+    //             );
+    //             applyCutout = defined(intersection) || applyCutout;
+
+    //             dayTextureCutoutRectangle.x =
+    //             (cutoutRectangle.west - cartographicTileRectangle.west) *
+    //             inverseTileWidth;
+    //             dayTextureCutoutRectangle.y =
+    //             (cutoutRectangle.south - cartographicTileRectangle.south) *
+    //             inverseTileHeight;
+    //             dayTextureCutoutRectangle.z =
+    //             (cutoutRectangle.east - cartographicTileRectangle.west) *
+    //             inverseTileWidth;
+    //             dayTextureCutoutRectangle.w =
+    //             (cutoutRectangle.north - cartographicTileRectangle.south) *
+    //             inverseTileHeight;
+    //         }
+
+    //         // Update color to alpha
+    //         let colorToAlpha =
+    //           uniformMapProperties.colorsToAlpha[numberOfDayTextures2];
+    //         if (!defined(colorToAlpha)) {
+    //             colorToAlpha = uniformMapProperties.colorsToAlpha[
+    //                 numberOfDayTextures2
+    //             ] = new Vector4();
+    //         }
+
+    //         const hasColorToAlpha =
+    //           defined(imageryLayer.colorToAlpha) &&
+    //           imageryLayer.colorToAlphaThreshold > 0.0;
+    //         applyColorToAlpha = applyColorToAlpha || hasColorToAlpha;
+
+    //         if (hasColorToAlpha) {
+    //             const color = imageryLayer.colorToAlpha;
+    //             colorToAlpha.x = color.red;
+    //             colorToAlpha.y = color.green;
+    //             colorToAlpha.z = color.blue;
+    //             colorToAlpha.w = imageryLayer.colorToAlphaThreshold;
+    //         } else {
+    //             colorToAlpha.w = -1.0;
+    //         }
+
+    //         ++numberOfDayTextures2;
+    //     }
+
+    //     // trim texture array to the used length so we don't end up using old textures
+    //     // which might get destroyed eventually
+    //     uniformMapProperties.dayTextures.length = numberOfDayTextures2;
+    //     uniformMapProperties.waterMask = waterMaskTexture;
+    //     Cartesian4.clone(
+    //         waterMaskTranslationAndScale,
+    //         uniformMapProperties.waterMaskTranslationAndScale
+    //     );
+
+    //     uniformMapProperties.minMaxHeight.x = encoding.minimumHeight;
+    //     uniformMapProperties.minMaxHeight.y = encoding.maximumHeight;
+
+    //     uniformMapProperties.scaleAndBias.copy(encoding.threeMatrix4);
+
+
+    //     surfaceShaderSetOptions.numberOfDayTextures = numberOfDayTextures2;
+    //     surfaceShaderSetOptions.applyBrightness = applyBrightness;
+    //     surfaceShaderSetOptions.applyContrast = applyContrast;
+    //     surfaceShaderSetOptions.applyHue = applyHue;
+    //     surfaceShaderSetOptions.applySaturation = applySaturation;
+    //     surfaceShaderSetOptions.applyGamma = applyGamma;
+    //     surfaceShaderSetOptions.applyAlpha = applyAlpha;
+    //     surfaceShaderSetOptions.applyDayNightAlpha = applyDayNightAlpha;
+    //     surfaceShaderSetOptions.applySplit = applySplit;
+    //     surfaceShaderSetOptions.enableFog = applyFog;
+    //     surfaceShaderSetOptions.enableClippingPlanes = false;
+    //     // surfaceShaderSetOptions.clippingPlanes = clippingPlanes;
+    //     surfaceShaderSetOptions.hasImageryLayerCutout = applyCutout;
+    //     surfaceShaderSetOptions.colorCorrect = colorCorrect;
+    //     surfaceShaderSetOptions.highlightFillTile = highlightFillTile;
+    //     surfaceShaderSetOptions.colorToAlpha = applyColorToAlpha;
+    //     surfaceShaderSetOptions.showUndergroundColor = showUndergroundColor;
+    //     surfaceShaderSetOptions.translucent = translucent;
+
+    //     // const shaderProgram = tileProvider._surfaceShaderSet.getShaderProgram(
+    //     //     surfaceShaderSetOptions
+    //     // );
+    //     // console.log( command.geometry);
+    //     // if(command.geometry){
+
+    //     // }
+    //     //     // console.log(mesh.geometry)
+
+    //         command._mesh.geometry = mesh.geometry;
+    //             command._mesh.material = material;
+    //         if(mesh.show){
+
+    //             //@ts-ignore
+    //             command.show = true;
+    //         }else{
+    //             //@ts-ignore
+    //             command.show = false;
+    //         }
+
+
+    //     // setUniform(command, uniformMap, globeSurfaceMaterial);
+    //     // command.material = globeSurfaceMaterial;
+
+    //     // (command.material as GlobeSurfaceTileMaterial).vertexShader = shaderProgram._vertexShaderText;
+    //     // (command.material as GlobeSurfaceTileMaterial).fragmentShader = shaderProgram._fragmentShaderText;
+
+    //     // setUniform(command, uniformMap, shaderProgram.material);
+    //     // command.material = shaderProgram.material;
+
+    //     const boundingVolume = command.boundingVolume;
+    //     const orientedBoundingBox = command.orientedBoundingBox;
+    //     // command.localPosition = new Orillusion.Vector3(rtc.x,rtc.y,rtc.z);
+    //     command.boundingVolume = BoundingSphere.clone(surfaceTile.boundingSphere3D, boundingVolume);
+    //     command.orientedBoundingBox = OrientedBoundingBox.clone(surfaceTile.orientedBoundingBox, orientedBoundingBox);
+
+    //     frameState.commandList.push(command);
+
+    //     initialColor = otherPassesInitialColor;
+    // } while (imageryIndex < imageryLen);
 };
 
 class GlobeSurfaceTileProvider {
@@ -1519,7 +1667,7 @@ class GlobeSurfaceTileProvider {
     undergroundColorAlphaByDistance?: NearFarScalar;
 
     oceanNormalMap: any;
-    constructor (options: {
+    constructor(options: {
         terrainProvider: EllipsoidTerrainProvider;
         imageryLayers: ImageryLayerCollection;
         surfaceShaderSet: GlobeSurfaceShaderSet
@@ -1545,11 +1693,11 @@ class GlobeSurfaceTileProvider {
         this.baseColor = new CesiumColor(0.0, 0.0, 0.5, 1.0);
     }
 
-    get baseColor (): CesiumColor {
+    get baseColor(): CesiumColor {
         return this._baseColor as CesiumColor;
     }
 
-    set baseColor (value: CesiumColor) {
+    set baseColor(value: CesiumColor) {
         // >>includeStart('debug', pragmas.debug);
         if (!defined(value)) {
             throw new DeveloperError('value is required.');
@@ -1560,23 +1708,23 @@ class GlobeSurfaceTileProvider {
         this._firstPassInitialColor = Cartesian4.fromColor(value, this._firstPassInitialColor);
     }
 
-    get quadtree (): QuadtreePrimitive {
+    get quadtree(): QuadtreePrimitive {
         return (this._quadtree as QuadtreePrimitive);
     }
 
-    set quadtree (value: QuadtreePrimitive) {
+    set quadtree(value: QuadtreePrimitive) {
         this._quadtree = value;
     }
 
-    get tilingScheme (): GeographicTilingScheme {
+    get tilingScheme(): GeographicTilingScheme {
         return this._terrainProvider.tilingScheme as GeographicTilingScheme;
     }
 
-    get terrainProvider (): EllipsoidTerrainProvider | TerrainProvider {
+    get terrainProvider(): EllipsoidTerrainProvider | TerrainProvider {
         return this._terrainProvider;
     }
 
-    set terrainProvider (terrainProvider: EllipsoidTerrainProvider | TerrainProvider) {
+    set terrainProvider(terrainProvider: EllipsoidTerrainProvider | TerrainProvider) {
         if (this._terrainProvider === terrainProvider) {
             return;
         }
@@ -1594,15 +1742,15 @@ class GlobeSurfaceTileProvider {
         }
     }
 
-    get imageryLayersUpdatedEvent (): Event {
+    get imageryLayersUpdatedEvent(): Event {
         return this._imageryLayersUpdatedEvent;
     }
 
-    get ready (): any {
+    get ready(): any {
         return (
             this._terrainProvider.ready &&
             (this._imageryLayers.length === 0 ||
-              this._imageryLayers.get(0).imageryProvider.ready)
+                this._imageryLayers.get(0).imageryProvider.ready)
         );
     }
 
@@ -1611,11 +1759,11 @@ class GlobeSurfaceTileProvider {
      * @param {QuadtreeTile} tile The tile to check.
      * @returns {boolean} True if the tile can be refined, false if it cannot.
      */
-    anRefine (tile: QuadtreeTile): boolean {
-    // Only allow refinement it we know whether or not the children of this tile exist.
-    // For a tileset with `availability`, we'll always be able to refine.
-    // We can ask for availability of _any_ child tile because we only need to confirm
-    // that we get a yes or no answer, it doesn't matter what the answer is.
+    anRefine(tile: QuadtreeTile): boolean {
+        // Only allow refinement it we know whether or not the children of this tile exist.
+        // For a tileset with `availability`, we'll always be able to refine.
+        // We can ask for availability of _any_ child tile because we only need to confirm
+        // that we get a yes or no answer, it doesn't matter what the answer is.
         if (defined((tile.data as GlobeSurfaceTile).terrainData)) {
             return true;
         }
@@ -1633,7 +1781,7 @@ class GlobeSurfaceTileProvider {
      *
      * @param {FrameState} frameState The frame state.
      */
-    beginUpdate (frameState: FrameState): void {
+    beginUpdate(frameState: FrameState): void {
         const tilesToRenderByTextureCount = this._tilesToRenderByTextureCount;
         for (let i = 0, len = tilesToRenderByTextureCount.length; i < len; ++i) {
             const tiles = tilesToRenderByTextureCount[i];
@@ -1658,132 +1806,11 @@ class GlobeSurfaceTileProvider {
    *
    * @param {FrameState} frameState The frame state.
    */
-    endUpdate (frameState: FrameState) {
-        // if (!defined(this._renderState)) {
-        //     this._renderState = RenderState.fromCache({
-        //         // Write color and depth
-        //         cull: {
-        //             enabled: true
-        //         },
-        //         depthTest: {
-        //             enabled: true,
-        //             func: DepthFunction.LESS
-        //         }
-        //     });
-
-        //     this._blendRenderState = RenderState.fromCache({
-        //         // Write color and depth
-        //         cull: {
-        //             enabled: true
-        //         },
-        //         depthTest: {
-        //             enabled: true,
-        //             func: DepthFunction.LESS_OR_EQUAL
-        //         },
-        //         blending: BlendingState.ALPHA_BLEND
-        //     });
-
-        //     let rs = clone(this._renderState, true);
-        //     rs.cull.enabled = false;
-        //     this._disableCullingRenderState = RenderState.fromCache(rs);
-
-        //     rs = clone(this._blendRenderState, true);
-        //     rs.cull.enabled = false;
-        //     this._disableCullingBlendRenderState = RenderState.fromCache(rs);
-        // }
-
-        // If this frame has a mix of loaded and fill tiles, we need to propagate
-        // loaded heights to the fill tiles.
-        // if (this._hasFillTilesThisFrame && this._hasLoadedTilesThisFrame) {
-        //     TerrainFillMesh.updateFillTiles(
-        //         this,
-        //         this._quadtree._tilesToRender,
-        //         frameState,
-        //         this._vertexArraysToDestroy
-        //     );
-        // }
-
-        // When terrain exaggeration changes, all of the loaded tiles need to generate
-        // geodetic surface normals so they can scale properly when rendered.
-        // When exaggeration is reset, geodetic surface normals are removed to decrease
-        // memory usage. Some tiles might have been constructed with the correct
-        // exaggeration already, so skip over them.
-
-        // If the geodetic surface normals can't be created because the tile doesn't
-        // have a mesh, keep checking until the tile does have a mesh. This can happen
-        // if the tile's mesh starts construction in a worker thread right before the
-        // exaggeration changes.
-
-        //     const quadtree = this.quadtree;
-        //     const exaggeration = frameState.terrainExaggeration;
-        //     const exaggerationRelativeHeight = frameState.terrainExaggerationRelativeHeight;
-        //     const hasExaggerationScale = exaggeration !== 1.0;
-        //     const exaggerationChanged =
-        //   this._oldTerrainExaggeration !== exaggeration ||
-        //   this._oldTerrainExaggerationRelativeHeight !== exaggerationRelativeHeight;
-
-        //     // Keep track of the next time there is a change in exaggeration
-        //     this._oldTerrainExaggeration = exaggeration;
-        //     this._oldTerrainExaggerationRelativeHeight = exaggerationRelativeHeight;
-
-        //     const processingChange =
-        //   exaggerationChanged || this._processingTerrainExaggerationChange;
-        //     let continueProcessing = false;
-
-        //     if (processingChange) {
-        //         quadtree.forEachRenderedTile(function (tile) {
-        //             const surfaceTile = tile.data;
-        //             const mesh = surfaceTile.renderedMesh;
-        //             if (mesh !== undefined) {
-        //                 // Check the tile's terrain encoding to see if it has been exaggerated yet
-        //                 const encoding = mesh.encoding;
-        //                 const encodingExaggerationScaleChanged =
-        //         encoding.exaggeration !== exaggeration;
-        //                 const encodingRelativeHeightChanged =
-        //         encoding.exaggerationRelativeHeight !== exaggerationRelativeHeight;
-
-        //                 if (encodingExaggerationScaleChanged || encodingRelativeHeightChanged) {
-        //                     // Turning exaggeration scale on/off requires adding or removing geodetic surface normals
-        //                     // Relative height only translates, so it has no effect on normals
-        //                     if (encodingExaggerationScaleChanged) {
-        //                         if (hasExaggerationScale && !encoding.hasGeodeticSurfaceNormals) {
-        //                             const ellipsoid = tile.tilingScheme.ellipsoid;
-        //                             surfaceTile.addGeodeticSurfaceNormals(ellipsoid, frameState);
-        //                         } else if (
-        //                             !hasExaggerationScale &&
-        //             encoding.hasGeodeticSurfaceNormals
-        //                         ) {
-        //                             surfaceTile.removeGeodeticSurfaceNormals(frameState);
-        //                         }
-        //                     }
-
-        //                     encoding.exaggeration = exaggeration;
-        //                     encoding.exaggerationRelativeHeight = exaggerationRelativeHeight;
-
-        //                     // Notify the quadtree that this tile's height has changed
-        //                     quadtree._tileToUpdateHeights.push(tile);
-        //                     const customData = tile.customData;
-        //                     const customDataLength = customData.length;
-        //                     for (let i = 0; i < customDataLength; i++) {
-        //                         // Restart the level so that a height update is triggered
-        //                         const data = customData[i];
-        //                         data.level = -1;
-        //                     }
-        //                 }
-        //             } else {
-        //                 // this tile may come into view at a later time so keep the loop active
-        //                 continueProcessing = true;
-        //             }
-        //         });
-        //     }
-
-        //     this._processingTerrainExaggerationChange = continueProcessing;
-
-        // Add the tile render commands to the command list, sorted by texture count.
+    endUpdate(frameState: FrameState) {
         const tilesToRenderByTextureCount = this._tilesToRenderByTextureCount;
         for (
             let textureCountIndex = 0,
-                textureCountLength = tilesToRenderByTextureCount.length;
+            textureCountLength = tilesToRenderByTextureCount.length;
             textureCountIndex < textureCountLength;
             ++textureCountIndex
         ) {
@@ -1808,7 +1835,7 @@ class GlobeSurfaceTileProvider {
         }
     }
 
-    _onLayerAdded (layer:ImageryLayer, index: number): void {
+    _onLayerAdded(layer: ImageryLayer, index: number): void {
         if (layer.show) {
             const terrainProvider = this._terrainProvider;
 
@@ -1816,7 +1843,7 @@ class GlobeSurfaceTileProvider {
             const imageryProvider = layer.imageryProvider;
             const tileImageryUpdatedEvent = this._imageryLayersUpdatedEvent;
             imageryProvider._reload = function () {
-            // Clear the layer's cache
+                // Clear the layer's cache
                 layer._imageryCache = {};
 
                 (that._quadtree as QuadtreePrimitive).forEachLoadedTile(function (tile: any) {
@@ -1886,9 +1913,9 @@ class GlobeSurfaceTileProvider {
                     // We don't mark the rendered tiles non-renderable, though, because that would make the globe disappear.
                     if (
                         tile.level !== 0 &&
-                (tile._lastSelectionResultFrame !==
-                  (that.quadtree as QuadtreePrimitive)._lastSelectionFrameNumber ||
-                  tile._lastSelectionResult !== TileSelectionResult.RENDERED)
+                        (tile._lastSelectionResultFrame !==
+                            (that.quadtree as QuadtreePrimitive)._lastSelectionFrameNumber ||
+                            tile._lastSelectionResult !== TileSelectionResult.RENDERED)
                     ) {
                         tile.renderable = false;
                     }
@@ -1900,7 +1927,7 @@ class GlobeSurfaceTileProvider {
         }
     }
 
-    _onLayerRemoved (layer: ImageryLayer, index?: number): void {
+    _onLayerRemoved(layer: ImageryLayer, index?: number): void {
         // destroy TileImagerys for this layer for all previously loaded tiles
         (this._quadtree as QuadtreePrimitive).forEachLoadedTile(function (tile: any) {
             const tileImageryCollection = tile.data.imagery;
@@ -1938,16 +1965,16 @@ class GlobeSurfaceTileProvider {
         this._imageryLayersUpdatedEvent.raiseEvent();
     }
 
-    _onLayerMoved (
-        layer?:any,
-        newIndex?:number,
+    _onLayerMoved(
+        layer?: any,
+        newIndex?: number,
         oldIndex?: number
     ): void {
         this._layerOrderChanged = true;
         this._imageryLayersUpdatedEvent.raiseEvent();
     }
 
-    _onLayerShownOrHidden (
+    _onLayerShownOrHidden(
         layer: ImageryLayer,
         index: number,
         show: boolean
@@ -1962,8 +1989,8 @@ class GlobeSurfaceTileProvider {
     /**
      * Make updates to the tile provider that are not involved in rendering. Called before the render update cycle.
      */
-    update (frameState: FrameState) {
-    // update collection: imagery indices, base layers, raise layer show/hide event
+    update(frameState: FrameState) {
+        // update collection: imagery indices, base layers, raise layer show/hide event
         this._imageryLayers._update();
     }
 
@@ -1971,7 +1998,7 @@ class GlobeSurfaceTileProvider {
      * Called at the beginning of each render frame, before {@link QuadtreeTileProvider#showTileThisFrame}
      * @param {FrameState} frameState The frame state.
      */
-    initialize (frameState: FrameState): void {
+    initialize(frameState: FrameState): void {
         // update each layer for texture reprojection.
         this._imageryLayers.queueReprojectionCommands(frameState);
 
@@ -1998,7 +2025,7 @@ class GlobeSurfaceTileProvider {
     /**
      * Cancels any imagery re-projections in the queue.
      */
-    cancelReprojections (): void {
+    cancelReprojections(): void {
         this._imageryLayers.cancelReprojections();
     }
 
@@ -2010,7 +2037,7 @@ class GlobeSurfaceTileProvider {
      *
      * @returns {Number} The distance from the camera to the closest point on the tile, in meters.
      */
-    computeDistanceToTile (tile:QuadtreeTile, frameState:FrameState): number {
+    computeDistanceToTile(tile: QuadtreeTile, frameState: FrameState): number {
         // The distance should be:
         // 1. the actual distance to the tight-fitting bounding volume, or
         // 2. a distance that is equal to or greater than the actual distance to the tight-fitting bounding volume.
@@ -2074,11 +2101,11 @@ class GlobeSurfaceTileProvider {
      *                       Visibility.PARTIAL if the tile is partially visible, or
      *                       Visibility.FULL if the tile is fully visible.
      */
-    computeTileVisibility (
-        tile:QuadtreeTile,
-        frameState:FrameState,
+    computeTileVisibility(
+        tile: QuadtreeTile,
+        frameState: FrameState,
         occluders?: QuadtreeOccluders
-    ):Visibility {
+    ): Visibility {
         const distance = this.computeDistanceToTile(tile, frameState);
         tile._distance = distance;
 
@@ -2217,7 +2244,7 @@ class GlobeSurfaceTileProvider {
      * @param {FrameState} frameState The frame state.
      * @returns {Number} The load priority value.
      */
-    computeTileLoadPriority (
+    computeTileLoadPriority(
         tile: QuadtreeTile,
         frameState: FrameState
     ): number {
@@ -2253,7 +2280,7 @@ class GlobeSurfaceTileProvider {
      * @param {QuadtreeTile} tile The tile to check.
      * @returns {boolean} True if the tile can be refined, false if it cannot.
      */
-    canRefine (tile: QuadtreeTile): boolean {
+    canRefine(tile: QuadtreeTile): boolean {
         // Only allow refinement it we know whether or not the children of this tile exist.
         // For a tileset with `availability`, we'll always be able to refine.
         // We can ask for availability of _any_ child tile because we only need to confirm
@@ -2277,7 +2304,7 @@ class GlobeSurfaceTileProvider {
  * @param {QuadtreeTile} tile The tile to check.
  * @returns {boolean} True if the tile can be rendered without losing detail.
  */
-    canRenderWithoutLosingDetail (
+    canRenderWithoutLosingDetail(
         tile: QuadtreeTile
     ): boolean {
         const surfaceTile = tile.data as GlobeSurfaceTile;
@@ -2313,9 +2340,9 @@ class GlobeSurfaceTileProvider {
                 const tileImagery = (imagery as TileImagery[])[i] as any;
                 const loadingImagery = tileImagery.loadingImagery;
                 const isReady =
-          !defined(loadingImagery) ||
-          (loadingImagery as Imagery).state === ImageryState.FAILED ||
-          (loadingImagery as Imagery).state === ImageryState.INVALID;
+                    !defined(loadingImagery) ||
+                    (loadingImagery as Imagery).state === ImageryState.FAILED ||
+                    (loadingImagery as Imagery).state === ImageryState.INVALID;
                 const layerIndex = (tileImagery.loadingImagery || tileImagery.readyImagery)
                     .imageryLayer._layerIndex;
 
@@ -2339,9 +2366,9 @@ class GlobeSurfaceTileProvider {
         while (stack.length > 0) {
             const descendant = stack.pop();
             const lastFrameSelectionResult =
-        descendant._lastSelectionResultFrame === lastFrame
-            ? descendant._lastSelectionResult
-            : TileSelectionResult.NONE;
+                descendant._lastSelectionResultFrame === lastFrame
+                    ? descendant._lastSelectionResult
+                    : TileSelectionResult.NONE;
 
             if (lastFrameSelectionResult === TileSelectionResult.RENDERED) {
                 const descendantSurface = descendant.data;
@@ -2353,7 +2380,7 @@ class GlobeSurfaceTileProvider {
 
                 if (
                     !terrainReady &&
-          descendant.data.terrainState === TerrainState.READY
+                    descendant.data.terrainState === TerrainState.READY
                 ) {
                     // Rendered descendant has real terrain, but we don't. Rendering is blocked.
                     return false;
@@ -2364,12 +2391,12 @@ class GlobeSurfaceTileProvider {
                     const descendantTileImagery = descendantImagery[i];
                     const descendantLoadingImagery = descendantTileImagery.loadingImagery;
                     const descendantIsReady =
-            !defined(descendantLoadingImagery) ||
-            descendantLoadingImagery.state === ImageryState.FAILED ||
-            descendantLoadingImagery.state === ImageryState.INVALID;
+                        !defined(descendantLoadingImagery) ||
+                        descendantLoadingImagery.state === ImageryState.FAILED ||
+                        descendantLoadingImagery.state === ImageryState.INVALID;
                     const descendantLayerIndex = (
                         descendantTileImagery.loadingImagery ||
-            descendantTileImagery.readyImagery
+                        descendantTileImagery.readyImagery
                     ).imageryLayer._layerIndex;
 
                     // If this imagery tile of a descendant is ready but the layer isn't ready in this tile,
@@ -2399,7 +2426,7 @@ class GlobeSurfaceTileProvider {
      * @param {QuadtreeTile} tile The tile instance.
      * @param {FrameState} frameState The state information of the current rendering frame.
      */
-    showTileThisFrame (
+    showTileThisFrame(
         tile: QuadtreeTile,
         frameState?: FrameState
     ): void {
@@ -2445,7 +2472,7 @@ class GlobeSurfaceTileProvider {
      *
      * @exception {DeveloperError} <code>loadTile</code> must not be called before the tile provider is ready.
      */
-    loadTile (frameState: FrameState, tile: QuadtreeTile) {
+    loadTile(frameState: FrameState, tile: QuadtreeTile) {
         // We don't want to load imagery until we're certain that the terrain tiles are actually visible.
         // So if our bounding volume isn't accurate because it came from another tile, load terrain only
         // initially. If we load some terrain and suddenly have a more accurate bounding volume and the
@@ -2457,8 +2484,8 @@ class GlobeSurfaceTileProvider {
         let terrainStateBefore;
         if (defined(surfaceTile)) {
             terrainOnly =
-      surfaceTile.boundingVolumeSourceTile !== tile ||
-      tile._lastSelectionResult === TileSelectionResult.CULLED_BUT_NEEDED;
+                surfaceTile.boundingVolumeSourceTile !== tile ||
+                tile._lastSelectionResult === TileSelectionResult.CULLED_BUT_NEEDED;
             terrainStateBefore = surfaceTile.terrainState;
         }
 
@@ -2502,7 +2529,7 @@ class GlobeSurfaceTileProvider {
  * @param {Number} level The tile level for which to get the maximum geometric error.
  * @returns {Number} The maximum geometric error in meters.
  */
-    getLevelMaximumGeometricError (level: number): number {
+    getLevelMaximumGeometricError(level: number): number {
         return this._terrainProvider.getLevelMaximumGeometricError(level) as number;
     }
 }

@@ -355,7 +355,6 @@ class GlobeSurfaceTile {
             terrainProvider,
             frameState
         );
-            console.log(isImageryDoneLoading);
         if (isTerrainDoneLoading && isImageryDoneLoading) {
             const callbacks = tile._loadedCallbacks;
             const newCallbacks = {};
@@ -513,15 +512,10 @@ class GlobeSurfaceTile {
                 const element5 = vertexBuffer.array[index+5];
                 const element6 = vertexBuffer.array[index+6];
                 positon.push(...[element,element1,element2]);
-                uv.push(...[element4,element6])
+                uv.push(...[element4,element5])
             }
             let feop = new Float32Array(positon);
 
-            // for (let index = 0; index < positon.length; index+=3) {
-            //     feop[index] = positon[index]+mesh.center.x;
-            //     feop[index+1] = positon[index+1]+mesh.center.y;
-            //     feop[index+2] =positon[index+2]+mesh.center.z;
-            // }
             geometry.setIndices(mesh.indices);
             geometry.setAttribute(VertexAttributeName.position, feop as Float32Array);
             geometry.setAttribute(VertexAttributeName.uv, new Float32Array(uv) as Float32Array);

@@ -389,7 +389,7 @@ class CesiumScene extends Scene3D {
         // 是否启用深度坐标拾取
         this.useDepthPicking = true;
 
-        this.skyBox = new SkyBox(this);
+        // this.skyBox = new SkyBox(this);
 
         this._environmentState = {
             skyBoxCommand: undefined,
@@ -721,21 +721,21 @@ class CesiumScene extends Scene3D {
             environmentState.sunComputeCommand = undefined;
             environmentState.moonCommand = undefined;
         } else {
-            if (defined(skyAtmosphere)) {
-                if (defined(globe)) {
-                    (skyAtmosphere as SkyAtmosphere).setDynamicAtmosphereColor(
-                        globe.enableLighting && globe.dynamicAtmosphereLighting,
-                        globe.dynamicAtmosphereLightingFromSun
-                    );
-                    environmentState.isReadyForAtmosphere =
-                        environmentState.isReadyForAtmosphere ||
-                        globe._surface._tilesToRender.length > 0;
-                }
-                environmentState.skyAtmosphereCommand = (skyAtmosphere as SkyAtmosphere).update(
-                    frameState,
-                    globe
-                );
-            }
+            // if (defined(skyAtmosphere)) {
+            //     if (defined(globe)) {
+            //         (skyAtmosphere as SkyAtmosphere).setDynamicAtmosphereColor(
+            //             globe.enableLighting && globe.dynamicAtmosphereLighting,
+            //             globe.dynamicAtmosphereLightingFromSun
+            //         );
+            //         environmentState.isReadyForAtmosphere =
+            //             environmentState.isReadyForAtmosphere ||
+            //             globe._surface._tilesToRender.length > 0;
+            //     }
+            //     environmentState.skyAtmosphereCommand = (skyAtmosphere as SkyAtmosphere).update(
+            //         frameState,
+            //         globe
+            //     );
+            // }
         }
     }
 
