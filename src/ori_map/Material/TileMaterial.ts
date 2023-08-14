@@ -160,8 +160,6 @@ class TileMaterial extends MaterialBase {
         };
         @group(3) @binding(0)
         var<uniform> u_dayTextureT:  DayTextureT;
-
-        
         `
 
         for (let index = 0; index < num; index++) {
@@ -174,7 +172,7 @@ class TileMaterial extends MaterialBase {
 
 
         let sdf = ``
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < num; i++) {
             let str = ''
             // if(dayTextureUseWebMercatorT[i]){
             //     str = `tileTextureCoordinates = v_textureCoordinates.xz;`
@@ -195,16 +193,15 @@ class TileMaterial extends MaterialBase {
                 var translation${i} = textureCoordinateTranslationAndScale${i}.xy;
                 var scale${i} = textureCoordinateTranslationAndScale${i}.zw;
                 var textureCoordinates${i} = tileTextureCoordinates * scale${i} + translation${i};
+              
                 
-                
-                var value${i} = textureSample(u_dayTextures${i},baseMapSampler,textureCoordinates${i}.yx) ;
-                //  texture2D(u_dayTextures${i}, textureCoordinates${i});
+                var value${i} = textureSample(u_dayTextures${i},baseMapSampler,vec2<f32>(textureCoordinates${i}.x,textureCoordinates${i}.y)).rgba;
                 var color${i} = value${i}.rgb;
                 var alpha${i} = value${i}.a;
                 var sourceAlpha${i} = alpha${i} * textureAlpha${i};
-                var outAlpha${i} = mix(previousColor.a, 1.0, sourceAlpha${i});
+                var outAlpha${i} = mix(previousColor.a,alpha${i}, sourceAlpha${i});
                 var outColor${i} = mix(previousColor.rgb * 1.0 , color${i}, sourceAlpha${i}) / outAlpha${i};
-                previousColor = vec4(outColor${i}, outAlpha${i});
+                previousColor = vec4<f32>(outColor${i}, outAlpha${i});
             
             `
         }
@@ -244,19 +241,19 @@ class TileMaterial extends MaterialBase {
             ${MorphTarget_shader.getMorphTargetCalcVertex()}    
             #endif
         
-            // #if USE_SKELETON
-            //     #if USE_JOINT_VEC8
-            //         let skeletonNormal = getSkeletonWorldMatrix_8(vertex.joints0, vertex.weights0, vertex.joints1, vertex.weights1);
-            //         ORI_MATRIX_M *= skeletonNormal ;
-            //     #else
-            //         let skeletonNormal = getSkeletonWorldMatrix_4(vertex.joints0, vertex.weights0);
-            //         ORI_MATRIX_M *= skeletonNormal ;
-            //     #endif
-            // #endif
+            #if USE_SKELETON
+                #if USE_JOINT_VEC8
+                    let skeletonNormal = getSkeletonWorldMatrix_8(vertex.joints0, vertex.weights0, vertex.joints1, vertex.weights1);
+                    ORI_MATRIX_M *= skeletonNormal ;
+                #else
+                    let skeletonNormal = getSkeletonWorldMatrix_4(vertex.joints0, vertex.weights0);
+                    ORI_MATRIX_M *= skeletonNormal ;
+                #endif
+            #endif
         
-            // #if USE_TANGENT
-            //     ORI_VertexOut.varying_Tangent = vertex.TANGENT ;
-            // #endif
+            #if USE_TANGENT
+                ORI_VertexOut.varying_Tangent = vertex.TANGENT ;
+            #endif
         
             ORI_NORMALMATRIX = transpose(inverse( mat3x3<f32>(ORI_MATRIX_M[0].xyz,ORI_MATRIX_M[1].xyz,ORI_MATRIX_M[2].xyz) ));
         
@@ -266,11 +263,11 @@ class TileMaterial extends MaterialBase {
             clipPosition = applyLogarithmicDepth(clipPosition,0.1,10000000000.0);
             ORI_CameraWorldDir = normalize(ORI_CAMERAMATRIX[3].xyz - worldPos.xyz) ;
         
-            ORI_VertexOut.varying_UV0 = vertex.uv.xy ;
+            ORI_VertexOut.varying_UV0 = vertex.uv;
             ORI_VertexOut.varying_UV1 = vertex.TEXCOORD_1.xy;
             ORI_VertexOut.varying_ViewPos = viewPosition / viewPosition.w;
-            ORI_VertexOut.varying_Clip = clipPosition ;
-            ORI_VertexOut.varying_WPos = worldPos ;
+            ORI_VertexOut.varying_Clip = clipPosition;
+            ORI_VertexOut.varying_WPos = worldPos;
             ORI_VertexOut.varying_WPos.w = f32(vertex.index);
             ORI_VertexOut.varying_WNormal = normalize(ORI_NORMALMATRIX * vertexNormal.xyz) ;
             ORI_VertexOut.member = clipPosition;
@@ -292,19 +289,22 @@ class TileMaterial extends MaterialBase {
             Tile_ORI_Vert(inputData) ;
             return ORI_VertexOut ;
         }
+
+
+        
         fn frag(){
             var transformUV1 = materialUniform.transformUV1;
             var transformUV2 = materialUniform.transformUV2;
-            var tileTextureCoordinates = ORI_VertexVarying.fragUV0;
-            let color = textureSample(u_dayTextures0,baseMapSampler,ORI_VertexVarying.fragUV0) ;
-            if(color.w < 0.5){
-                discard ;
-            }
+            var tileTextureCoordinates = vec2<f32>(ORI_VertexVarying.fragUV0.x, ORI_VertexVarying.fragUV0.y);
+            let color = textureSample(u_dayTextures0,baseMapSampler,tileTextureCoordinates).rgba;
+            // if(color.w < 0.5){
+            //     discard ;
+            // }
             var previousColor = vec4<f32>(0.0, 0.0, 0.5, 1.0);
          
             ${sdf}
-
-            ORI_ShadingInput.BaseColor = color;
+            // ORI_FragmentOutput.color = previousColor;
+            ORI_ShadingInput.BaseColor = previousColor;
             UnLit();
         }
         `

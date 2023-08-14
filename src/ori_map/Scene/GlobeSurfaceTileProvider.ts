@@ -824,7 +824,6 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
         } else {
             command = tileProvider._drawCommands[tileProvider._usedDrawCommands];
             material = tileProvider._materialMaps[tileProvider._usedDrawCommands];
-
             globeSurfaceMaterial = tileProvider._uniformMaps[tileProvider._usedDrawCommands];
 
             uniformMap = createTileUniformMap(frameState, tileProvider);
@@ -837,8 +836,7 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
         material.dayTextureTexCoordsRectangle = dayTextureTexCoordsRectangle;
         material.shader.setTexture(`baseMap`,dayTextures[0]);
         material.dayTextures = dayTextures;
-        // material.baseMap = dayTextures[0];
-        debugger
+
         //@ts-ignore
         const viewMatrix = window.view.camera.viewMatrix.rawData;
         // console.log(viewMatrix);

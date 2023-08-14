@@ -963,12 +963,13 @@ class ImageryLayer {
 
          needGeographicProjection = defaultValue(needGeographicProjection, true);
 
-         Engine3D.res.loadTexture(imagery.imageUrl).then(res=>{
+         Engine3D.res.loadTexture(imagery.imageUrl,undefined,true).then(res=>{
             res.addressModeU = GPUAddressMode.clamp_to_edge;
             res.addressModeV = GPUAddressMode.clamp_to_edge;
+            res.width = 256;
+            res.height = 256;
+            res.useMipmap = true;
             imagery.texture = res;
-            console.log(res);
-            debugger
             imagery.state = ImageryState.READY;
          })
          // Reproject this texture if it is not already in a geographic projection and
