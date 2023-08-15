@@ -40,7 +40,7 @@ class TileMaterial extends MaterialBase {
         this.defines.APPLY_GAMMA = '';
 
         this.defines.GROUND_ATMOSPHERE = '';
-        let shaderName = 'daytexteure_'+shaderSetOptions.numberOfDayTextures;
+        let shaderName = 'daytexteure_' + shaderSetOptions.numberOfDayTextures;
         console.log(this.getwgsl(shaderSetOptions.numberOfDayTextures));
         ShaderLib.register(shaderName, this.getwgsl(shaderSetOptions.numberOfDayTextures));
 
@@ -163,9 +163,16 @@ class TileMaterial extends MaterialBase {
         `
 
         for (let index = 0; index < num; index++) {
-            uniform+= /*wgsl*/`
-           @group(3) @binding(${1+index})
-           var u_dayTextures${index}: texture_2d<f32>;
+            let number = []
+            for (let j = 0; j < 2; j++) {
+                let n = index * 2 + j + 1;
+                number.push(n);
+            }
+            uniform += /*wgsl*/`
+            @group(3) @binding(${number[0]})
+            var u_dayTextures${index}Sampler: sampler;
+            @group(3) @binding(${number[1]})
+            var u_dayTextures${index}: texture_2d<f32>;
            `
         }
 
@@ -195,14 +202,18 @@ class TileMaterial extends MaterialBase {
                 var textureCoordinates${i} = tileTextureCoordinates * scale${i} + translation${i};
               
                 
-                var value${i} = textureSample(u_dayTextures${i},baseMapSampler,vec2<f32>(textureCoordinates${i}.x,textureCoordinates${i}.y)).rgba;
+                var value${i} = textureSample(u_dayTextures${i},u_dayTextures${i}Sampler,vec2<f32>(textureCoordinates${i}.x,textureCoordinates${i}.y)).rgba;
                 var color${i} = value${i}.rgb;
                 var alpha${i} = value${i}.a;
                 var sourceAlpha${i} = alpha${i} * textureAlpha${i};
                 var outAlpha${i} = mix(previousColor.a,alpha${i}, sourceAlpha${i});
                 var outColor${i} = mix(previousColor.rgb * 1.0 , color${i}, sourceAlpha${i}) / outAlpha${i};
-                previousColor = vec4<f32>(outColor${i}, outAlpha${i});
-            
+                if(textureCoordinates${i}.x < 0.0 || textureCoordinates${i}.x > 1.0 ||  textureCoordinates${i}.y > 1.0  || textureCoordinates${i}.y < 0.0 ){
+                    previousColor = previousColor;
+                }else{
+                    previousColor = vec4<f32>(outColor${i}, outAlpha${i});
+
+                }
             `
         }
 
@@ -304,7 +315,7 @@ class TileMaterial extends MaterialBase {
          
             ${sdf}
             // ORI_FragmentOutput.color = previousColor;
-            ORI_ShadingInput.BaseColor = previousColor;
+            ORI_ShadingInput.BaseColor = color;
             UnLit();
         }
         `

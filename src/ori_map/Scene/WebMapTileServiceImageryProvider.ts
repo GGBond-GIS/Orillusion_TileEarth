@@ -449,7 +449,7 @@ class WebMapTileServiceImageryProvider {
 
         // Couldn't load from cache
         if (!defined(result)) {
-            result = requestImage(this, x, y, level, request, currentInterval);
+            result = requestImage(this, x, y, level+1, request, currentInterval);
         }
 
         // If we are approaching an interval, preload this tile in the next interval

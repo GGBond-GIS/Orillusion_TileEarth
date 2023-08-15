@@ -3,6 +3,8 @@ import { CesiumScene } from './ori_map/Scene/CesiumScene'
 import { Stats } from "@orillusion/stats"
 import { UrlTemplateImageryProvider } from './ori_map/Scene/UrlTemplateImageryProvider';
 import { TileCoordinatesImageryProvider } from './ori_map/Scene/TileCoordinatesImageryProvider';
+import { WebMapTileServiceImageryProvider } from './ori_map/Scene/WebMapTileServiceImageryProvider';
+import { GeographicTilingScheme } from './ori_map/Core/GeographicTilingScheme';
 await Engine3D.init();
 //@ts-ignore
 let scene3D: CesiumScene = window.scene = new CesiumScene({})
@@ -26,10 +28,10 @@ scene3D.addChild(light)
 // create new object  
 class ControllerUpdate extends ComponentBase {
   public onUpdate() {
-      // update lifecycle codes
-      scene3D.render()
-      scene3D.screenSpaceCameraController.update()
-      // updateViewMatrix(cesium_camera)
+    // update lifecycle codes
+    scene3D.render()
+    scene3D.screenSpaceCameraController.update()
+    // updateViewMatrix(cesium_camera)
   }
 }
 scene3D.addComponent(ControllerUpdate);
@@ -51,19 +53,36 @@ Sphere.transform.rotationX += 180;
 // Sphere.transform.rotationY += 90;
 // Sphere.transform.rotationZ += 180;
 // set location
-const rencoll:Object3D = new Object3D();
+const rencoll: Object3D = new Object3D();
 rencoll.addChild(Sphere);
 
-const urlTemplateImageryProvide = new UrlTemplateImageryProvider({
-  // url: 'http://www.google.cn/maps/vt?lyrs=s@800&x={x}&y={y}&z={z}'
-  // tilingScheme: new WebMercatorTilingScheme({}),
-  // minimumLevel: 1,
-  // maximumLevel: 20
-  url: 'https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}'
-});
-scene3D.imageryLayers.addImageryProvider(
-  urlTemplateImageryProvide
-);
+// const urlTemplateImageryProvide = new UrlTemplateImageryProvider({
+//   // url: 'http://www.google.cn/maps/vt?lyrs=s@800&x={x}&y={y}&z={z}'
+//   // tilingScheme: new WebMercatorTilingScheme({}),
+//   // minimumLevel: 1,
+//   // maximumLevel: 20
+//   url: 'https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}'
+// });
+// scene3D.imageryLayers.addImageryProvider(
+//   urlTemplateImageryProvide
+// );
+const mapToken = '39d358c825ec7e59142958656c0a6864';// 盈嘉企业开发者秘钥
+
+//https://t4.tianditu.gov.cn/img_c/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=c&FORMAT=tiles&TILECOL={TileCol}&TILEROW={TileRow}&TILEMATRIX={TileMatrix}&tk=75f0434f240669f4a2df6359275146d2
+scene3D.imageryLayers.addImageryProvider(new WebMapTileServiceImageryProvider({
+  // url: 'https://{s}.tianditu.gov.cn/img_w/wmts?SERVICE=WMTS&REQUEST=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&tk=' + mapToken,
+  url: 'https://t4.tianditu.gov.cn/img_c/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=c&FORMAT=tiles&TILECOL={TileCol}&TILEROW={TileRow}&TILEMATRIX={TileMatrix}&tk=' + mapToken,
+  subdomains: ['t0', 't1', 't2', 't3', 't4', 't5', 't6', 't7'],
+  maximumLevel: 17, // 定义最大缩放级别
+  layer: 'tdtImgLayer',
+  style: 'default',
+  format: 'image/jpeg',
+  tilingScheme: new GeographicTilingScheme({
+    numberOfLevelZeroTilesX: 2,
+    numberOfLevelZeroTilesY: 1
+  }),
+  tileMatrixSetID: "EPSG:4326", // 使用谷歌的瓦片切片方式
+}));
 // scene3D.imageryLayers.addImageryProvider(new (TileCoordinatesImageryProvider as any)());
 
 // scene3D.addChild(rencoll)
@@ -84,7 +103,7 @@ scene3D.addChild(obj)
 scene3D.addComponent(AtmosphericComponent).sunY = 0.6
 // create a view with target scene and camera
 //@ts-ignore
-let view =window.view = new View3D()
+let view = window.view = new View3D()
 view.scene = scene3D
 view.camera = scene3D.cameraObj._camera;
 // start render
