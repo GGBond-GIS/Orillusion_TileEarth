@@ -836,7 +836,7 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
         material.dayTextureTexCoordsRectangle = dayTextureTexCoordsRectangle;
         material.shader.setTexture(`baseMap`,dayTextures[0]);
         material.dayTextures = dayTextures;
-
+        
         //@ts-ignore
         const viewMatrix = window.view.camera.viewMatrix.rawData;
         // console.log(viewMatrix);
