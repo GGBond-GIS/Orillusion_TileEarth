@@ -965,8 +965,7 @@ class ImageryLayer {
 
          Engine3D.res.loadTexture(imagery.imageUrl,undefined,true).then(res=>{
             res.addressModeU = GPUAddressMode.clamp_to_edge;
-            res.addressModeV = GPUAddressMode.;
-            // res.mode
+            res.addressModeV = GPUAddressMode.clamp_to_edge;
             res.width = 256;
             res.height = 256;
             res.useMipmap = true;
