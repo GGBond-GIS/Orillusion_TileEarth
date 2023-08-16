@@ -313,6 +313,8 @@ function isUndergroundVisible(tileProvider: GlobeSurfaceTileProvider, frameState
 const otherPassesInitialColor = new Cartesian4(0.0, 0.0, 0.0, 0.0);
 const modifiedModelViewScratch = new CesiumMatrix4();
 const modifiedModelViewProjectionScratch = new CesiumMatrix4();
+const vm = new Orillusion.Matrix4();
+
 const tileRectangleScratch = new Vector4();
 const localizedCartographicLimitRectangleScratch = new Cartesian4();
 const localizedTranslucencyRectangleScratch = new Cartesian4();
@@ -763,6 +765,7 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
     const tileImageryCollection = surfaceTile.imagery;
     let imageryIndex = 0;
     const imageryLen = tileImageryCollection.length;
+    let maxTextures = ContextLimits.maximumTextureImageUnits;
 
     let initialColor = tileProvider._firstPassInitialColor;
 
@@ -773,13 +776,12 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
 
         let uniformMap;
         let material: TileMaterial;
-
         let globeSurfaceMaterial: GlobeSurfaceTileMaterial;
         const dayTextures = [];
         const dayTextureTranslationAndScale = [];
         const dayTextureTexCoordsRectangle = [];
         const dayTextureUseWebMercatorT = [];
-        while (imageryIndex < imageryLen) {
+        while ( imageryIndex < imageryLen) {
             
             const tileImagery = tileImageryCollection[imageryIndex];
             const imagery = tileImagery?.readyImagery || undefined;
@@ -806,42 +808,32 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
         if (tileProvider._drawCommands.length <= tileProvider._usedDrawCommands) {
             command = new DrawMeshCommand();
             command.owner = tile;
-            // command.frustumCulled = false;
-            command.boundingVolume = new BoundingSphere();
             command.localPosition = new Orillusion.Vector3(rtc.x, rtc.y, rtc.z);
-
             command.orientedBoundingBox = undefined;
-
             material = createMaterialMap(frameState, tileProvider, surfaceShaderSetOptions, quantization);
-
-            uniformMap = createTileUniformMap(frameState, tileProvider);
-
             globeSurfaceMaterial = new GlobeSurfaceTileMaterial();
-
             tileProvider._drawCommands.push(command);
             tileProvider._materialMaps.push(material);
-            tileProvider._uniformMaps.push(globeSurfaceMaterial);
         } else {
             command = tileProvider._drawCommands[tileProvider._usedDrawCommands];
             material = tileProvider._materialMaps[tileProvider._usedDrawCommands];
             globeSurfaceMaterial = tileProvider._uniformMaps[tileProvider._usedDrawCommands];
-
-            uniformMap = createTileUniformMap(frameState, tileProvider);
         }
         command.localPosition = new Orillusion.Vector3(rtc.x,rtc.y,rtc.z);
-
+        if (material.defines.TEXTURE_UNITS !== material.dayTextures.length ||
+            imageryLen !== material.dayTextures.length ||
+            quantization === TerrainQuantization.BITS12 && !defined(material.defines.QUANTIZATION_BITS12) ||
+            quantization === TerrainQuantization.NONE && defined(material.defines.QUANTIZATION_BITS12)
+        ) {
+        }
         ++tileProvider._usedDrawCommands;
-        debugger
         material.dayTextureTranslationAndScale = dayTextureTranslationAndScale;
         material.dayTextureTexCoordsRectangle = dayTextureTexCoordsRectangle;
         material.shader.setTexture(`baseMap`,dayTextures[0]);
         material.dayTextures = dayTextures;
+        material.shaderState.topology = GPUPrimitiveTopology.line_list;
         
-        //@ts-ignore
-        const viewMatrix = window.view.camera.viewMatrix.rawData;
-        // console.log(viewMatrix);
-        //@ts-ignore
-        const projectionMatrix = frameState.camera.frustum.cesiumProjectMatrix;
+        const viewMatrix =  frameState.camera.frustum._camera.viewMatrix.rawData;
         const centerEye = CesiumMatrix4.multiplyByPoint(
             viewMatrix,
             rtc,
@@ -852,42 +844,34 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
             centerEye,
             modifiedModelViewProjectionScratch
         );
-        let vm = new Orillusion.Matrix4();
-        vm.rawData = new Float32Array([
-            modifiedModelViewProjectionScratch[0],
-            modifiedModelViewProjectionScratch[1],
-            modifiedModelViewProjectionScratch[2],
-            modifiedModelViewProjectionScratch[3],
-            modifiedModelViewProjectionScratch[4],
-            modifiedModelViewProjectionScratch[5],
-            modifiedModelViewProjectionScratch[6],
-            modifiedModelViewProjectionScratch[7],
-            modifiedModelViewProjectionScratch[8],
-            modifiedModelViewProjectionScratch[9],
-            modifiedModelViewProjectionScratch[10],
-            modifiedModelViewProjectionScratch[11],
-            modifiedModelViewProjectionScratch[12],
-            modifiedModelViewProjectionScratch[13],
-            modifiedModelViewProjectionScratch[14],
-            modifiedModelViewProjectionScratch[15],
-        ])
-        //@ts-ignore
+            vm.set(0,0,modifiedModelViewProjectionScratch[0]);
+            vm.set(0,1,modifiedModelViewProjectionScratch[4]);
+            vm.set(0,2,modifiedModelViewProjectionScratch[8]);
+            vm.set(0,3,modifiedModelViewProjectionScratch[12]);
+            vm.set(1,0,modifiedModelViewProjectionScratch[1]);
+            vm.set(1,1,modifiedModelViewProjectionScratch[5]);
+            vm.set(1,2,modifiedModelViewProjectionScratch[9]);
+            vm.set(1,3,modifiedModelViewProjectionScratch[13]);
+            vm.set(2,0,modifiedModelViewProjectionScratch[2]);
+            vm.set(2,1,modifiedModelViewProjectionScratch[6]);
+            vm.set(2,2,modifiedModelViewProjectionScratch[10]);
+            vm.set(2,3,modifiedModelViewProjectionScratch[14]);
+            vm.set(3,0,modifiedModelViewProjectionScratch[3]);
+            vm.set(3,1,modifiedModelViewProjectionScratch[7]);
+            vm.set(3,2,modifiedModelViewProjectionScratch[11]);
+            vm.set(3,3,modifiedModelViewProjectionScratch[15]);
+    
+        // //@ts-ignore
         material.modifiedModelView.setMatrix('matrixMVP_RTE', vm);
         material.modifiedModelView.apply();
-        // material.shaderState.topology = GPUPrimitiveTopology.line_list;
-
         command._mesh.geometry = mesh.geometry;
         command._mesh.material = material;
             if(mesh.show){
-
-                //@ts-ignore
-                command.show = true;
+                frameState.commandList.push(command);
             }else{
-                //@ts-ignore
-                command.show = false;
+   
             }
 
-        frameState.commandList.push(command);
     } while (imageryIndex < imageryLen);
     // const surfaceTile = tile.data;
 

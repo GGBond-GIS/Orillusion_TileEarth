@@ -20,7 +20,7 @@ class TileMaterial extends MaterialBase {
         super();
         // console.log();
         this.modifiedModelView = new UniformGPUBuffer(128);
-        this.u_dayTextureT = new UniformGPUBuffer(1024);
+        this.u_dayTextureT = new UniformGPUBuffer(128);
         this.defines = {};
         this.uniforms = {
             u_dayTextures: { value: [] },
@@ -41,7 +41,6 @@ class TileMaterial extends MaterialBase {
 
         this.defines.GROUND_ATMOSPHERE = '';
         let shaderName = 'daytexteure_' + shaderSetOptions.numberOfDayTextures;
-        console.log(this.getwgsl(shaderSetOptions.numberOfDayTextures));
         ShaderLib.register(shaderName, this.getwgsl(shaderSetOptions.numberOfDayTextures));
 
         let shader = this.shader = this.setShader(shaderName, shaderName);
@@ -79,12 +78,12 @@ class TileMaterial extends MaterialBase {
         if (!defined(value)) {
             return;
         }
-
         this.uniforms.u_dayTextures.value = value;
-        value.forEach((res: Texture, index: number) => {
-            this.shader.setTexture(`u_dayTextures${index}`, res)
-        })
+        for (let index = 0; index < value.length; index++) {
+            const element = value[index];
+            this.shader.setTexture(`u_dayTextures${index}`, element)
 
+        }
     }
 
     get dayTextureTranslationAndScale() {
@@ -97,9 +96,11 @@ class TileMaterial extends MaterialBase {
             return;
         }
         this.uniforms.u_dayTextureTranslationAndScale.value = value;
-        value.forEach((res: Vector4, index: number) => {
-            this.u_dayTextureT.setVector4(`u_dayTextureTranslationAndScale${index}`, res)
-        })
+        for (let index = 0; index < value.length; index++) {
+            const element = value[index];
+            this.u_dayTextureT.setVector4(`u_dayTextureTranslationAndScale${index}`, element)
+        }
+
         this.u_dayTextureT.apply();
     }
 
@@ -112,9 +113,12 @@ class TileMaterial extends MaterialBase {
             return;
         }
         this.uniforms.u_dayTextureTexCoordsRectangle.value = value;
-        value.forEach((res: Vector4, index: number) => {
-            this.u_dayTextureT.setVector4(`u_dayTextureTexCoordsRectangle${index}`, res)
-        })
+        for (let index = 0; index < value.length; index++) {
+            const element = value[index];
+            this.u_dayTextureT.setVector4(`u_dayTextureTexCoordsRectangle${index}`, element)
+
+        }
+
         this.u_dayTextureT.apply();
     }
 
@@ -289,8 +293,8 @@ class TileMaterial extends MaterialBase {
                 logarithmicDepthConstant: f32,
                 perspectiveFarPlaneDistance: f32) -> vec4<f32>
            {
-               let z = ((2.0 * log((logarithmicDepthConstant * clipPosition.z) + 1.0) / 
-                              log((logarithmicDepthConstant * perspectiveFarPlaneDistance) + 1.0)) - 1.0) * clipPosition.w;
+           
+            let z = log((clipPosition.z - logarithmicDepthConstant) / (perspectiveFarPlaneDistance - logarithmicDepthConstant) + 1.0) / log(2.0);
            
                return vec4<f32>(clipPosition.x,clipPosition.y,z,clipPosition.w);
            }
@@ -315,7 +319,7 @@ class TileMaterial extends MaterialBase {
          
             ${sdf}
             // ORI_FragmentOutput.color = previousColor;
-            ORI_ShadingInput.BaseColor = color;
+            ORI_ShadingInput.BaseColor = previousColor;
             UnLit();
         }
         `

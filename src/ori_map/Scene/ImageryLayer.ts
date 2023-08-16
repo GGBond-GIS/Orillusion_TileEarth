@@ -956,7 +956,6 @@ class ImageryLayer {
      * @param {Boolean} [needGeographicProjection=true] True to reproject to geographic, or false if Web Mercator is fine.
      */
      _reprojectTexture (frameState: FrameState, imagery: Imagery, needGeographicProjection = true): void {
-        console.log(imagery.imageUrl);
          const texture = imagery.textureWebMercator || imagery.texture;
          const rectangle = imagery.rectangle;
          const context = frameState.context;

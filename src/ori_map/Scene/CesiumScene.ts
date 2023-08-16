@@ -210,10 +210,7 @@ function updateAndRenderPrimitives (scene: CesiumScene) {
     }
 
     for (const command of frameState.commandList) {
-        if(command.show){
             scene._renderCollection.addChild(command);
-        }
-
     }
 }
 

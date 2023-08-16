@@ -18,25 +18,24 @@ class TileImagery {
 
     _textureCoordinateRectangle_vector4 = new Vector4();
     _textureTranslationAndScale_vector4 = new Vector4();
-    constructor (imagery:Imagery, textureCoordinateRectangle?: Cartesian4, useWebMercatorT?: boolean) {
+    constructor(imagery: Imagery, textureCoordinateRectangle?: Cartesian4, useWebMercatorT?: boolean) {
         this.readyImagery = undefined;
         this.loadingImagery = imagery;
-        console.log(textureCoordinateRectangle)
-        if(textureCoordinateRectangle){
- //@ts-ignore
- this.textureCoordinateRectangle = new Orillusion.Vector4(textureCoordinateRectangle?.x,textureCoordinateRectangle?.y,textureCoordinateRectangle?.z,textureCoordinateRectangle.w);
+        if (textureCoordinateRectangle) {
+            //@ts-ignore
+            this.textureCoordinateRectangle = new Orillusion.Vector4(textureCoordinateRectangle?.x, textureCoordinateRectangle?.y, textureCoordinateRectangle?.z, textureCoordinateRectangle.w);
 
-        }else{
+        } else {
             //@ts-ignore
 
-        this.textureCoordinateRectangle = new Orillusion.Vector4();
+            this.textureCoordinateRectangle = new Orillusion.Vector4();
         }
- 
+
         this.textureTranslationAndScale = undefined;
         this.useWebMercatorT = useWebMercatorT;
     }
 
-    get textureCoordinateRectangle_vector4 (): Vector4 {
+    get textureCoordinateRectangle_vector4(): Vector4 {
         const textureCoordinateRectangle = this.textureCoordinateRectangle as Cartesian4;
         this._textureCoordinateRectangle_vector4.set(
             textureCoordinateRectangle.x,
@@ -48,7 +47,7 @@ class TileImagery {
         return this._textureCoordinateRectangle_vector4;
     }
 
-    get textureTranslationAndScale_vector4 (): Vector4 {
+    get textureTranslationAndScale_vector4(): Vector4 {
         const textureTranslationAndScale = this.textureTranslationAndScale as Cartesian4;
         this._textureTranslationAndScale_vector4.set(
             textureTranslationAndScale.x,
@@ -63,7 +62,7 @@ class TileImagery {
     /**
      * Frees the resources held by this instance.
      */
-    freeResources (): void {
+    freeResources(): void {
         if (defined(this.readyImagery)) {
             (this.readyImagery as Imagery).releaseReference();
         }
@@ -83,10 +82,10 @@ class TileImagery {
  *                  already loaded on ancestor tiles.
  * @returns {Boolean} True if this instance is done loading; otherwise, false.
  */
-    processStateMachine (
+    processStateMachine(
         tile: QuadtreeTile,
         frameState: FrameState,
-        skipLoading?: boolean |undefined
+        skipLoading?: boolean | undefined
     ): boolean {
         const loadingImagery = this.loadingImagery as Imagery;
         const imageryLayer = loadingImagery.imageryLayer;
@@ -115,7 +114,7 @@ class TileImagery {
         while (
             defined(ancestor) &&
             (ancestor.state !== ImageryState.READY ||
-            (!this.useWebMercatorT && !defined(ancestor.texture)))
+                (!this.useWebMercatorT && !defined(ancestor.texture)))
         ) {
             if (
                 ancestor.state !== ImageryState.FAILED &&

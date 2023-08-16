@@ -485,16 +485,18 @@ class GlobeSurfaceTile {
 
         const geometry = new GeometryBase();
 
-        // if ((mesh.encoding as TerrainEncoding).quantization === TerrainQuantization.BITS12) {
-        //     // const vertexBuffer = new Float32BufferAttribute(typedArray, 4).onUpload(disposeArray);
-        //     // geometry.setAttribute('compressed0', vertexBuffer);
-        //     const vertexBuffer = new InterleavedBuffer(typedArray, attributes[0].componentsPerAttribute);
-        //     vertexBuffer.setUsage(StaticDrawUsage);
-        //     const compressed0 = new InterleavedBufferAttribute(vertexBuffer, attributes[0].componentsPerAttribute, 0, false);
-        //     // geometry.setAttribute('compressed0', compressed0);
-        //     mesh.show = false;
-        //     //压缩定点算法还没做这里取消渲染
-        // } else {
+        if ((mesh.encoding as TerrainEncoding).quantization === TerrainQuantization.BITS12) {
+            // const vertexBuffer = new Float32BufferAttribute(typedArray, 4).onUpload(disposeArray);
+            // geometry.setAttribute('compressed0', vertexBuffer);
+            const vertexBuffer = new InterleavedBuffer(typedArray, attributes[0].componentsPerAttribute);
+            vertexBuffer.setUsage(StaticDrawUsage);
+            const compressed0 = new InterleavedBufferAttribute(vertexBuffer, attributes[0].componentsPerAttribute, 0, false);
+            // geometry.setAttribute('compressed0', compressed0);
+            // geometry.setAttribute('compressed0',);
+
+            mesh.show = false;
+            //压缩定点算法还没做这里取消渲染
+        } else {
             const vertexBuffer = new InterleavedBuffer(typedArray, attributes[0].componentsPerAttribute + attributes[1].componentsPerAttribute);
 
             vertexBuffer.setUsage(StaticDrawUsage);
@@ -522,7 +524,7 @@ class GlobeSurfaceTile {
             mesh.show = true;
 
             // geometry.setAttribute('textureCoordAndEncodedNormals', textureCoordAndEncodedNormals);
-        // }
+        }
 
      
         geometry.addSubGeometry({
