@@ -40,6 +40,19 @@ function disposeArray () {
 
 }
 
+function czm_decompressTextureCoordinates( encoded:number)
+{
+   let temp = encoded / 4096.0;
+   let xZeroTo4095 = new Float32Array([temp])[0];
+   let stx = xZeroTo4095 / 4095.0;
+   let sty = (encoded - xZeroTo4095 * 4096.0) / 4095.0;
+   return [stx, sty];
+}
+
+
+
+
+
 const scratchCartographic = new Cartographic();
 
 function getPosition (encoding: any, mode: any, projection: any, vertices: any, index: any, result: any) {
@@ -491,9 +504,27 @@ class GlobeSurfaceTile {
             const vertexBuffer = new InterleavedBuffer(typedArray, attributes[0].componentsPerAttribute);
             vertexBuffer.setUsage(StaticDrawUsage);
             const compressed0 = new InterleavedBufferAttribute(vertexBuffer, attributes[0].componentsPerAttribute, 0, false);
+            console.log(compressed0,vertexBuffer,mesh);
+            compressed0.data
             // geometry.setAttribute('compressed0', compressed0);
-            // geometry.setAttribute('compressed0',);
-
+            let positon= [];
+            let uv = [];
+            for (let index = 0; index < compressed0.array.length; index+=4) {
+                
+                const element0 = vertexBuffer.array[index];
+                const element1 = vertexBuffer.array[index+1];
+                const element2 = vertexBuffer.array[index+2];
+                const element3 = vertexBuffer.array[index+3];
+                let xy = czm_decompressTextureCoordinates(element0);
+                let zh = czm_decompressTextureCoordinates(element1);
+                let position =[...xy,zh[0]]
+                let textureCoordinates = czm_decompressTextureCoordinates(element2);
+            
+                uv.push(...textureCoordinates);
+                positon.push(...position);
+            }
+            geometry.setAttribute(VertexAttributeName.position,new Float32Array(positon));
+            geometry.setAttribute(VertexAttributeName.uv, new Float32Array(uv) as Float32Array);
             mesh.show = false;
             //压缩定点算法还没做这里取消渲染
         } else {

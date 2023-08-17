@@ -708,7 +708,7 @@ const createTileUniformMap = (frameState: FrameState, globeSurfaceTileProvider: 
 
 const defaultUndergroundColor = CesiumColor.TRANSPARENT;
 const defaultundergroundColorAlphaByDistance = new NearFarScalar();
-
+const scaleAndBias = new Orillusion.Matrix4();
 const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: any, frameState: FrameState) => {
     const surfaceTile = tile.data;
 
@@ -781,8 +781,8 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
         const dayTextureTranslationAndScale = [];
         const dayTextureTexCoordsRectangle = [];
         const dayTextureUseWebMercatorT = [];
-        while ( imageryIndex < imageryLen) {
-            
+        while (imageryIndex < imageryLen) {
+
             const tileImagery = tileImageryCollection[imageryIndex];
             const imagery = tileImagery?.readyImagery || undefined;
             ++imageryIndex;
@@ -795,12 +795,12 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
             if (!defined(tileImagery.textureTranslationAndScale)) {
                 tileImagery.textureTranslationAndScale = imageryLayer._calculateTextureTranslationAndScale(tile, tileImagery);
             }
-            
-                dayTextures[numberOfDayTextures] = texture;
-                dayTextureTranslationAndScale[numberOfDayTextures] = tileImagery.textureTranslationAndScale;
-                dayTextureTexCoordsRectangle[numberOfDayTextures] = tileImagery.textureCoordinateRectangle;
-                dayTextureUseWebMercatorT[numberOfDayTextures] = tileImagery.useWebMercatorT;
-                ++numberOfDayTextures;
+
+            dayTextures[numberOfDayTextures] = texture;
+            dayTextureTranslationAndScale[numberOfDayTextures] = tileImagery.textureTranslationAndScale;
+            dayTextureTexCoordsRectangle[numberOfDayTextures] = tileImagery.textureCoordinateRectangle;
+            dayTextureUseWebMercatorT[numberOfDayTextures] = tileImagery.useWebMercatorT;
+            ++numberOfDayTextures;
 
         }
         surfaceShaderSetOptions.numberOfDayTextures = dayTextures.length;
@@ -819,21 +819,22 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
             material = tileProvider._materialMaps[tileProvider._usedDrawCommands];
             globeSurfaceMaterial = tileProvider._uniformMaps[tileProvider._usedDrawCommands];
         }
-        command.localPosition = new Orillusion.Vector3(rtc.x,rtc.y,rtc.z);
-        if (material.defines.TEXTURE_UNITS !== material.dayTextures.length ||
-            imageryLen !== material.dayTextures.length ||
-            quantization === TerrainQuantization.BITS12 && !defined(material.defines.QUANTIZATION_BITS12) ||
-            quantization === TerrainQuantization.NONE && defined(material.defines.QUANTIZATION_BITS12)
-        ) {
-        }
+        command.localPosition = new Orillusion.Vector3(rtc.x, rtc.y, rtc.z);
+        // if (quantization === TerrainQuantization.BITS12
+        // ) {
+        //     tileProvider._materialMaps[tileProvider._usedDrawCommands].destroy();
+        //     material = createMaterialMap(frameState, tileProvider, surfaceShaderSetOptions, quantization);
+
+        // }
         ++tileProvider._usedDrawCommands;
         material.dayTextureTranslationAndScale = dayTextureTranslationAndScale;
         material.dayTextureTexCoordsRectangle = dayTextureTexCoordsRectangle;
-        material.shader.setTexture(`baseMap`,dayTextures[0]);
+        material.shader.setTexture(`baseMap`, dayTextures[0]);
         material.dayTextures = dayTextures;
-        material.shaderState.topology = GPUPrimitiveTopology.line_list;
-        
-        const viewMatrix =  frameState.camera.frustum._camera.viewMatrix.rawData;
+        // material.shaderState.topology = GPUPrimitiveTopology.line_list;
+        const projectionMatrix = frameState.camera.frustum.cesiumProjectMatrix;
+
+        const viewMatrix = frameState.camera.frustum._camera.viewMatrix.rawData;
         const centerEye = CesiumMatrix4.multiplyByPoint(
             viewMatrix,
             rtc,
@@ -844,33 +845,64 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
             centerEye,
             modifiedModelViewProjectionScratch
         );
-            vm.set(0,0,modifiedModelViewProjectionScratch[0]);
-            vm.set(0,1,modifiedModelViewProjectionScratch[4]);
-            vm.set(0,2,modifiedModelViewProjectionScratch[8]);
-            vm.set(0,3,modifiedModelViewProjectionScratch[12]);
-            vm.set(1,0,modifiedModelViewProjectionScratch[1]);
-            vm.set(1,1,modifiedModelViewProjectionScratch[5]);
-            vm.set(1,2,modifiedModelViewProjectionScratch[9]);
-            vm.set(1,3,modifiedModelViewProjectionScratch[13]);
-            vm.set(2,0,modifiedModelViewProjectionScratch[2]);
-            vm.set(2,1,modifiedModelViewProjectionScratch[6]);
-            vm.set(2,2,modifiedModelViewProjectionScratch[10]);
-            vm.set(2,3,modifiedModelViewProjectionScratch[14]);
-            vm.set(3,0,modifiedModelViewProjectionScratch[3]);
-            vm.set(3,1,modifiedModelViewProjectionScratch[7]);
-            vm.set(3,2,modifiedModelViewProjectionScratch[11]);
-            vm.set(3,3,modifiedModelViewProjectionScratch[15]);
-    
+        // CesiumMatrix4.multiply(
+        //     projectionMatrix,
+        //     modifiedModelViewProjectionScratch,
+        //     modifiedModelViewProjectionScratch
+        // );
+        vm.set(0, 0, modifiedModelViewProjectionScratch[0]); vm.set(1, 0, modifiedModelViewProjectionScratch[1]); vm.set(2, 0, modifiedModelViewProjectionScratch[2]); vm.set(3, 0, modifiedModelViewProjectionScratch[3]);
+        vm.set(0, 1, modifiedModelViewProjectionScratch[4]); vm.set(1, 1, modifiedModelViewProjectionScratch[5]); vm.set(2, 1, modifiedModelViewProjectionScratch[6]); vm.set(3, 1, modifiedModelViewProjectionScratch[7]);
+        vm.set(0, 2, modifiedModelViewProjectionScratch[8]); vm.set(1, 2, modifiedModelViewProjectionScratch[9]); vm.set(2, 2, modifiedModelViewProjectionScratch[10]); vm.set(3, 2, modifiedModelViewProjectionScratch[11]);
+        vm.set(0, 3, modifiedModelViewProjectionScratch[12]); vm.set(1, 3, modifiedModelViewProjectionScratch[13]); vm.set(2, 3, modifiedModelViewProjectionScratch[14]); vm.set(3, 3, modifiedModelViewProjectionScratch[15]);
+
+
+
+
+
+
+
+
+
+
         // //@ts-ignore
         material.modifiedModelView.setMatrix('matrixMVP_RTE', vm);
         material.modifiedModelView.apply();
+
+
+
+        if (mesh.show) {
+            material.QUANTIZATION_BITS12 = false;
+
+        } else {
+            material.QUANTIZATION_BITS12 = true;
+            scaleAndBias.set(0, 0, encoding.matrix[0]);
+            scaleAndBias.set(0, 1, encoding.matrix[4]);
+            scaleAndBias.set(0, 2, encoding.matrix[8]);
+            scaleAndBias.set(0, 3, encoding.matrix[12]);
+            scaleAndBias.set(1, 0, encoding.matrix[1]);
+            scaleAndBias.set(1, 1, encoding.matrix[5]);
+            scaleAndBias.set(1, 2, encoding.matrix[9]);
+            scaleAndBias.set(1, 3, encoding.matrix[13]);
+            scaleAndBias.set(2, 0, encoding.matrix[2]);
+            scaleAndBias.set(2, 1, encoding.matrix[6]);
+            scaleAndBias.set(2, 2, encoding.matrix[10]);
+            scaleAndBias.set(2, 3, encoding.matrix[14]);
+            scaleAndBias.set(3, 0, encoding.matrix[3]);
+            scaleAndBias.set(3, 1, encoding.matrix[7]);
+            scaleAndBias.set(3, 2, encoding.matrix[11]);
+            scaleAndBias.set(3, 3, encoding.matrix[15]);
+            material.minMaxHeight = new Orillusion.Vector2(encoding.minimumHeight, encoding.maximumHeight);
+            material.scaleAndBias = scaleAndBias;
+            debugger
+            // console.log(scaleAndBias)
+        }
+
+
         command._mesh.geometry = mesh.geometry;
         command._mesh.material = material;
-            if(mesh.show){
-                frameState.commandList.push(command);
-            }else{
-   
-            }
+        frameState.commandList.push(command);
+
+
 
     } while (imageryIndex < imageryLen);
     // const surfaceTile = tile.data;

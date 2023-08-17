@@ -71,7 +71,7 @@ interface orientationOptions {
     pitch?: number,
     roll?: number,
 }
-
+    const  mat = new Matrix4();
 function updateViewMatrix (camera: Camera) {
     CesiumMatrix4.computeView(
         camera._position,
@@ -88,7 +88,9 @@ function updateViewMatrix (camera: Camera) {
     CesiumMatrix4.inverseTransformation(camera._viewMatrix, camera._invViewMatrix);
 
 
-    let rowdata = new Float32Array([
+
+    //@ts-ignore
+    mat.rawData = new Float32Array([
         camera._invViewMatrix[0],
         camera._invViewMatrix[1],
         camera._invViewMatrix[2],
@@ -106,9 +108,6 @@ function updateViewMatrix (camera: Camera) {
         camera._invViewMatrix[14],
         camera._invViewMatrix[15]
     ]);
-    //@ts-ignore
-    let mat = new Matrix4();
-    mat.rawData = rowdata;
 
     let v3 = new Vector3();
     let qu4 = new Vector3();

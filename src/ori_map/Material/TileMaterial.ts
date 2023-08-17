@@ -86,6 +86,31 @@ class TileMaterial extends MaterialBase {
         }
     }
 
+    get minMaxHeight(){
+        return this.uniforms.u_minMaxHeight;
+    }
+
+    set minMaxHeight( res){
+        this.uniforms.u_minMaxHeight = res;
+        this.modifiedModelView.setVector2('u_minMaxHeight',res);
+        this.modifiedModelView.apply();
+    }
+
+    get scaleAndBias(){
+        return this.uniforms.u_scaleAndBias;
+    }
+
+    set scaleAndBias(res){
+        this.uniforms.u_scaleAndBias = res;
+        // this.shader.set('u_minMaxHeight',res);
+        this.modifiedModelView.setMatrix('u_scaleAndBias',res);
+
+        this.modifiedModelView.apply();
+
+
+    }
+
+
     get dayTextureTranslationAndScale() {
 
         return this.uniforms.u_dayTextureTranslationAndScale.value;
@@ -145,6 +170,15 @@ class TileMaterial extends MaterialBase {
      */
     public set shadowMap(texture: Texture) {
         //not need shadowMap texture
+    }
+
+    get QUANTIZATION_BITS12(){
+        return this.uniforms.QUANTIZATION_BITS12
+    }
+
+    set QUANTIZATION_BITS12(res:boolean){
+        this.uniforms.QUANTIZATION_BITS12 = res;
+        this.shader.setDefine('QUANTIZATION_BITS12',res)
     }
 
     getwgsl(num: number) {
@@ -238,6 +272,8 @@ class TileMaterial extends MaterialBase {
     
         struct MVPMatrix {
             matrixMVP_RTE: mat4x4<f32>,
+            u_minMaxHeight:vec2<f32>,
+            u_scaleAndBias:mat4x4<f32>,
         };
         
         @group(2) @binding(0)
@@ -247,11 +283,38 @@ class TileMaterial extends MaterialBase {
         
         ${uniform}
     
+
+        fn czm_decompressTextureCoordinates(encoded:f32) -> vec2<f32>
+        {
+           let temp = encoded / 4096.0;
+           let xZeroTo4095 = floor(temp);
+           let stx = xZeroTo4095 / 4095.0;
+           let sty = (encoded - xZeroTo4095 * 4096.0) / 4095.0;
+           return vec2<f32>(stx, sty);
+        }
+       
         
         fn Tile_ORI_Vert(vertex:VertexAttributes){
+            #if QUANTIZATION_BITS12
+
+            let xy = czm_decompressTextureCoordinates(vertex.position.x);
+            let zh = czm_decompressTextureCoordinates(vertex.position.y);
+            let position = vec3<f32>(xy, zh.x);
+            // // let height = zh.y;
+        
+            // // height = height * (modifiedModelView.u_minMaxHeight.y - modifiedModelView.u_minMaxHeight.x) + modifiedModelView.u_minMaxHeight.x;
+            var vertexPosition = (modifiedModelView.u_scaleAndBias * vec4<f32>(position.xyz, 1.0)).xyz;
+            var textureCoordinates = czm_decompressTextureCoordinates(vertex.position.z);
+            // var vertexNormal = vertex.normal;
+
+            #else
+
             var vertexPosition = vertex.position;
             var vertexNormal = vertex.normal;
-        
+            var textureCoordinates = vertex.uv;
+
+            #endif
+
             #if USE_MORPHTARGETS
             ${MorphTarget_shader.getMorphTargetCalcVertex()}    
             #endif
@@ -276,15 +339,8 @@ class TileMaterial extends MaterialBase {
             var viewPosition = ORI_MATRIX_V  * worldPos;
             var clipPosition = ORI_MATRIX_P *  modifiedModelView.matrixMVP_RTE * vec4<f32>(vertexPosition.xyz, 1.0) ;
             clipPosition = applyLogarithmicDepth(clipPosition,0.1,10000000000.0);
-            ORI_CameraWorldDir = normalize(ORI_CAMERAMATRIX[3].xyz - worldPos.xyz) ;
         
-            ORI_VertexOut.varying_UV0 = vertex.uv;
-            ORI_VertexOut.varying_UV1 = vertex.TEXCOORD_1.xy;
-            ORI_VertexOut.varying_ViewPos = viewPosition / viewPosition.w;
-            ORI_VertexOut.varying_Clip = clipPosition;
-            ORI_VertexOut.varying_WPos = worldPos;
-            ORI_VertexOut.varying_WPos.w = f32(vertex.index);
-            ORI_VertexOut.varying_WNormal = normalize(ORI_NORMALMATRIX * vertexNormal.xyz) ;
+            ORI_VertexOut.varying_UV0 = textureCoordinates;
             ORI_VertexOut.member = clipPosition;
             }
     
@@ -293,9 +349,7 @@ class TileMaterial extends MaterialBase {
                 logarithmicDepthConstant: f32,
                 perspectiveFarPlaneDistance: f32) -> vec4<f32>
            {
-           
             let z = log((clipPosition.z - logarithmicDepthConstant) / (perspectiveFarPlaneDistance - logarithmicDepthConstant) + 1.0) / log(2.0);
-           
                return vec4<f32>(clipPosition.x,clipPosition.y,z,clipPosition.w);
            }
     
@@ -308,10 +362,10 @@ class TileMaterial extends MaterialBase {
 
         
         fn frag(){
-            var transformUV1 = materialUniform.transformUV1;
-            var transformUV2 = materialUniform.transformUV2;
+            // var transformUV1 = materialUniform.transformUV1;
+            // var transformUV2 = materialUniform.transformUV2;
             var tileTextureCoordinates = vec2<f32>(ORI_VertexVarying.fragUV0.x, ORI_VertexVarying.fragUV0.y);
-            let color = textureSample(u_dayTextures0,baseMapSampler,tileTextureCoordinates).rgba;
+            // let color = textureSample(u_dayTextures0,baseMapSampler,tileTextureCoordinates).rgba;
             // if(color.w < 0.5){
             //     discard ;
             // }
@@ -319,7 +373,13 @@ class TileMaterial extends MaterialBase {
          
             ${sdf}
             // ORI_FragmentOutput.color = previousColor;
+            #if QUANTIZATION_BITS12
+            ORI_ShadingInput.BaseColor = vec4<f32>(0.0, 0.0, 0.5, 1.0);
+            #else
             ORI_ShadingInput.BaseColor = previousColor;
+
+            #endif
+
             UnLit();
         }
         `

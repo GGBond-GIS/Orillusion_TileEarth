@@ -17,6 +17,7 @@
     "@orillusion/core": "^0.6.8",
     "@orillusion/stats": "^0.2.0",
     "@tweenjs/tween.js": "^21.0.0",
-    "three": "^0.155.0"
+    "three": "^0.155.0",
+    "vite-plugin-mkcert": "^1.16.0"
   }
 }
