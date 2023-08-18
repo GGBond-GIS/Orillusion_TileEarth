@@ -48,6 +48,7 @@ import { TileImagery } from './TileImagery';
 import TileSelectionResult from './TileSelectionResult';
 import { GPUPrimitiveTopology, LitMaterial } from '@orillusion/core';
 import * as Orillusion from '@orillusion/core'
+import { TileMaterial2 } from '../Material/TileMaterial copy 2';
 const readyImageryScratch: any[] = [];
 const canRenderTraversalStack: any[] = [];
 
@@ -370,7 +371,7 @@ function sortTileImageryByLayerIndex(a: any, b: any) {
 }
 
 const createMaterialMap = (frameState: FrameState, tileProvider: any, surfaceShaderSetOptions: any, quantization: TerrainQuantization): TileMaterial => {
-    const material = new TileMaterial({
+    const material = new TileMaterial2({
         // side: DoubleSide
         // wireframe: true
         // depthTest: false

@@ -88,26 +88,30 @@ function updateViewMatrix (camera: Camera) {
     CesiumMatrix4.inverseTransformation(camera._viewMatrix, camera._invViewMatrix);
 
 
+    mat.set(0, 0, camera._invViewMatrix[0]); mat.set(1, 0, camera._invViewMatrix[1]); mat.set(2, 0, camera._invViewMatrix[2]); mat.set(3, 0, camera._invViewMatrix[3]);
+    mat.set(0, 1, camera._invViewMatrix[4]); mat.set(1, 1, camera._invViewMatrix[5]); mat.set(2, 1, camera._invViewMatrix[6]); mat.set(3, 1, camera._invViewMatrix[7]);
+    mat.set(0, 2, camera._invViewMatrix[8]); mat.set(1, 2, camera._invViewMatrix[9]); mat.set(2, 2, camera._invViewMatrix[10]); mat.set(3, 2, camera._invViewMatrix[11]);
+    mat.set(0, 3, camera._invViewMatrix[12]); mat.set(1, 3, camera._invViewMatrix[13]); mat.set(2, 3, camera._invViewMatrix[14]); mat.set(3, 3, camera._invViewMatrix[15]);
 
-    //@ts-ignore
-    mat.rawData = new Float32Array([
-        camera._invViewMatrix[0],
-        camera._invViewMatrix[1],
-        camera._invViewMatrix[2],
-        camera._invViewMatrix[3],
-        camera._invViewMatrix[4],
-        camera._invViewMatrix[5],
-        camera._invViewMatrix[6],
-        camera._invViewMatrix[7],
-        camera._invViewMatrix[8],
-        camera._invViewMatrix[9],
-        camera._invViewMatrix[10],
-        camera._invViewMatrix[11],
-        camera._invViewMatrix[12],
-        camera._invViewMatrix[13],
-        camera._invViewMatrix[14],
-        camera._invViewMatrix[15]
-    ]);
+    // //@ts-ignore
+    // mat.rawData = new Float32Array([
+    //     camera._invViewMatrix[0],
+    //     camera._invViewMatrix[1],
+    //     camera._invViewMatrix[2],
+    //     camera._invViewMatrix[3],
+    //     camera._invViewMatrix[4],
+    //     camera._invViewMatrix[5],
+    //     camera._invViewMatrix[6],
+    //     camera._invViewMatrix[7],
+    //     camera._invViewMatrix[8],
+    //     camera._invViewMatrix[9],
+    //     camera._invViewMatrix[10],
+    //     camera._invViewMatrix[11],
+    //     camera._invViewMatrix[12],
+    //     camera._invViewMatrix[13],
+    //     camera._invViewMatrix[14],
+    //     camera._invViewMatrix[15]
+    // ]);
 
     let v3 = new Vector3();
     let qu4 = new Vector3();

@@ -6,7 +6,7 @@ import { TileMaterialShader } from './TileMaterialShader';
 
 
 
-class TileMaterial extends MaterialBase {
+class TileMaterial2 extends MaterialBase {
     defines: any;
     uniforms: any;
     modifiedModelView: UniformGPUBuffer;
@@ -258,31 +258,17 @@ class TileMaterial extends MaterialBase {
 
 
         let wgsl = /*wgsl*/ `
-        #include "Common_vert"
-        #include "Common_frag"
-        #include "UnLit_frag"
-        #include "UnLitMaterialUniform_frag"
-    
-        @group(1) @binding(0)
-        var baseMapSampler: sampler;
-        @group(1) @binding(1)
-        var baseMap: texture_2d<f32>;
-    
-    
-    
+        #include "GlobalUniform"
+        #include "WorldMatrixUniform"
         struct MVPMatrix {
             matrixMVP_RTE: mat4x4<f32>,
             u_minMaxHeight:vec2<f32>,
             u_scaleAndBias:mat4x4<f32>,
         };
-        
         @group(2) @binding(0)
         var<uniform> modifiedModelView: MVPMatrix;
-    
-
         
         ${uniform}
-    
 
         fn czm_decompressTextureCoordinates(encoded:f32) -> vec2<f32>
         {
@@ -293,92 +279,90 @@ class TileMaterial extends MaterialBase {
            return vec2<f32>(stx, sty);
         }
        
-        
-        fn Tile_ORI_Vert(vertex:VertexAttributes){
-            #if QUANTIZATION_BITS12
+        #include "GlobalUniform"
+        #include "WorldMatrixUniform"
 
-            let xy = czm_decompressTextureCoordinates(vertex.position.x);
-            let zh = czm_decompressTextureCoordinates(vertex.position.y);
-            let position = vec3<f32>(xy, zh.x);
-            // // let height = zh.y;
-        
-            // // height = height * (modifiedModelView.u_minMaxHeight.y - modifiedModelView.u_minMaxHeight.x) + modifiedModelView.u_minMaxHeight.x;
-            var vertexPosition = (modifiedModelView.u_scaleAndBias * vec4<f32>(position.xyz, 1.0)).xyz;
-            var textureCoordinates = czm_decompressTextureCoordinates(vertex.position.z);
-            // var vertexNormal = vertex.normal;
 
-            #else
+        struct VertexInput {
+            @builtin(instance_index) index : u32,
+            @location(0) position: vec3<f32>,
+            @location(1) normal: vec3<f32>,
+            @location(2) uv: vec2<f32>,
+        };
 
-            var vertexPosition = vertex.position;
-            var vertexNormal = vertex.normal;
-            var textureCoordinates = vertex.uv;
+        struct VertexOutput {
+            @location(0) uv: vec2<f32>,
+            @location(1) color: vec4<f32>,
+            @location(2) worldPos: vec4<f32>,
+            @location(3) depthBuf: f32,
+            @builtin(position) member: vec4<f32>
+        };
+       
+        fn applyLogarithmicDepth(
+            clipPosition: vec4<f32>,
+            logarithmicDepthConstant: f32,
+            perspectiveFarPlaneDistance: f32) -> f32
+       {
+        let z =  log((clipPosition.z - logarithmicDepthConstant) / (perspectiveFarPlaneDistance - logarithmicDepthConstant) + 1.0) / log(2.0);
+        return z;
+       }
 
-            #endif
+        @vertex
+        fn VertMain( in: VertexInput ) -> VertexOutput {
+         
 
-            #if USE_MORPHTARGETS
-            ${MorphTarget_shader.getMorphTargetCalcVertex()}    
-            #endif
-        
-            #if USE_SKELETON
-                #if USE_JOINT_VEC8
-                    let skeletonNormal = getSkeletonWorldMatrix_8(vertex.joints0, vertex.weights0, vertex.joints1, vertex.weights1);
-                    ORI_MATRIX_M *= skeletonNormal ;
-                #else
-                    let skeletonNormal = getSkeletonWorldMatrix_4(vertex.joints0, vertex.weights0);
-                    ORI_MATRIX_M *= skeletonNormal ;
-                #endif
-            #endif
-        
-            #if USE_TANGENT
-                ORI_VertexOut.varying_Tangent = vertex.TANGENT ;
-            #endif
-        
-            ORI_NORMALMATRIX = transpose(inverse( mat3x3<f32>(ORI_MATRIX_M[0].xyz,ORI_MATRIX_M[1].xyz,ORI_MATRIX_M[2].xyz) ));
-        
-            var worldPos = (ORI_MATRIX_M * vec4<f32>(vertexPosition.xyz, 1.0));
-            var viewPosition = ORI_MATRIX_V  * worldPos;
-            var clipPosition = ORI_MATRIX_P *  modifiedModelView.matrixMVP_RTE * vec4<f32>(vertexPosition.xyz, 1.0) ;
-            clipPosition = applyLogarithmicDepth(clipPosition,0.1,10000000000.0);
-        
-            ORI_VertexOut.varying_UV0 = textureCoordinates;
-            ORI_VertexOut.member = clipPosition;
-            }
-    
-            fn applyLogarithmicDepth(
-                clipPosition: vec4<f32>,
-                logarithmicDepthConstant: f32,
-                perspectiveFarPlaneDistance: f32) -> vec4<f32>
-           {
-            let z = log((clipPosition.z - logarithmicDepthConstant) / (perspectiveFarPlaneDistance - logarithmicDepthConstant) + 1.0) / log(2.0);
-               return vec4<f32>(clipPosition.x,clipPosition.y,z,clipPosition.w);
-           }
-    
-    
-        fn vert(inputData:VertexAttributes) -> VertexOutput {
-            Tile_ORI_Vert(inputData) ;
-            return ORI_VertexOut ;
+
+
+            var out: VertexOutput;
+            out.uv = in.uv;
+            out.color = vec4<f32>(1, 1, 1, 1);
+            let clipPosition = globalUniform.projMat * modifiedModelView.matrixMVP_RTE * vec4<f32>(in.position.xyz,1.0);
+          
+            out.depthBuf = applyLogarithmicDepth(clipPosition,0.1,10000000000.0);
+            out.member = vec4<f32>(clipPosition.x,clipPosition.y,out.depthBuf,clipPosition.w);
+
+            return out;
         }
 
+        struct FragmentInput {
+            @location(0) uv: vec2<f32>,
+            @location(1) color: vec4<f32>,
+            @location(2) worldPos: vec4<f32>,
+            @location(3) depthBuf: f32,
+            @builtin(position) member: vec4<f32>
+        };
 
-        
-        fn frag(){
-            // var transformUV1 = materialUniform.transformUV1;
-            // var transformUV2 = materialUniform.transformUV2;
-            var tileTextureCoordinates = vec2<f32>(ORI_VertexVarying.fragUV0.x, ORI_VertexVarying.fragUV0.y);
+        struct FragmentOutput {
+            @location(0) color: vec4<f32>,
+            #if USE_WORLDPOS
+                @location(1) worldPos: vec4<f32>,
+            #endif
+            #if USEGBUFFER
+                @location(2) worldNormal: vec4<f32>,
+                @location(3) material: vec4<f32>,
+            #endif
+        };
+
+        @group(1) @binding(0)
+        var baseMapSampler: sampler;
+        @group(1) @binding(1)
+        var baseMap: texture_2d<f32>;
+
+        @fragment
+        fn FragMain( in: FragmentInput ) -> FragmentOutput {
+            var out: FragmentOutput;
+            out.worldPos = in.worldPos;
+            var tileTextureCoordinates = vec2<f32>(in.uv.x, in.uv.y);
 
             var previousColor = vec4<f32>(0.0, 0.0, 0.5, 1.0);
          
             ${sdf}
-            // ORI_FragmentOutput.color = previousColor;
-            #if QUANTIZATION_BITS12
-            ORI_ShadingInput.BaseColor = vec4<f32>(0.0, 0.0, 0.5, 1.0);
-            #else
-            ORI_ShadingInput.BaseColor = previousColor;
 
-            #endif
-
-            UnLit();
+            out.color = previousColor;
+            return out;
         }
+        
+        
         `
         return wgsl
     }
@@ -415,4 +399,4 @@ class TileMaterial extends MaterialBase {
     }
 }
 
-export { TileMaterial };
+export { TileMaterial2 };
