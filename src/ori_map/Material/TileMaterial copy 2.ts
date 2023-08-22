@@ -295,6 +295,7 @@ class TileMaterial2 extends MaterialBase {
             @location(1) color: vec4<f32>,
             @location(2) worldPos: vec4<f32>,
             @location(3) depthBuf: f32,
+            @location(4) compressed0: vec4<f32>,
             @builtin(position) member: vec4<f32>
         };
        
@@ -314,10 +315,20 @@ class TileMaterial2 extends MaterialBase {
 
 
             var out: VertexOutput;
-            out.uv = in.uv;
             out.color = vec4<f32>(1, 1, 1, 1);
+
+            #if QUANTIZATION_BITS12
+            let xy = czm_decompressTextureCoordinates(in.compressed0.x);
+            let zh = czm_decompressTextureCoordinates(in.compressed0.y);
+            let position = vec3<f32>(xy, zh.x);
+            out.uv = czm_decompressTextureCoordinates(in.compressed0.z);
+
+            let clipPosition = (modifiedModelView.u_scaleAndBias * vec4(position, 1.0)).xyz;
+            #else
             let clipPosition = globalUniform.projMat * modifiedModelView.matrixMVP_RTE * vec4<f32>(in.position.xyz,1.0);
-          
+            out.uv = in.uv;
+
+            #endif
             out.depthBuf = applyLogarithmicDepth(clipPosition,0.1,10000000000.0);
             out.member = vec4<f32>(clipPosition.x,clipPosition.y,out.depthBuf,clipPosition.w);
 

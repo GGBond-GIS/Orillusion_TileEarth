@@ -49,6 +49,7 @@ import TileSelectionResult from './TileSelectionResult';
 import { GPUPrimitiveTopology, LitMaterial } from '@orillusion/core';
 import * as Orillusion from '@orillusion/core'
 import { TileMaterial2 } from '../Material/TileMaterial copy 2';
+import { TerrainEncoding } from '../Core/TerrainEncoding';
 const readyImageryScratch: any[] = [];
 const canRenderTraversalStack: any[] = [];
 
@@ -871,10 +872,7 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
 
 
 
-        if (mesh.show) {
-            material.QUANTIZATION_BITS12 = false;
-
-        } else {
+        if ((mesh.encoding as TerrainEncoding).quantization === TerrainQuantization.BITS12) {
             material.QUANTIZATION_BITS12 = true;
             scaleAndBias.set(0, 0, encoding.matrix[0]);
             scaleAndBias.set(0, 1, encoding.matrix[4]);
@@ -894,7 +892,10 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
             scaleAndBias.set(3, 3, encoding.matrix[15]);
             material.minMaxHeight = new Orillusion.Vector2(encoding.minimumHeight, encoding.maximumHeight);
             material.scaleAndBias = scaleAndBias;
-            debugger
+
+        } else {
+            material.QUANTIZATION_BITS12 = false;
+           
             // console.log(scaleAndBias)
         }
 

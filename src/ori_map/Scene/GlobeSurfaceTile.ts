@@ -509,6 +509,7 @@ class GlobeSurfaceTile {
             // geometry.setAttribute('compressed0', compressed0);
             let positon= [];
             let uv = [];
+            let compressed = [];
             for (let index = 0; index < compressed0.array.length; index+=4) {
                 
                 const element0 = vertexBuffer.array[index];
@@ -522,10 +523,12 @@ class GlobeSurfaceTile {
             
                 uv.push(...textureCoordinates);
                 positon.push(...position);
+                compressed.push(...[element0,element1,element2,element3])
             }
             geometry.setAttribute(VertexAttributeName.position,new Float32Array(positon));
+            geometry.setAttribute(`compressed0`,new Float32Array(compressed));
             geometry.setAttribute(VertexAttributeName.uv, new Float32Array(uv) as Float32Array);
-            mesh.show = false;
+            mesh.show = true;
             //压缩定点算法还没做这里取消渲染
         } else {
             const vertexBuffer = new InterleavedBuffer(typedArray, attributes[0].componentsPerAttribute + attributes[1].componentsPerAttribute);

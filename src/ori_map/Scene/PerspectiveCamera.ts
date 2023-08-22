@@ -14,9 +14,10 @@ export class PerspectiveCamera extends Object3D{
         let hc =  this._cameraObj.addComponent(HoverCameraController);
         hc.setCamera(0,0,1);
         setTimeout(()=>{
+        hc.setCamera(0,0,0);
             hc.destroy();
             this._camera.transform.z = 0;
-        },1000);
+        },100);
         this._camera.frustum.update = ()=>{};
         this.addChild(this._cameraObj);
 

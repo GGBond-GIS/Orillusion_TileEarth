@@ -323,6 +323,32 @@ class CesiumMatrix4 {
         return result;
     }
 
+    static setTranslationOri (matrix:CesiumMatrix4, translation:Cartesian3, result:CesiumMatrix4):CesiumMatrix4 {
+        result[0] = matrix[0];
+        result[1] = matrix[1];
+        result[2] = matrix[2];
+        result[3] = matrix[3];
+
+        result[4] = matrix[4];
+        result[5] = matrix[5];
+        result[6] = matrix[6];
+        result[7] = matrix[7];
+
+        result[8] = matrix[8];
+        result[9] = matrix[9];
+        result[10] = matrix[10];
+        result[11] = matrix[11];
+
+        result[12] = translation.x;
+        result[13] = translation.y;
+        result[14] = translation.z;
+        result[15] = matrix[15];
+
+        return result;
+    }
+
+
+
     /**
      * Computes a Matrix4 instance representing a non-uniform scale.
      *
