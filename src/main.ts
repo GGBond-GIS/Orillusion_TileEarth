@@ -1,4 +1,4 @@
-import { Engine3D, Scene3D, Object3D, Camera3D, LitMaterial, BoxGeometry, MeshRenderer, DirectLight, HoverCameraController, Color, Vector3, AtmosphericComponent, View3D, ComponentBase, SphereGeometry } from '@orillusion/core'
+import { Engine3D, Scene3D, Object3D, Camera3D, LitMaterial, BoxGeometry, MeshRenderer, DirectLight, HoverCameraController, Color, Vector3, AtmosphericComponent, View3D, ComponentBase, SphereGeometry, InstanceDrawComponent } from '@orillusion/core'
 import { CesiumScene } from './ori_map/Scene/CesiumScene'
 import { Stats } from "@orillusion/stats"
 import { UrlTemplateImageryProvider } from './ori_map/Scene/UrlTemplateImageryProvider';
@@ -34,6 +34,8 @@ class ControllerUpdate extends ComponentBase {
     // updateViewMatrix(cesium_camera)
   }
 }
+scene3D._renderCollection.addComponent(InstanceDrawComponent);
+
 scene3D.addComponent(ControllerUpdate);
 const Sphere: Object3D = new Object3D()
 // add MeshRenderer to the object
