@@ -260,6 +260,7 @@ class TileMaterial2 extends MaterialBase {
         let wgsl = /*wgsl*/ `
         #include "GlobalUniform"
         #include "WorldMatrixUniform"
+        
         struct MVPMatrix {
             matrixMVP_RTE: mat4x4<f32>,
             u_minMaxHeight:vec2<f32>,
@@ -369,6 +370,8 @@ class TileMaterial2 extends MaterialBase {
          
             ${sdf}
 
+            
+            
             out.color = previousColor;
             return out;
         }

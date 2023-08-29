@@ -22,6 +22,7 @@ class DrawMeshCommand extends Object3D {
         super();
         // this.name = ''
         this._mesh =  this.addComponent(MeshRenderer);
+        this._mesh.receiveShadow = true
         this.derivedCommands = {
             // originalMaterial: this.material,
             oit: undefined,

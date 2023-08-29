@@ -1,11 +1,31 @@
-import { Engine3D, Scene3D, Object3D, Camera3D, LitMaterial, BoxGeometry, MeshRenderer, DirectLight, HoverCameraController, Color, Vector3, AtmosphericComponent, View3D, ComponentBase, SphereGeometry, InstanceDrawComponent } from '@orillusion/core'
+import { Engine3D, Scene3D, Object3D, Camera3D, LitMaterial, BoxGeometry, MeshRenderer, DirectLight, HoverCameraController, Color, Vector3, AtmosphericComponent, View3D, ComponentBase, SphereGeometry, InstanceDrawComponent, TAAPost, PostProcessingComponent } from '@orillusion/core'
 import { CesiumScene } from './ori_map/Scene/CesiumScene'
 import { Stats } from "@orillusion/stats"
 import { UrlTemplateImageryProvider } from './ori_map/Scene/UrlTemplateImageryProvider';
 import { TileCoordinatesImageryProvider } from './ori_map/Scene/TileCoordinatesImageryProvider';
 import { WebMapTileServiceImageryProvider } from './ori_map/Scene/WebMapTileServiceImageryProvider';
 import { GeographicTilingScheme } from './ori_map/Core/GeographicTilingScheme';
-await Engine3D.init();
+// 引擎全局配置设置
+//@ts-ignore
+Engine3D.setting.render.postProcessing.taa.jitterSeedCount = 8;
+//@ts-ignore
+Engine3D.setting.render.postProcessing.taa.blendFactor = 0.1;
+//@ts-ignore
+Engine3D.setting.render.postProcessing.taa.sharpFactor = 0.6;
+//@ts-ignore
+Engine3D.setting.render.postProcessing.taa.sharpPreBlurFactor = 0.5;
+//@ts-ignore
+Engine3D.setting.render.postProcessing.taa.temporalJitterScale = 0.6;
+
+
+Engine3D.setting.shadow.shadowSize = 2048
+Engine3D.setting.shadow.shadowBound = 1000;
+Engine3D.setting.shadow.shadowBias = 0.0005;
+
+await Engine3D.init({canvasConfig:{
+
+  devicePixelRatio: 1 // 渲染 DPR, 默认使用 window.devicePixelRatio
+}});
 //@ts-ignore
 let scene3D: CesiumScene = window.scene = new CesiumScene({})
 // let cameraObj: Object3D = new Object3D()
@@ -15,6 +35,7 @@ let scene3D: CesiumScene = window.scene = new CesiumScene({})
 // controller.setCamera(0, 0, 15)
 // scene3D.addChild(scene3D.cameraObj as Object3D);
 scene3D.addComponent(Stats);
+
 // create light
 let light: Object3D = new Object3D()
 // add direct light component
@@ -31,7 +52,6 @@ class ControllerUpdate extends ComponentBase {
     // update lifecycle codes
     scene3D.render()
     scene3D.screenSpaceCameraController.update()
-    // updateViewMatrix(cesium_camera)
   }
 }
 scene3D._renderCollection.addComponent(InstanceDrawComponent);
@@ -109,4 +129,23 @@ let view = window.view = new View3D()
 view.scene = scene3D
 view.camera = scene3D.cameraObj._camera;
 // start render
-Engine3D.startRenderView(view)
+Engine3D.startRenderView(view);
+
+
+
+
+
+
+
+// 添加后处理组件
+let postProcessing = scene3D.addComponent(PostProcessingComponent);
+
+// // 添加TAAPost
+// let taaPost = postProcessing.addPost(TAAPost);
+
+// // 通过 taaPost 对象设置（引擎全局配置和此处基于 taaPost 对象设置，结果是等价的）
+// taaPost.jitterSeedCount = 8;
+// taaPost.blendFactor = 0.1;
+// taaPost.sharpFactor = 0.6;
+// taaPost.sharpPreBlurFactor = 0.5;
+// taaPost.temporalJitterScale = 0.6;

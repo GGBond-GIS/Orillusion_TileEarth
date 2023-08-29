@@ -208,10 +208,13 @@ function updateAndRenderPrimitives (scene: CesiumScene) {
     if (scene._globe) {
         scene._globe.render(frameState);
     }
-
-    for (const command of frameState.commandList) {
-            scene._renderCollection.addChild(command);
+    for (let index = 0; index < frameState.commandList.length; index++) {
+        const command = frameState.commandList[index];
+        scene._renderCollection.addChild(command);
+        
     }
+    // for (const command of frameState.commandList) {
+    // }
 }
 
 const executeComputeCommands = (scene: CesiumScene) => {

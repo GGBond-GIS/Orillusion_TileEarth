@@ -34,19 +34,18 @@ import { BufferUsage } from '../Renderer/BufferUsage';
 import { Buffer } from '../Renderer/Buffer';
 import { GeometryBase, VertexAttributeName } from '@orillusion/core';
 
-function disposeArray () {
+function disposeArray() {
 
     // this.array = null;
 
 }
 
-function czm_decompressTextureCoordinates( encoded:number)
-{
-   let temp = encoded / 4096.0;
-   let xZeroTo4095 = new Float32Array([temp])[0];
-   let stx = xZeroTo4095 / 4095.0;
-   let sty = (encoded - xZeroTo4095 * 4096.0) / 4095.0;
-   return [stx, sty];
+function czm_decompressTextureCoordinates(encoded: number) {
+    let temp = encoded / 4096.0;
+    let xZeroTo4095 = new Float32Array([temp])[0];
+    let stx = xZeroTo4095 / 4095.0;
+    let sty = (encoded - xZeroTo4095 * 4096.0) / 4095.0;
+    return [stx, sty];
 }
 
 
@@ -55,7 +54,7 @@ function czm_decompressTextureCoordinates( encoded:number)
 
 const scratchCartographic = new Cartographic();
 
-function getPosition (encoding: any, mode: any, projection: any, vertices: any, index: any, result: any) {
+function getPosition(encoding: any, mode: any, projection: any, vertices: any, index: any, result: any) {
     let position = encoding.getExaggeratedPosition(vertices, index, result);
 
     if (defined(mode) && mode !== SceneMode.SCENE3D) {
@@ -80,7 +79,7 @@ const scratchV0 = new Cartesian3();
 const scratchV1 = new Cartesian3();
 const scratchV2 = new Cartesian3();
 
-function toggleGeodeticSurfaceNormals (
+function toggleGeodeticSurfaceNormals(
     surfaceTile: any,
     enabled: any,
     ellipsoid: any,
@@ -186,13 +185,13 @@ class GlobeSurfaceTile {
      * @memberof GlobeSurfaceTile.prototype
      * @type {Boolean}
      */
-    get eligibleForUnloading (): boolean {
+    get eligibleForUnloading(): boolean {
         // Do not remove tiles that are transitioning or that have
         // imagery that is transitioning.
         const terrainState = this.terrainState;
         const loadingIsTransitioning =
-        terrainState === TerrainState.RECEIVING ||
-        terrainState === TerrainState.TRANSFORMING;
+            terrainState === TerrainState.RECEIVING ||
+            terrainState === TerrainState.TRANSFORMING;
 
         let shouldRemoveTile = !loadingIsTransitioning;
 
@@ -200,8 +199,8 @@ class GlobeSurfaceTile {
         for (let i = 0, len = imagery.length; shouldRemoveTile && i < len; ++i) {
             const tileImagery = imagery[i] as TileImagery;
             shouldRemoveTile =
-            !defined(tileImagery.loadingImagery) ||
-            (tileImagery.loadingImagery as Imagery).state !== ImageryState.TRANSITIONING;
+                !defined(tileImagery.loadingImagery) ||
+                (tileImagery.loadingImagery as Imagery).state !== ImageryState.TRANSITIONING;
         }
 
         return shouldRemoveTile;
@@ -217,7 +216,7 @@ class GlobeSurfaceTile {
      * @memberof GlobeSurfaceTile.prototype
      * @type {TerrainMesh}
      */
-    get renderedMesh (): any {
+    get renderedMesh(): any {
         if (defined(this.vertexArray)) {
             return this.mesh;
         } else if (defined(this.fill)) {
@@ -226,7 +225,7 @@ class GlobeSurfaceTile {
         return undefined;
     }
 
-    pick (
+    pick(
         ray: any,
         mode: any,
         projection: any,
@@ -271,7 +270,7 @@ class GlobeSurfaceTile {
             : undefined;
     }
 
-    freeResources () {
+    freeResources() {
         if (defined(this.waterMaskTexture)) {
             --this.waterMaskTexture.referenceCount;
             if (this.waterMaskTexture.referenceCount === 0) {
@@ -295,14 +294,14 @@ class GlobeSurfaceTile {
         this.freeVertexArray();
     }
 
-    freeVertexArray () {
+    freeVertexArray() {
         GlobeSurfaceTile._freeVertexArray(this.vertexArray);
         this.vertexArray = undefined;
         GlobeSurfaceTile._freeVertexArray(this.wireframeVertexArray);
         this.wireframeVertexArray = undefined;
     }
 
-    static initialize (
+    static initialize(
         tile: any,
         terrainProvider: any,
         imageryLayerCollection: any
@@ -318,7 +317,7 @@ class GlobeSurfaceTile {
         }
     }
 
-    static processStateMachine (
+    static processStateMachine(
         tile: any,
         frameState: any,
         terrainProvider: any,
@@ -360,8 +359,8 @@ class GlobeSurfaceTile {
         // If this tile's terrain and imagery are just upsampled from its parent, mark the tile as
         // upsampled only.  We won't refine a tile if its four children are upsampled only.
         tile.upsampledFromParent =
-      defined(surfaceTile.terrainData) &&
-      surfaceTile.terrainData.wasCreatedByUpsampling();
+            defined(surfaceTile.terrainData) &&
+            surfaceTile.terrainData.wasCreatedByUpsampling();
 
         const isImageryDoneLoading = surfaceTile.processImagery(
             tile,
@@ -392,7 +391,7 @@ class GlobeSurfaceTile {
         }
     }
 
-    processImagery (
+    processImagery(
         tile: QuadtreeTile,
         terrainProvider: any,
         frameState: FrameState,
@@ -416,8 +415,8 @@ class GlobeSurfaceTile {
             if ((tileImagery.loadingImagery as Imagery).state === ImageryState.PLACEHOLDER) {
                 const imageryLayer = (tileImagery.loadingImagery as Imagery).imageryLayer;
                 if (imageryLayer.imageryProvider.ready) {
-                // Remove the placeholder and add the actual skeletons (if any)
-                // at the same position.  Then continue the loop at the same index.
+                    // Remove the placeholder and add the actual skeletons (if any)
+                    // at the same position.  Then continue the loop at the same index.
                     tileImagery.freeResources();
                     tileImageryCollection.splice(i, 1);
                     imageryLayer._createTileImagerySkeletons(tile, terrainProvider, i);
@@ -438,15 +437,15 @@ class GlobeSurfaceTile {
 
             // The imagery is renderable as soon as we have any renderable imagery for this region.
             isAnyTileLoaded =
-            isAnyTileLoaded ||
-            thisTileDoneLoading ||
-            defined(tileImagery.readyImagery);
+                isAnyTileLoaded ||
+                thisTileDoneLoading ||
+                defined(tileImagery.readyImagery);
 
             isUpsampledOnly =
-            isUpsampledOnly &&
-            defined(tileImagery.loadingImagery) &&
-            ((tileImagery.loadingImagery as Imagery).state === ImageryState.FAILED ||
-            (tileImagery.loadingImagery as Imagery).state === ImageryState.INVALID);
+                isUpsampledOnly &&
+                defined(tileImagery.loadingImagery) &&
+                ((tileImagery.loadingImagery as Imagery).state === ImageryState.FAILED ||
+                    (tileImagery.loadingImagery as Imagery).state === ImageryState.INVALID);
         }
 
         tile.upsampledFromParent = isUpsampledOnly;
@@ -456,20 +455,20 @@ class GlobeSurfaceTile {
         return isDoneLoading;
     }
 
-    addGeodeticSurfaceNormals (
+    addGeodeticSurfaceNormals(
         ellipsoid: Ellipsoid,
         frameState: FrameState
     ): void {
         toggleGeodeticSurfaceNormals(this, true, ellipsoid, frameState);
     }
 
-    removeGeodeticSurfaceNormals (
+    removeGeodeticSurfaceNormals(
         frameState: FrameState
     ): void {
         toggleGeodeticSurfaceNormals(this, false, undefined, frameState);
     }
 
-    static _createVertexArrayForMesh (context: Context, mesh: any) {
+    static _createVertexArrayForMesh(context: Context, mesh: any) {
         const typedArray = mesh.vertices;
         const buffer = Buffer.createVertexBuffer({
             context: context,
@@ -504,51 +503,46 @@ class GlobeSurfaceTile {
             const vertexBuffer = new InterleavedBuffer(typedArray, attributes[0].componentsPerAttribute);
             vertexBuffer.setUsage(StaticDrawUsage);
             const compressed0 = new InterleavedBufferAttribute(vertexBuffer, attributes[0].componentsPerAttribute, 0, false);
-            console.log(compressed0,vertexBuffer,mesh);
+            console.log(compressed0, vertexBuffer, mesh);
             compressed0.data
             // geometry.setAttribute('compressed0', compressed0);
-            let positon= [];
+            let positon = [];
             let uv = [];
             let compressed = [];
-            for (let index = 0; index < compressed0.array.length; index+=4) {
-                
+            for (let index = 0; index < compressed0.array.length; index += 4) {
+
                 const element0 = vertexBuffer.array[index];
-                const element1 = vertexBuffer.array[index+1];
-                const element2 = vertexBuffer.array[index+2];
-                const element3 = vertexBuffer.array[index+3];
+                const element1 = vertexBuffer.array[index + 1];
+                const element2 = vertexBuffer.array[index + 2];
+                const element3 = vertexBuffer.array[index + 3];
                 let xy = czm_decompressTextureCoordinates(element0);
                 let zh = czm_decompressTextureCoordinates(element1);
-                let position =[...xy,zh[0]]
+                let position = [...xy, zh[0]]
                 let textureCoordinates = czm_decompressTextureCoordinates(element2);
-            
+
                 uv.push(...textureCoordinates);
                 positon.push(...position);
-                compressed.push(...[element0,element1,element2,element3])
+                compressed.push(...[element0, element1, element2, element3])
             }
-            geometry.setAttribute(VertexAttributeName.position,new Float32Array(positon));
-            geometry.setAttribute(`compressed0`,new Float32Array(compressed));
+            geometry.setAttribute(VertexAttributeName.position, new Float32Array(positon));
+            geometry.setAttribute(`compressed0`, new Float32Array(compressed));
             geometry.setAttribute(VertexAttributeName.uv, new Float32Array(uv) as Float32Array);
             mesh.show = true;
             //压缩定点算法还没做这里取消渲染
         } else {
-            const vertexBuffer = new InterleavedBuffer(typedArray, attributes[0].componentsPerAttribute + attributes[1].componentsPerAttribute);
-
-            vertexBuffer.setUsage(StaticDrawUsage);
-
-            const position3DAndHeight = new InterleavedBufferAttribute(vertexBuffer, attributes[0].componentsPerAttribute - 1, 0, false);
-            const textureCoordAndEncodedNormals = new InterleavedBufferAttribute(vertexBuffer, attributes[1].componentsPerAttribute - 1, attributes[0].componentsPerAttribute, false);
+            const vertexBuffer = mesh.vertices;
             let positon = [];
-            let uv =[];
-            for (let index = 0; index < vertexBuffer.array.length; index+=7) {
-                const element = vertexBuffer.array[index];
-                const element1 = vertexBuffer.array[index+1];
-                const element2 = vertexBuffer.array[index+2];
-                const element3 = vertexBuffer.array[index+3];
-                const element4 = vertexBuffer.array[index+4];
-                const element5 = vertexBuffer.array[index+5];
-                const element6 = vertexBuffer.array[index+6];
-                positon.push(...[element,element1,element2]);
-                uv.push(...[element4,element5])
+            let uv = [];
+            for (let index = 0; index < vertexBuffer.length; index += 7) {
+                const element = vertexBuffer[index];
+                const element1 = vertexBuffer[index + 1];
+                const element2 = vertexBuffer[index + 2];
+                const element3 = vertexBuffer[index + 3];
+                const element4 = vertexBuffer[index + 4];
+                const element5 = vertexBuffer[index + 5];
+                const element6 = vertexBuffer[index + 6];
+                positon.push(...[element, element1, element2]);
+                uv.push(...[element4, element5])
             }
             let feop = new Float32Array(positon);
 
@@ -556,11 +550,12 @@ class GlobeSurfaceTile {
             geometry.setAttribute(VertexAttributeName.position, feop as Float32Array);
             geometry.setAttribute(VertexAttributeName.uv, new Float32Array(uv) as Float32Array);
             mesh.show = true;
-
+            positon = [];
+            uv = [];
             // geometry.setAttribute('textureCoordAndEncodedNormals', textureCoordAndEncodedNormals);
         }
 
-     
+        geometry.computeNormals();
         geometry.addSubGeometry({
             indexStart: 0,
             indexCount: mesh.indices.length,
@@ -621,57 +616,39 @@ class GlobeSurfaceTile {
         // return geometry;
     }
 
-    static _freeVertexArray (vertexArray: any) {
-        if (defined(vertexArray)) {
-            const indexBuffer = vertexArray.index;
+    static _freeVertexArray(geometry: GeometryBase) {
 
+        if (defined(geometry)) {
+            // const indexBuffer = geometry.vertexBuffer;
+            // geometry.setIndices(new Float32Array());
+            // geometry.setAttribute(VertexAttributeName.position, new Float32Array());
+            // geometry.setAttribute(VertexAttributeName.uv, new Float32Array());
+            // vertexArray.vertexBuffer.updateAttributes(VertexAttributeName.position,[])
             // if (!vertexArray.isDestroyed()) {
-            //     vertexArray.destroy();
+            //   vertexArray.destroy();
             // }
+            // vertexArray.destroy();
 
             // if (
-            //     defined(indexBuffer) &&
-            // !indexBuffer.isDestroyed() &&
-            // defined(indexBuffer.referenceCount)
+            //   defined(indexBuffer) &&
+            //   !indexBuffer.isDestroyed() &&
+            //   defined(indexBuffer.referenceCount)
             // ) {
-            //     --indexBuffer.referenceCount;
-            //     if (indexBuffer.referenceCount === 0) {
-            //         indexBuffer.destroy();
-            //     }
+            //   --indexBuffer.referenceCount;
+            //   if (indexBuffer.referenceCount === 0) {
+            //   }
             // }
-
-            // let attributes = vertexArray.attributes;
-
-            // for (const key in attributes) {
-            //     // (attributes[key] as BufferAttribute).array = [];
-            //     // (attributes[key] as any) = null;
-
-            //     if (attributes[key] instanceof InterleavedBufferAttribute) {
-            //         (attributes[key] as InterleavedBufferAttribute).data.array = [];
-            //     } else if (attributes[key] instanceof BufferAttribute) {
-            //         (attributes[key] as BufferAttribute).array = [];
-            //     }
-            // }
-            // attributes = {};
-            // if (defined(indexBuffer)) {
-            //     (indexBuffer as BufferAttribute).array = [];
-            //     indexBuffer = null;
-            // }
-            // console.log(vertexArray);
-            // vertexArray.
-            // console.log(vertexArray);
-            // vertexArray.destroy(true);
         }
     }
 
-    _findAncestorTileWithTerrainData (tile: any) {
+    _findAncestorTileWithTerrainData(tile: any) {
         let sourceTile = tile.parent;
 
         while (
             defined(sourceTile) &&
-          (!defined(sourceTile.data) ||
-            !defined(sourceTile.data.terrainData) ||
-            sourceTile.data.terrainData.wasCreatedByUpsampling())
+            (!defined(sourceTile.data) ||
+                !defined(sourceTile.data.terrainData) ||
+                sourceTile.data.terrainData.wasCreatedByUpsampling())
         ) {
             sourceTile = sourceTile.parent;
         }
@@ -679,7 +656,7 @@ class GlobeSurfaceTile {
         return sourceTile;
     }
 
-    _computeWaterMaskTranslationAndScale (
+    _computeWaterMaskTranslationAndScale(
         tile: any,
         sourceTile: any,
         result: any
@@ -692,9 +669,9 @@ class GlobeSurfaceTile {
         const scaleX = tileWidth / sourceTileRectangle.width;
         const scaleY = tileHeight / sourceTileRectangle.height;
         result.x =
-          (scaleX * (tileRectangle.west - sourceTileRectangle.west)) / tileWidth;
+            (scaleX * (tileRectangle.west - sourceTileRectangle.west)) / tileWidth;
         result.y =
-          (scaleY * (tileRectangle.south - sourceTileRectangle.south)) / tileHeight;
+            (scaleY * (tileRectangle.south - sourceTileRectangle.south)) / tileHeight;
         result.z = scaleX;
         result.w = scaleY;
 
@@ -702,7 +679,7 @@ class GlobeSurfaceTile {
     }
 }
 
-function prepareNewTile (tile: any, terrainProvider: any, imageryLayerCollection: any) {
+function prepareNewTile(tile: any, terrainProvider: any, imageryLayerCollection: any) {
     let available = terrainProvider.getTileDataAvailable(
         tile.x,
         tile.y,
@@ -737,7 +714,7 @@ function prepareNewTile (tile: any, terrainProvider: any, imageryLayerCollection
     }
 }
 
-function processTerrainStateMachine (
+function processTerrainStateMachine(
     tile: any,
     frameState: FrameState,
     terrainProvider: any,
@@ -751,12 +728,12 @@ function processTerrainStateMachine (
     const parent = tile.parent;
     if (
         surfaceTile.terrainState === TerrainState.FAILED &&
-      parent !== undefined
+        parent !== undefined
     ) {
         const parentReady =
-        parent.data !== undefined &&
-        parent.data.terrainData !== undefined &&
-        parent.data.terrainData.canUpsample !== false;
+            parent.data !== undefined &&
+            parent.data.terrainData !== undefined &&
+            parent.data.terrainData.canUpsample !== false;
         if (!parentReady) {
             GlobeSurfaceTile.processStateMachine(
                 parent,
@@ -816,8 +793,8 @@ function processTerrainStateMachine (
 
     if (
         surfaceTile.terrainState >= TerrainState.RECEIVED &&
-      surfaceTile.waterMaskTexture === undefined &&
-      terrainProvider.hasWaterMask
+        surfaceTile.waterMaskTexture === undefined &&
+        terrainProvider.hasWaterMask
     ) {
         const terrainData = surfaceTile.terrainData;
         if (terrainData.waterMask !== undefined) {
@@ -837,7 +814,7 @@ function processTerrainStateMachine (
     }
 }
 
-function upsample (surfaceTile: any, tile: any, frameState: any, terrainProvider: any, x: any, y: any, level: any) {
+function upsample(surfaceTile: any, tile: any, frameState: any, terrainProvider: any, x: any, y: any, level: any) {
     const parent = tile.parent;
     if (!parent) {
         // Trying to upsample from a root tile. No can do. This tile is a failure.
@@ -883,16 +860,16 @@ function upsample (surfaceTile: any, tile: any, frameState: any, terrainProvider
     );
 }
 
-function requestTileGeometry (surfaceTile: any, terrainProvider: any, x: any, y: any, level: any) {
-    function success (terrainData: any) {
+function requestTileGeometry(surfaceTile: any, terrainProvider: any, x: any, y: any, level: any) {
+    function success(terrainData: any) {
         surfaceTile.terrainData = terrainData;
         surfaceTile.terrainState = TerrainState.RECEIVED;
         surfaceTile.request = undefined;
     }
 
-    function failure (error: any) {
+    function failure(error: any) {
         if (surfaceTile.request.state === RequestState.CANCELLED) {
-        // Cancelled due to low priority - try again later.
+            // Cancelled due to low priority - try again later.
             surfaceTile.terrainData = undefined;
             surfaceTile.terrainState = TerrainState.UNLOADED;
             surfaceTile.request = undefined;
@@ -905,15 +882,15 @@ function requestTileGeometry (surfaceTile: any, terrainProvider: any, x: any, y:
         surfaceTile.request = undefined;
 
         const message =
-        'Failed to obtain terrain tile X: ' +
-        x +
-        ' Y: ' +
-        y +
-        ' Level: ' +
-        level +
-        '. Error message: "' +
-        error +
-        '"';
+            'Failed to obtain terrain tile X: ' +
+            x +
+            ' Y: ' +
+            y +
+            ' Level: ' +
+            level +
+            '. Error message: "' +
+            error +
+            '"';
         terrainProvider._requestError = TileProviderError.handleError(
             terrainProvider._requestError,
             terrainProvider,
@@ -926,7 +903,7 @@ function requestTileGeometry (surfaceTile: any, terrainProvider: any, x: any, y:
         );
     }
 
-    function doRequest () {
+    function doRequest() {
         // Request the terrain from the terrain provider.
         const request = new Request({
             throttle: false,
@@ -948,7 +925,7 @@ function requestTileGeometry (surfaceTile: any, terrainProvider: any, x: any, y:
             surfaceTile.terrainState = TerrainState.RECEIVING;
             when(requestPromise, success, failure);
         } else {
-        // Deferred - try again later.
+            // Deferred - try again later.
             surfaceTile.terrainState = TerrainState.UNLOADED;
             surfaceTile.request = undefined;
         }
@@ -967,7 +944,7 @@ const scratchCreateMeshOptions = {
     throttle: true
 };
 
-function transform (surfaceTile: any, frameState: any, terrainProvider: any, x: any, y: any, level: any) {
+function transform(surfaceTile: any, frameState: any, terrainProvider: any, x: any, y: any, level: any) {
     const tilingScheme = terrainProvider.tilingScheme;
 
     const createMeshOptions = scratchCreateMeshOptions;
@@ -977,7 +954,7 @@ function transform (surfaceTile: any, frameState: any, terrainProvider: any, x: 
     createMeshOptions.level = level;
     createMeshOptions.exaggeration = frameState.terrainExaggeration;
     createMeshOptions.exaggerationRelativeHeight =
-      frameState.terrainExaggerationRelativeHeight;
+        frameState.terrainExaggerationRelativeHeight;
     createMeshOptions.throttle = true;
 
     const terrainData = surfaceTile.terrainData;
@@ -1002,7 +979,7 @@ function transform (surfaceTile: any, frameState: any, terrainProvider: any, x: 
     );
 }
 
-function createResources (
+function createResources(
     surfaceTile: any,
     context: any,
     terrainProvider: any,
@@ -1017,7 +994,7 @@ function createResources (
     );
     surfaceTile.terrainState = TerrainState.READY;
     surfaceTile.fill =
-      surfaceTile.fill && surfaceTile.fill.destroy(vertexArraysToDestroy);
+        surfaceTile.fill && surfaceTile.fill.destroy(vertexArraysToDestroy);
 }
 
 // function getContextWaterMaskData (context: any) {

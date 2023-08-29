@@ -512,12 +512,12 @@ function selectTilesForRendering (primitive: any, frameState: any) {
     const camera = frameState.camera;
 
     primitive._cameraPositionCartographic = camera.positionCartographic;
-    // const cameraFrameOrigin = CesiumMatrix4.getTranslation(
-    //     camera.transform,
-    //     cameraOriginScratch
-    // );
+    const cameraFrameOrigin = CesiumMatrix4.getTranslation(
+        camera.transform,
+        cameraOriginScratch
+    );
 
-    const cameraFrameOrigin = new Cartesian3(0, 0, 0);
+    // const cameraFrameOrigin = new Cartesian3(0, 0, 0);
     primitive._cameraReferenceFrameOriginCartographic = primitive.tileProvider.tilingScheme.ellipsoid.cartesianToCartographic(
         cameraFrameOrigin,
         primitive._cameraReferenceFrameOriginCartographic
@@ -1196,13 +1196,6 @@ function visitIfVisible (
 }
 
 function screenSpaceError (primitive: QuadtreePrimitive, frameState: FrameState, tile: QuadtreeTile) {
-    // if (
-    //     frameState.mode === SceneMode.SCENE2D ||
-    // frameState.camera.frustum instanceof OrthographicFrustum ||
-    // frameState.camera.frustum instanceof OrthographicOffCenterFrustum
-    // ) {
-    //     return screenSpaceError2D(primitive, frameState, tile);
-    // }
 
     const maxGeometricError = primitive._tileProvider.getLevelMaximumGeometricError(
         tile.level
@@ -1224,35 +1217,6 @@ function screenSpaceError (primitive: QuadtreePrimitive, frameState: FrameState,
     return error;
 }
 
-function screenSpaceError2D (primitive: any, frameState: any, tile: any) {
-    const camera = frameState.camera;
-    let frustum = camera.frustum;
-    if (defined(frustum._offCenterFrustum)) {
-        frustum = frustum._offCenterFrustum;
-    }
-
-    const context = frameState.context;
-    const width = context.drawingBufferWidth;
-    const height = context.drawingBufferHeight;
-
-    const maxGeometricError = primitive._tileProvider.getLevelMaximumGeometricError(
-        tile.level
-    );
-    const pixelSize =
-    Math.max(frustum.top - frustum.bottom, frustum.right - frustum.left) /
-    Math.max(width, height);
-    let error = maxGeometricError / pixelSize;
-
-    // if (frameState.fog.enabled && frameState.mode !== SceneMode.SCENE2D) {
-    //     error -=
-    //   CesiumMath.fog(tile._distance, frameState.fog.density) *
-    //   frameState.fog.sse;
-    // }
-
-    error /= frameState.pixelRatio;
-
-    return error;
-}
 
 function addTileToRenderList (primitive: any, tile: any) {
     primitive._tilesToRender.push(tile);
