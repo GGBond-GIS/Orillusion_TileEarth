@@ -6,7 +6,7 @@
 
 ![](./public/image/earth.png)
 
-基于Orillusion(WebGPU)的GIS引擎demo
+基于[Orillusion](https://www.orillusion.com/)(WebGPU)的GIS引擎demo
 
 #### 🚀特性
 
