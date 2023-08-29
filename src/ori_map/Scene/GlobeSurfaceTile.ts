@@ -32,7 +32,8 @@ import { Imagery } from './Imagery';
 import { Ellipsoid } from '../Core/Ellipsoid';
 import { BufferUsage } from '../Renderer/BufferUsage';
 import { Buffer } from '../Renderer/Buffer';
-import { GeometryBase, VertexAttributeName } from '@orillusion/core';
+import {  GeometryBase, VertexAttributeData, VertexAttributeName } from '@orillusion/core';
+import { CustumGeometry } from '../Geometry/CustumGeometry';
 
 function disposeArray() {
 
@@ -495,7 +496,7 @@ class GlobeSurfaceTile {
             ++indexBuffer.referenceCount;
         }
 
-        const geometry = new GeometryBase();
+        const geometry = new CustumGeometry();
 
         if ((mesh.encoding as TerrainEncoding).quantization === TerrainQuantization.BITS12) {
             // const vertexBuffer = new Float32BufferAttribute(typedArray, 4).onUpload(disposeArray);
@@ -616,14 +617,14 @@ class GlobeSurfaceTile {
         // return geometry;
     }
 
-    static _freeVertexArray(geometry: GeometryBase) {
+    static _freeVertexArray(geometry: CustumGeometry) {
 
         if (defined(geometry)) {
-            // const indexBuffer = geometry.vertexBuffer;
-            // geometry.setIndices(new Float32Array());
-            // geometry.setAttribute(VertexAttributeName.position, new Float32Array());
-            // geometry.setAttribute(VertexAttributeName.uv, new Float32Array());
-            // vertexArray.vertexBuffer.updateAttributes(VertexAttributeName.position,[])
+            if(geometry.Object3D != undefined){
+                geometry.destroy(true);
+                // geometry.Object3D= undefined;
+                
+            }
             // if (!vertexArray.isDestroyed()) {
             //   vertexArray.destroy();
             // }

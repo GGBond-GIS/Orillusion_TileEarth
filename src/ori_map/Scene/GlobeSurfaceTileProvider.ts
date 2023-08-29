@@ -50,6 +50,7 @@ import { GPUPrimitiveTopology, LitMaterial } from '@orillusion/core';
 import * as Orillusion from '@orillusion/core'
 import { TileMaterial2 } from '../Material/TileMaterial copy 2';
 import { TerrainEncoding } from '../Core/TerrainEncoding';
+import { CustumGeometry } from '../Geometry/CustumGeometry';
 const readyImageryScratch: any[] = [];
 const canRenderTraversalStack: any[] = [];
 
@@ -900,7 +901,8 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
         }
 
 
-        command._mesh.geometry = mesh.geometry;
+        command._mesh.geometry  = mesh.geometry as CustumGeometry;
+        (command._mesh.geometry as CustumGeometry).Object3D = command;
         command._mesh.material = material;
         frameState.commandList.push(command);
 
