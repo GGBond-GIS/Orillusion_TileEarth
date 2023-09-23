@@ -1,4 +1,4 @@
-import { Engine3D, Scene3D, Object3D, Camera3D, LitMaterial, BoxGeometry, MeshRenderer, DirectLight, HoverCameraController, Color, Vector3, AtmosphericComponent, View3D, ComponentBase, SphereGeometry, InstanceDrawComponent, TAAPost, PostProcessingComponent } from '@orillusion/core'
+import { Engine3D, Scene3D, Object3D, Camera3D, LitMaterial, BoxGeometry, MeshRenderer, DirectLight, HoverCameraController, Color, Vector3, AtmosphericComponent, View3D, ComponentBase, SphereGeometry, InstanceDrawComponent, TAAPost, PostProcessingComponent, Matrix4 } from '@orillusion/core'
 import { CesiumScene } from './ori_map/Scene/CesiumScene'
 import { Stats } from "@orillusion/stats"
 import { UrlTemplateImageryProvider } from './ori_map/Scene/UrlTemplateImageryProvider';
@@ -22,10 +22,20 @@ Engine3D.setting.shadow.shadowSize = 2048
 Engine3D.setting.shadow.shadowBound = 1000;
 Engine3D.setting.shadow.shadowBias = 0.0005;
 
+
 await Engine3D.init({canvasConfig:{
 
   devicePixelRatio: 1 // 渲染 DPR, 默认使用 window.devicePixelRatio
 }});
+//@ts-ignore
+window.mat = new Matrix4();
+//@ts-ignore
+window.vm = new Matrix4();
+//@ts-ignore
+
+window.scaleAndBias = new Matrix4();
+
+
 //@ts-ignore
 let scene3D: CesiumScene = window.scene = new CesiumScene({})
 // let cameraObj: Object3D = new Object3D()

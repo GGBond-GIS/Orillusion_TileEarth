@@ -1,12 +1,12 @@
 
-import { Color, Engine3D, MaterialBase, Matrix4, MorphTarget_shader, RenderShader, ShaderLib, Texture, UUID, UnLit, UnLitMaterial, UniformGPUBuffer, Vector2, Vector3, Vector4 } from '@orillusion/core';
+import { Color, Engine3D, Material, Matrix4, MorphTarget_shader, RenderShader, ShaderLib, Texture, UUID, UnLit, UnLitMaterial, UniformGPUBuffer, Vector2, Vector3, Vector4 } from '@orillusion/core';
 import { defined } from '../Core/defined';
 import { TileMaterialShader } from './TileMaterialShader';
 
 
 
 
-class TileMaterial2 extends MaterialBase {
+class TileMaterial2 extends Material {
     defines: any;
     uniforms: any;
     modifiedModelView: UniformGPUBuffer;
@@ -43,7 +43,7 @@ class TileMaterial2 extends MaterialBase {
         let shaderName = 'daytexteure_' + shaderSetOptions.numberOfDayTextures;
         ShaderLib.register(shaderName, this.getwgsl(shaderSetOptions.numberOfDayTextures));
 
-        let shader = this.shader = this.setShader(shaderName, shaderName);
+        let shader = this.shader = new RenderShader(shaderName, shaderName);
         shader.setShaderEntry(`VertMain`, `FragMain`)
 
         shader.setUniformVector4(`transformUV1`, new Vector4(0, 0, 1, 1));
@@ -67,7 +67,7 @@ class TileMaterial2 extends MaterialBase {
         // mat.baseMap = texture
         // default value
         // this.baseMap = Engine3D.res.whiteTexture;
-
+        this.defaultPass = this.shader
     }
 
     get dayTextures(): Texture[] {

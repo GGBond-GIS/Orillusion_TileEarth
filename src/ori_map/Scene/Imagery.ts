@@ -76,7 +76,7 @@ class Imagery {
             }
 
             if (defined(this.texture)) {
-                this.texture.destroy();
+                // this.texture.destroy();
                 // this.texture = null;
             }
 

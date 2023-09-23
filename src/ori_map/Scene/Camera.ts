@@ -72,7 +72,7 @@ interface orientationOptions {
     pitch?: number,
     roll?: number,
 }
-    const  mat = new Matrix4();
+    
 function updateViewMatrix (camera: Camera) {
     CesiumMatrix4.computeView(
         camera._position,
@@ -87,7 +87,7 @@ function updateViewMatrix (camera: Camera) {
         camera._viewMatrix
     );
     CesiumMatrix4.inverseTransformation(camera._viewMatrix, camera._invViewMatrix);
-
+    
     mat.set(0, 0,  camera._invViewMatrix[0]); mat.set(1, 0,  camera._invViewMatrix[1]); mat.set(2, 0,  camera._invViewMatrix[2]); mat.set(3, 0,  camera._invViewMatrix[3]);
     mat.set(0, 1,  camera._invViewMatrix[4]); mat.set(1, 1,  camera._invViewMatrix[5]); mat.set(2, 1,  camera._invViewMatrix[6]); mat.set(3, 1,  camera._invViewMatrix[7]);
     mat.set(0, 2,  camera._invViewMatrix[8]); mat.set(1, 2,  camera._invViewMatrix[9]); mat.set(2, 2, camera._invViewMatrix[10]); mat.set(3, 2, camera._invViewMatrix[11]);
