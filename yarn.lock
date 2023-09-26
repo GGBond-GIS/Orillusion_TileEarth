@@ -223,10 +223,15 @@
   dependencies:
     "@octokit/openapi-types" "^18.0.0"
 
-"@orillusion/core@^0.6.0", "@orillusion/core@^0.6.8":
+"@orillusion/core@^0.6.0":
   version "0.6.8"
   resolved "https://registry.npmjs.org/@orillusion/core/-/core-0.6.8.tgz"
   integrity sha512-LWKjdOO0U5yENUL7A8O8IqURbk9njiVPDD1+ZLMihq4R9GcfO+oG4btQM8x0AD3++QeQfGqLBZXlJHWaPVUJgQ==
+
+"@orillusion/core@^0.6.9":
+  version "0.6.9"
+  resolved "https://registry.npmmirror.com/@orillusion/core/-/core-0.6.9.tgz#5857a58aed583f55ca8f3ab87c99839ed408dcde"
+  integrity sha512-AYBqDUe8eykv1RX6oGM0iirhX1Rz05rme0GV1jNNP3DgfuxuOspW8II7ZYMwGdFpjNUsLBpJWRPRhv8WosbcxA==
 
 "@orillusion/stats@^0.2.0":
   version "0.2.0"
