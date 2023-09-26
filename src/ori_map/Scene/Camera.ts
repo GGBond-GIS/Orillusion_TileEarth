@@ -88,15 +88,15 @@ function updateViewMatrix (camera: Camera) {
     );
     CesiumMatrix4.inverseTransformation(camera._viewMatrix, camera._invViewMatrix);
     
-    mat.set(0, 0,  camera._invViewMatrix[0]); mat.set(1, 0,  camera._invViewMatrix[1]); mat.set(2, 0,  camera._invViewMatrix[2]); mat.set(3, 0,  camera._invViewMatrix[3]);
-    mat.set(0, 1,  camera._invViewMatrix[4]); mat.set(1, 1,  camera._invViewMatrix[5]); mat.set(2, 1,  camera._invViewMatrix[6]); mat.set(3, 1,  camera._invViewMatrix[7]);
-    mat.set(0, 2,  camera._invViewMatrix[8]); mat.set(1, 2,  camera._invViewMatrix[9]); mat.set(2, 2, camera._invViewMatrix[10]); mat.set(3, 2, camera._invViewMatrix[11]);
-    mat.set(0, 3, camera._invViewMatrix[12]); mat.set(1, 3, camera._invViewMatrix[13]); mat.set(2, 3, camera._invViewMatrix[14]); mat.set(3, 3, camera._invViewMatrix[15]);
+    (window as any).mat.set(0, 0,  camera._invViewMatrix[0]); (window as any).mat.set(1, 0,  camera._invViewMatrix[1]); (window as any).mat.set(2, 0,  camera._invViewMatrix[2]); (window as any).mat.set(3, 0,  camera._invViewMatrix[3]);
+    (window as any).mat.set(0, 1,  camera._invViewMatrix[4]); (window as any).mat.set(1, 1,  camera._invViewMatrix[5]); (window as any).mat.set(2, 1,  camera._invViewMatrix[6]); (window as any).mat.set(3, 1,  camera._invViewMatrix[7]);
+    (window as any).mat.set(0, 2,  camera._invViewMatrix[8]); (window as any).mat.set(1, 2,  camera._invViewMatrix[9]); (window as any).mat.set(2, 2, camera._invViewMatrix[10]); (window as any).mat.set(3, 2, camera._invViewMatrix[11]);
+    (window as any).mat.set(0, 3, camera._invViewMatrix[12]); (window as any).mat.set(1, 3, camera._invViewMatrix[13]); (window as any).mat.set(2, 3, camera._invViewMatrix[14]); (window as any).mat.set(3, 3, camera._invViewMatrix[15]);
 
     let v3 = new Vector3();
     let qu4 = new Vector3();
     let sc3 = new Vector3();
-    mat.decompose(Orientation3D.QUATERNION, [v3, qu4, sc3]);
+    (window as any).mat.decompose(Orientation3D.QUATERNION, [v3, qu4, sc3]);
     camera.frustum.localQuaternion = new Quaternion(qu4.x,qu4.y,qu4.z,qu4.w);
     camera.frustum.localPosition = v3;
     camera.frustum.localScale = sc3;
