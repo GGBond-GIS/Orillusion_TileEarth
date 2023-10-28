@@ -534,6 +534,7 @@ class GlobeSurfaceTile {
             const vertexBuffer = mesh.vertices;
             let positon = [];
             let uv = [];
+            let height = [];
             for (let index = 0; index < vertexBuffer.length; index += 7) {
                 const element = vertexBuffer[index];
                 const element1 = vertexBuffer[index + 1];
@@ -544,12 +545,15 @@ class GlobeSurfaceTile {
                 const element6 = vertexBuffer[index + 6];
                 positon.push(...[element, element1, element2]);
                 uv.push(...[element4, element5])
+                height.push(element3)
             }
             let feop = new Float32Array(positon);
 
             geometry.setIndices(mesh.indices);
             geometry.setAttribute(VertexAttributeName.position, feop as Float32Array);
             geometry.setAttribute(VertexAttributeName.uv, new Float32Array(uv) as Float32Array);
+            geometry.setAttribute("height", new Float32Array(height) as Float32Array);
+
             mesh.show = true;
             positon = [];
             uv = [];

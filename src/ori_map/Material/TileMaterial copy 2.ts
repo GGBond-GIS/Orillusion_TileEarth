@@ -293,6 +293,7 @@ class TileMaterial2 extends Material {
             @location(0) position: vec3<f32>,
             @location(1) normal: vec3<f32>,
             @location(2) uv: vec2<f32>,
+            @location(3) height: f32
         };
 
         struct VertexOutput {
@@ -344,7 +345,7 @@ class TileMaterial2 extends Material {
             out.uv = in.uv;
 
             #endif
-            out.depthBuf = applyLogarithmicDepth(clipPosition,0.1,10000000000.0);
+            out.depthBuf = in.height;
             out.member = vec4<f32>(clipPosition.x,clipPosition.y,applyLogarithmicDepth(clipPosition,0.1,10000000000.0),clipPosition.w);
 
             return out;

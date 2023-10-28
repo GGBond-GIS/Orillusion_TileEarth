@@ -837,7 +837,7 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
         // material.shaderState.topology = GPUPrimitiveTopology.line_list;
         const projectionMatrix = frameState.camera.frustum.cesiumProjectMatrix;
 
-        const viewMatrix = frameState.camera.frustum._camera.viewMatrix.rawData;
+        const viewMatrix = frameState.camera.viewMatrix;
         const centerEye = CesiumMatrix4.multiplyByPoint(
             viewMatrix,
             rtc,
@@ -854,10 +854,22 @@ const addDrawCommandsForTile = (tileProvider: GlobeSurfaceTileProvider, tile: an
         //     modifiedModelViewProjectionScratch
         // );
         
-        (window as any).vm.set(0, 0, modifiedModelViewProjectionScratch[0]); (window as any).vm.set(1, 0, modifiedModelViewProjectionScratch[1]); (window as any).vm.set(2, 0, modifiedModelViewProjectionScratch[2]); (window as any).vm.set(3, 0, modifiedModelViewProjectionScratch[3]);
-        (window as any).vm.set(0, 1, modifiedModelViewProjectionScratch[4]); (window as any).vm.set(1, 1, modifiedModelViewProjectionScratch[5]); (window as any).vm.set(2, 1, modifiedModelViewProjectionScratch[6]); (window as any).vm.set(3, 1, modifiedModelViewProjectionScratch[7]);
-        (window as any).vm.set(0, 2, modifiedModelViewProjectionScratch[8]); (window as any).vm.set(1, 2, modifiedModelViewProjectionScratch[9]); (window as any).vm.set(2, 2, modifiedModelViewProjectionScratch[10]); (window as any).vm.set(3, 2, modifiedModelViewProjectionScratch[11]);
-        (window as any).vm.set(0, 3, modifiedModelViewProjectionScratch[12]); (window as any).vm.set(1, 3, modifiedModelViewProjectionScratch[13]); (window as any).vm.set(2, 3, modifiedModelViewProjectionScratch[14]); (window as any).vm.set(3, 3, modifiedModelViewProjectionScratch[15]);
+        (window as any).vm.set(0, 0, -modifiedModelViewProjectionScratch[0]); 
+        (window as any).vm.set(1, 0, modifiedModelViewProjectionScratch[1]); 
+        (window as any).vm.set(2, 0, -modifiedModelViewProjectionScratch[2]); 
+        (window as any).vm.set(3, 0, -modifiedModelViewProjectionScratch[3]);
+        (window as any).vm.set(0, 1, -modifiedModelViewProjectionScratch[4]); 
+        (window as any).vm.set(1, 1, modifiedModelViewProjectionScratch[5]); 
+        (window as any).vm.set(2, 1, -modifiedModelViewProjectionScratch[6]); 
+        (window as any).vm.set(3, 1, modifiedModelViewProjectionScratch[7]);
+        (window as any).vm.set(0, 2, -modifiedModelViewProjectionScratch[8]); 
+        (window as any).vm.set(1, 2, modifiedModelViewProjectionScratch[9]); 
+        (window as any).vm.set(2, 2, -modifiedModelViewProjectionScratch[10]); 
+        (window as any).vm.set(3, 2, -modifiedModelViewProjectionScratch[11]);
+        (window as any).vm.set(0, 3, -modifiedModelViewProjectionScratch[12]); 
+        (window as any).vm.set(1, 3, modifiedModelViewProjectionScratch[13]); 
+        (window as any).vm.set(2, 3, -modifiedModelViewProjectionScratch[14]); 
+        (window as any).vm.set(3, 3, modifiedModelViewProjectionScratch[15]);
 
 
 
