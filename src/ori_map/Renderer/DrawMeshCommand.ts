@@ -1,8 +1,8 @@
-import { BoundingSphere } from '../Core/BoundingSphere';
-import { defined } from '../Core/defined';
+import { BoundingSphere } from '../../Core/Bound/BoundingSphere';
+import { defined } from '../../Util/defined';
 import { OrientedBoundingBox } from '../Core/OrientedBoundingBox';
-import { Context } from '../Scene/Context';
-import { FrameState } from '../Scene/FrameState';
+import { Context } from '../../Core/Renderer/Context';
+import { FrameState } from '../../Core/Renderer/FrameState';
 import { BufferGeometry, Material, Mesh } from 'three';
 import { ShaderProgram } from './ShaderProgram';
 import { BoundingBox, GeometryBase, LitMaterial, MeshRenderer, Object3D, PlaneGeometry, VertexAttributeName } from '@orillusion/core';

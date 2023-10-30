@@ -1,7 +1,7 @@
-import { defaultValue } from '../Core/defaultValue';
-import { defined } from '../Core/defined';
-import { Context } from '../Scene/Context';
-import { ContextLimits } from '../Scene/ContextLimits';
+import { defaultValue } from '../../Util/defaultValue';
+import { defined } from '../../Util/defined';
+import { Context } from '../../Core/Renderer/Context';
+import { ContextLimits } from '../../Core/Renderer/ContextLimits';
 import { ShaderMaterial } from 'three';
 import { ShaderCache } from './ShaderCache';
 import { ShaderSource } from './ShaderSource';

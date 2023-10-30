@@ -1,9 +1,9 @@
-import { Cartesian3 } from './Cartesian3';
-import { Cartographic } from './Cartographic';
-import { defaultValue } from './defaultValue';
-import { defined } from './defined';
-import { DeveloperError } from './DeveloperError';
-import { Ellipsoid } from './Ellipsoid';
+import { Cartesian3 } from '../../Math/Cartesian3';
+import { Cartographic } from '../../Math/Cartographic';
+import { defaultValue } from '../../Util/defaultValue';
+import { defined } from '../../Util/defined';
+import { DeveloperError } from '../../Util/DeveloperError';
+import { Ellipsoid } from '../../Math/Ellipsoid/Ellipsoid';
 
 class GeographicProjection {
     _ellipsoid: Ellipsoid;

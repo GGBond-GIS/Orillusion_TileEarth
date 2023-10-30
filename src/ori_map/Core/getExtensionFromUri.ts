@@ -1,6 +1,6 @@
-import { URI as Uri } from '../ThirdParty/Uri';
-import { defined } from './defined';
-import { DeveloperError } from './DeveloperError';
+import { URI as Uri } from '../../Core/ThirdParty/Uri';
+import { defined } from '../../Util/defined';
+import { DeveloperError } from '../../Util/DeveloperError';
 
 /**
  * Given a URI, returns the extension of the URI.

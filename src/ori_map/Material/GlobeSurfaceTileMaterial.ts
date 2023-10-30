@@ -1,4 +1,4 @@
-import { CesiumColor } from '../Core/CesiumColor';
+import { CesiumColor } from '../../Math/CesiumColor';
 import { GLSL3, Matrix4, RawShaderMaterial, ShaderMaterial, Vector2, Vector3, Vector4 } from 'three';
 
 class GlobeSurfaceTileMaterial extends RawShaderMaterial {

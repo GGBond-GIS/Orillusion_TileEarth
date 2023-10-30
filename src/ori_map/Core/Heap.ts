@@ -1,5 +1,5 @@
-import { defaultValue } from './defaultValue';
-import { defined } from './defined';
+import { defaultValue } from '../../Util/defaultValue';
+import { defined } from '../../Util/defined';
 
 function swap (array: any, a:number, b:number) {
     const temp = array[a];

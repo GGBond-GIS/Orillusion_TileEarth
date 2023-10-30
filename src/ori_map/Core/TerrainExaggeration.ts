@@ -1,6 +1,6 @@
-import { Cartesian3 } from './Cartesian3';
-import { Cartographic } from './Cartographic';
-import { Ellipsoid } from './Ellipsoid';
+import { Cartesian3 } from '../../Math/Cartesian3';
+import { Cartographic } from '../../Math/Cartographic';
+import { Ellipsoid } from '../../Math/Ellipsoid/Ellipsoid';
 
 const scratchCartographic = new Cartographic();
 

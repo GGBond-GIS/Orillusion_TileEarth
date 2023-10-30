@@ -1,17 +1,17 @@
 /* eslint-disable no-bitwise */
-import { defaultValue } from './defaultValue';
-import { defined } from './defined';
-import { DeveloperError } from './DeveloperError';
-import { createVerticesFromHeightmap } from './createVerticesFromHeightmap';
+import { defaultValue } from '../../Util/defaultValue';
+import { defined } from '../../Util/defined';
+import { DeveloperError } from '../../Util/DeveloperError';
+import { createVerticesFromHeightmap } from '../../Core/Geometry/createVerticesFromHeightmap';
 import { GeographicProjection } from './GeographicProjection';
-import { Rectangle } from './Rectangle';
-import { TerrainEncoding } from './TerrainEncoding';
-import { TerrainMesh } from './TerrainMesh';
+import { Rectangle } from '../../Math/Rectangle';
+import { TerrainEncoding } from '../../Core/Terrain/TerrainEncoding';
+import { TerrainMesh } from '../../Core/Terrain/TerrainMesh';
 import { TerrainProvider } from './TerrainProvider';
-import { when } from '../ThirdParty/when';
+import { when } from '../../Core/ThirdParty/when';
 import { GeographicTilingScheme } from './GeographicTilingScheme';
-import { BoundingSphere } from './BoundingSphere';
-import { Cartesian3 } from './Cartesian3';
+import { BoundingSphere } from '../../Core/Bound/BoundingSphere';
+import { Cartesian3 } from '../../Math/Cartesian3';
 import { OrientedBoundingBox } from './OrientedBoundingBox';
 import { HeightmapEncoding } from './HeightmapEncoding';
 import HeightmapTessellator from './HeightmapTessellator';

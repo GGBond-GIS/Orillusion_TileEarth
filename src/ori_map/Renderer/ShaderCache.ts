@@ -1,5 +1,5 @@
-import { defined } from '../Core/defined';
-import { Context } from '../Scene/Context';
+import { defined } from '../../Util/defined';
+import { Context } from '../../Core/Renderer/Context';
 import { CachedShaderOptions, ShaderProgram } from './ShaderProgram';
 import { ShaderSource } from './ShaderSource';
 

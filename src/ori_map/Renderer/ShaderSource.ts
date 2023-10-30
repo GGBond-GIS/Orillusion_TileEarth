@@ -1,9 +1,9 @@
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable no-multi-str */
-import { defaultValue } from '../Core/defaultValue';
-import { defined } from '../Core/defined';
-import { DeveloperError } from '../Core/DeveloperError';
-import { Context } from '../Scene/Context';
+import { defaultValue } from '../../Util/defaultValue';
+import { defined } from '../../Util/defined';
+import { DeveloperError } from '../../Util/DeveloperError';
+import { Context } from '../../Core/Renderer/Context';
 import CzmBuiltins from '../Shader/Builtin/CzmBuiltins';
 import AutomaticUniforms from './AutomaticUniforms';
 import modernizeShader from './modernizeShader';

@@ -19,11 +19,11 @@ import {
   PostProcessingComponent,
   Matrix4
 } from "@orillusion/core";
-import { CesiumScene } from "./ori_map/Scene/CesiumScene";
+import { CesiumScene } from "./Core/Scene/CesiumScene";
 import { Stats } from "@orillusion/stats";
-import { UrlTemplateImageryProvider } from "./ori_map/Scene/UrlTemplateImageryProvider";
-import { TileCoordinatesImageryProvider } from "./ori_map/Scene/TileCoordinatesImageryProvider";
-import { WebMapTileServiceImageryProvider } from "./ori_map/Scene/WebMapTileServiceImageryProvider";
+import { UrlTemplateImageryProvider } from "./Layer/ImageryLayer/UrlTemplateImageryProvider";
+import { TileCoordinatesImageryProvider } from "./Layer/ImageryLayer/TileCoordinatesImageryProvider";
+import { WebMapTileServiceImageryProvider } from "./Layer/ImageryLayer/WebMapTileServiceImageryProvider";
 import { GeographicTilingScheme } from "./ori_map/Core/GeographicTilingScheme";
 // 引擎全局配置设置
 //@ts-ignore
@@ -117,14 +117,15 @@ rencoll.addChild(Sphere);
 // scene3D.imageryLayers.addImageryProvider(
 //   urlTemplateImageryProvide
 // );
-const mapToken = "39d358c825ec7e59142958656c0a6864"; // 盈嘉企业开发者秘钥
+const mapToken = "39d358c825ec7e59142958656c0a6864"; //
 
+// https://t1.tianditu.gov.cn/img_c/wmts?service=WMTS&version=1.0.0&request=GetTile&tilematrix=10&layer=img&style=default&tilerow=166&tilecol=851&tilematrixset=c&format=tiles&tk=1c3ff1358b17417f1782dd1ae7bdd00a
 //https://t4.tianditu.gov.cn/img_c/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=c&FORMAT=tiles&TILECOL={TileCol}&TILEROW={TileRow}&TILEMATRIX={TileMatrix}&tk=75f0434f240669f4a2df6359275146d2
 scene3D.imageryLayers.addImageryProvider(
   new WebMapTileServiceImageryProvider({
     // url: 'https://{s}.tianditu.gov.cn/img_w/wmts?SERVICE=WMTS&REQUEST=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&tk=' + mapToken,
     url:
-      "https://t4.tianditu.gov.cn/img_c/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=c&FORMAT=tiles&TILECOL={TileCol}&TILEROW={TileRow}&TILEMATRIX={TileMatrix}&tk=" +
+      "https://t2.tianditu.gov.cn/img_c/wmts?service=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=c&FORMAT=tiles&TILECOL={TileCol}&TILEROW={TileRow}&TILEMATRIX={TileMatrix}&tk=" +
       mapToken,
     subdomains: ["t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7"],
     maximumLevel: 17, // 定义最大缩放级别

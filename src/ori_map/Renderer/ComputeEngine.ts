@@ -1,12 +1,12 @@
-import { defined } from '../Core/defined';
+import { defined } from '../../Util/defined';
 import { GeographicReprojectMaterial } from '../Material/GeographicReprojectMaterial';
 import { ComputeCommand } from '../Renderer/ComputeCommand';
 import { ComputedShaderPass } from '../Renderer/ComputedShaderPass';
-import { Context } from '../Scene/Context';
+import { Context } from '../../Core/Renderer/Context';
 import { Texture, Vector4, WebGLRenderTarget } from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { MapRenderer } from '../Scene/MapRenderer';
-import { Scene } from '../Scene/CesiumScene';
+import { Scene } from '../../Core/Scene/CesiumScene';
 
 // const bufferSize = new Vector2();
 

@@ -1,16 +1,16 @@
-import { FrameState } from '../Scene/FrameState';
-import { OrthographicFrustumCamera } from '../Scene/OrthographicFrustumCamera';
-import { Scene } from '../Scene/CesiumScene';
-import { BoundingRectangle } from './BoundingRectangle';
-import { Cartesian2 } from './Cartesian2';
-import { Cartesian3 } from './Cartesian3';
-import { Cartesian4 } from './Cartesian4';
-import { Cartographic } from './Cartographic';
-import { CesiumMath } from './CesiumMath';
-import { CesiumMatrix4 } from './CesiumMatrix4';
-import { defined } from './defined';
-import { SceneMode } from './SceneMode';
-import { Transforms } from './Transforms';
+import { FrameState } from '../../Core/Renderer/FrameState';
+import { OrthographicFrustumCamera } from '../../Core/Camera/OrthographicFrustumCamera';
+import { Scene } from '../../Core/Scene/CesiumScene';
+import { BoundingRectangle } from '../../Core/Bound/BoundingRectangle';
+import { Cartesian2 } from '../../Math/Cartesian2';
+import { Cartesian3 } from '../../Math/Cartesian3';
+import { Cartesian4 } from '../../Math/Cartesian4';
+import { Cartographic } from '../../Math/Cartographic';
+import { CesiumMath } from '../../Math/CesiumMath';
+import { CesiumMatrix4 } from '../../Math/CesiumMatrix4';
+import { defined } from '../../Util/defined';
+import { SceneMode } from '../../Core/Scene/SceneMode';
+import { Transforms } from '../../Math/Transforms';
 
 const SceneTransforms: any = {};
 

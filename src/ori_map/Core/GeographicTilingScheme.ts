@@ -1,11 +1,11 @@
-import { Cartesian2 } from './Cartesian2';
-import { Cartographic } from './Cartographic';
-import { CesiumMath } from './CesiumMath';
-import { defaultValue } from './defaultValue';
-import { defined } from './defined';
-import { Ellipsoid } from './Ellipsoid';
+import { Cartesian2 } from '../../Math/Cartesian2';
+import { Cartographic } from '../../Math/Cartographic';
+import { CesiumMath } from '../../Math/CesiumMath';
+import { defaultValue } from '../../Util/defaultValue';
+import { defined } from '../../Util/defined';
+import { Ellipsoid } from '../../Math/Ellipsoid/Ellipsoid';
 import { GeographicProjection } from './GeographicProjection';
-import { Rectangle } from './Rectangle';
+import { Rectangle } from '../../Math/Rectangle';
 
 interface GeographicTilingSchemeInterface {
     ellipsoid?: Ellipsoid,

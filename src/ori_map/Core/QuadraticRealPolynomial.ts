@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { CesiumMath } from './CesiumMath';
+import { CesiumMath } from '../../Math/CesiumMath';
 
 function addWithCancellationCheck (left: number, right: number, tolerance: number): number {
     const difference = left + right;

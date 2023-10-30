@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
-import { defined } from '../Core/defined';
-import { DeveloperError } from '../Core/DeveloperError';
+import { defined } from '../../Util/defined';
+import { DeveloperError } from '../../Util/DeveloperError';
 
 /**
  * A function to port GLSL shaders from GLSL ES 1.00 to GLSL ES 3.00

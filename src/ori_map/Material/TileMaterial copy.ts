@@ -1,7 +1,7 @@
 
-import { CesiumMatrix4 } from '../Core/CesiumMatrix4';
-import { defined } from '../Core/defined';
-import { Rectangle } from '../Core/Rectangle';
+import { CesiumMatrix4 } from '../../Math/CesiumMatrix4';
+import { defined } from '../../Util/defined';
+import { Rectangle } from '../../Math/Rectangle';
 import { ShaderMaterial, Vector2, Vector4, Matrix4, Vector3, RawShaderMaterial, GLSL3, DoubleSide, Texture } from 'three';
 
 const vertexShader = `

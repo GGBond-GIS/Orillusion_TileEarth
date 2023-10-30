@@ -1,5 +1,5 @@
-import { CesiumMath } from './CesiumMath';
-import { CubicRealPolynomial } from './CubicRealPolynomial';
+import { CesiumMath } from '../../Math/CesiumMath';
+import { CubicRealPolynomial } from '../../Math/CubicRealPolynomial';
 import { QuadraticRealPolynomial } from './QuadraticRealPolynomial';
 
 /**

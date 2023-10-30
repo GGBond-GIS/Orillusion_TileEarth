@@ -1,19 +1,19 @@
-import { AxisAlignedBoundingBox } from './AxisAlignedBoundingBox';
-import { BoundingSphere } from './BoundingSphere';
-import { Cartesian2 } from './Cartesian2';
-import { Cartesian3 } from './Cartesian3';
-import { CesiumMath } from './CesiumMath';
-import { CesiumMatrix4 as Matrix4 } from './CesiumMatrix4';
-import { defaultValue } from './defaultValue';
-import { defined } from './defined';
-import { DeveloperError } from './DeveloperError';
-import { Ellipsoid } from './Ellipsoid';
-import { EllipsoidalOccluder } from './EllipsoidalOccluder';
+import { AxisAlignedBoundingBox } from '../../Core/Bound/AxisAlignedBoundingBox';
+import { BoundingSphere } from '../../Core/Bound/BoundingSphere';
+import { Cartesian2 } from '../../Math/Cartesian2';
+import { Cartesian3 } from '../../Math/Cartesian3';
+import { CesiumMath } from '../../Math/CesiumMath';
+import { CesiumMatrix4 as Matrix4 } from '../../Math/CesiumMatrix4';
+import { defaultValue } from '../../Util/defaultValue';
+import { defined } from '../../Util/defined';
+import { DeveloperError } from '../../Util/DeveloperError';
+import { Ellipsoid } from '../../Math/Ellipsoid/Ellipsoid';
+import { EllipsoidalOccluder } from '../../Math/Ellipsoid/EllipsoidalOccluder';
 import { OrientedBoundingBox } from './OrientedBoundingBox';
-import { Rectangle } from './Rectangle';
-import { TerrainEncoding } from './TerrainEncoding';
-import { Transforms } from './Transforms';
-import { WebMercatorProjection } from './WebMercatorProjection';
+import { Rectangle } from '../../Math/Rectangle';
+import { TerrainEncoding } from '../../Core/Terrain/TerrainEncoding';
+import { Transforms } from '../../Math/Transforms';
+import { WebMercatorProjection } from '../../Layer/ImageryLayer/WebMercatorProjection';
 
 /**
  * Contains functions to create a mesh from a heightmap image.

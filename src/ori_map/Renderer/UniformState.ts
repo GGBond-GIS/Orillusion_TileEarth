@@ -1,8 +1,8 @@
-import { Cartesian3 } from '../Core/Cartesian3';
-import { CesiumMatrix3 } from '../Core/CesiumMatrix3';
-import { CesiumMatrix4 } from '../Core/CesiumMatrix4';
-import { Camera } from '../Scene/Camera';
-import { FrameState } from '../Scene/FrameState';
+import { Cartesian3 } from '../../Math/Cartesian3';
+import { CesiumMatrix3 } from '../../Math/CesiumMatrix3';
+import { CesiumMatrix4 } from '../../Math/CesiumMatrix4';
+import { Camera } from '../../Core/Camera/Camera';
+import { FrameState } from '../../Core/Renderer/FrameState';
 import { Matrix3 } from 'three';
 
 function setView (uniformState: UniformState, matrix: CesiumMatrix4) {

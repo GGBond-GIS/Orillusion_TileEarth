@@ -15,7 +15,7 @@ import {
   Vector3,
   Vector4
 } from "@orillusion/core";
-import { defined } from "../Core/defined";
+import { defined } from "../../Util/defined";
 import { TileMaterialShader } from "./TileMaterialShader";
 
 class TileMaterial2 extends Material {

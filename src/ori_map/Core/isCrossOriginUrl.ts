@@ -1,4 +1,4 @@
-import { defined } from './defined';
+import { defined } from '../../Util/defined';
 
 let a: any;
 
