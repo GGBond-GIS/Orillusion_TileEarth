@@ -6,7 +6,7 @@ import { defined } from './defined';
 import { DeveloperError } from './DeveloperError';
 import { EasingFunction } from './EasingFunction';
 import { getTimestamp } from './getTimestamp';
-import { TimeConstants } from '../ori_map/Core/TimeConstants';
+import { TimeConstants } from '../Core/Scene/TimeConstants';
 
 /**
  * A tween is an animation that interpolates the properties of two objects using an {@link EasingFunction}.  Create

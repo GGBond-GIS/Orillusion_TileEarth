@@ -6,8 +6,8 @@ import { destroyObject } from '../../Util/destroyObject';
 import { DeveloperError } from '../../Util/DeveloperError';
 import { FeatureDetection } from '../Request/FeatureDetection';
 import { getTimestamp } from '../../Util/getTimestamp';
-import { KeyboardEventModifier } from '../../ori_map/Core/KeyboardEventModifier';
-import { ScreenSpaceEventType } from '../../ori_map/Core/ScreenSpaceEventType';
+import { KeyboardEventModifier } from '../Scene/KeyboardEventModifier';
+import { ScreenSpaceEventType } from './ScreenSpaceEventType';
 
 const document: any = window.document;
 

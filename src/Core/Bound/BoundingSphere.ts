@@ -4,12 +4,12 @@ import { Cartesian3 } from '../../Math/Cartesian3';
 import { Cartographic } from '../../Math/Cartographic';
 import { CesiumMath } from '../../Math/CesiumMath';
 import { defined } from '../../Util/defined';
-import { GeographicProjection } from '../../ori_map/Core/GeographicProjection';
-import { Intersect } from '../../ori_map/Core/Intersect';
+import { GeographicProjection } from '../Projection/GeographicProjection';
+import { Intersect } from '../Scene/Intersect';
 import { Plane } from './Plane';
 import { Rectangle } from '../../Math/Rectangle';
 import { CesiumMatrix3 as Matrix3 } from '../../Math/CesiumMatrix3';
-import { OrientedBoundingBox } from '../../ori_map/Core/OrientedBoundingBox';
+import { OrientedBoundingBox } from './OrientedBoundingBox';
 
 const fromOrientedBoundingBoxScratchU = new Cartesian3();
 const fromOrientedBoundingBoxScratchV = new Cartesian3();

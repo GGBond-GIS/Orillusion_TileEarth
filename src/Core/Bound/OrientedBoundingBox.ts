@@ -9,8 +9,8 @@ import { defined } from '../../Util/defined';
 import { DeveloperError } from '../../Util/DeveloperError';
 import { Ellipsoid } from '../../Math/Ellipsoid/Ellipsoid';
 import { EllipsoidTangentPlane } from '../../Math/Ellipsoid/EllipsoidTangentPlane';
-import { Intersect } from './Intersect';
-import { Plane } from '../../Core/Bound/Plane';
+import { Intersect } from '../Scene/Intersect';
+import { Plane } from './Plane';
 import { Rectangle } from '../../Math/Rectangle';
 
 const scratchCartesian1 = new Cartesian3();

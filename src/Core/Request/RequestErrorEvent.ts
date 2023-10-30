@@ -1,5 +1,5 @@
 import { defined } from '../../Util/defined';
-import { parseResponseHeaders } from '../../ori_map/Core/parseResponseHeaders';
+import { parseResponseHeaders } from './parseResponseHeaders';
 
 /**
  * An event that is raised when a request encounters an error.

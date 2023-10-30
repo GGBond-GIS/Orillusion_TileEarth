@@ -4,7 +4,7 @@ import { Cartesian4 } from '../../Math/Cartesian4';
 import { defaultValue } from '../../Util/defaultValue';
 import { defined } from '../../Util/defined';
 import { DeveloperError } from '../../Util/DeveloperError';
-import { Intersect } from '../../ori_map/Core/Intersect';
+import { Intersect } from '../Scene/Intersect';
 import { Plane } from '../Bound/Plane';
 
 const faces = [new Cartesian3(), new Cartesian3(), new Cartesian3()];

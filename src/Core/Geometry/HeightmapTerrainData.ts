@@ -2,19 +2,19 @@
 import { defaultValue } from '../../Util/defaultValue';
 import { defined } from '../../Util/defined';
 import { DeveloperError } from '../../Util/DeveloperError';
-import { createVerticesFromHeightmap } from '../../Core/Geometry/createVerticesFromHeightmap';
-import { GeographicProjection } from './GeographicProjection';
+import { createVerticesFromHeightmap } from './createVerticesFromHeightmap';
+import { GeographicProjection } from '../Projection/GeographicProjection';
 import { Rectangle } from '../../Math/Rectangle';
-import { TerrainEncoding } from '../../Core/Terrain/TerrainEncoding';
-import { TerrainMesh } from '../../Core/Terrain/TerrainMesh';
-import { TerrainProvider } from './TerrainProvider';
-import { when } from '../../Core/ThirdParty/when';
-import { GeographicTilingScheme } from './GeographicTilingScheme';
-import { BoundingSphere } from '../../Core/Bound/BoundingSphere';
+import { TerrainEncoding } from '../Terrain/TerrainEncoding';
+import { TerrainMesh } from '../Terrain/TerrainMesh';
+import { TerrainProvider } from '../Terrain/TerrainProvider';
+import { when } from '../ThirdParty/when';
+import { GeographicTilingScheme } from '../Projection/GeographicTilingScheme';
+import { BoundingSphere } from '../Bound/BoundingSphere';
 import { Cartesian3 } from '../../Math/Cartesian3';
-import { OrientedBoundingBox } from './OrientedBoundingBox';
+import { OrientedBoundingBox } from '../Bound/OrientedBoundingBox';
 import { HeightmapEncoding } from './HeightmapEncoding';
-import HeightmapTessellator from './HeightmapTessellator';
+import HeightmapTessellator from '../Request/HeightmapTessellator';
 
 class HeightmapTerrainData {
     _buffer: any;

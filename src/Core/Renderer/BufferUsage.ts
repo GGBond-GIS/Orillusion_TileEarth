@@ -1,4 +1,4 @@
-import { WebGLConstants } from '../Core/WebGLConstants';
+import { WebGLConstants } from './WebGLConstants';
 
 /**
  * @private

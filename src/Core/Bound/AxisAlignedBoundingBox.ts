@@ -3,7 +3,7 @@
 import { Cartesian3 } from '../../Math/Cartesian3';
 import { defaultValue } from '../../Util/defaultValue';
 import { defined } from '../../Util/defined';
-import { Intersect } from '../../ori_map/Core/Intersect';
+import { Intersect } from '../Scene/Intersect';
 import { Plane } from './Plane';
 
 let intersectScratch = new Cartesian3();

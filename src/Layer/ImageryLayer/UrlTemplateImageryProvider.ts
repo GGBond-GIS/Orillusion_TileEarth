@@ -9,7 +9,7 @@ import { defaultValue } from '../../Util/defaultValue';
 import { defined } from '../../Util/defined';
 import { DeveloperError } from '../../Util/DeveloperError';
 import { Event } from '../../Util/Event';
-import { GeographicProjection } from '../../ori_map/Core/GeographicProjection';
+import { GeographicProjection } from '../../Core/Projection/GeographicProjection';
 import { Rectangle } from '../../Math/Rectangle';
 import { Request } from '../../Core/Request/Request';
 import { Resource } from '../../Core/Request/Resource';

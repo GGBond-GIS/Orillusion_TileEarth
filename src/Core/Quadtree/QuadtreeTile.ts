@@ -1,6 +1,6 @@
 import { defined } from '../../Util/defined';
 import { DeveloperError } from '../../Util/DeveloperError';
-import { GeographicTilingScheme } from '../../ori_map/Core/GeographicTilingScheme';
+import { GeographicTilingScheme } from '../Projection/GeographicTilingScheme';
 import { Rectangle } from '../../Math/Rectangle';
 import { FrameState } from '../Renderer/FrameState';
 import { GlobeSurfaceTile } from '../Globe/GlobeSurfaceTile';

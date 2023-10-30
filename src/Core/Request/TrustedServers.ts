@@ -1,4 +1,4 @@
-import { URI as Uri } from '../../Core/ThirdParty/Uri';
+import { URI as Uri } from '../ThirdParty/Uri';
 import { defined } from '../../Util/defined';
 import { DeveloperError } from '../../Util/DeveloperError';
 

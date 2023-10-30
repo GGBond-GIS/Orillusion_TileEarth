@@ -9,7 +9,7 @@ import { Event } from '../../Util/Event';
 import { getTimestamp } from '../../Util/getTimestamp';
 import { Rectangle } from '../../Math/Rectangle';
 import { SceneMode } from '../Scene/SceneMode';
-import { Visibility } from '../../ori_map/Core/Visibility';
+import { Visibility } from '../Visibility';
 import { Ray } from 'three';
 import { FrameState } from '../Renderer/FrameState';
 import { GlobeSurfaceTileProvider } from '../Globe/GlobeSurfaceTileProvider';

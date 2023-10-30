@@ -1,7 +1,7 @@
 import { BoundingSphere } from '../Bound/BoundingSphere';
 import { Cartesian3 } from '../../Math/Cartesian3';
 import { defaultValue } from '../../Util/defaultValue';
-import { OrientedBoundingBox } from '../../ori_map/Core/OrientedBoundingBox';
+import { OrientedBoundingBox } from '../Bound/OrientedBoundingBox';
 import { TerrainEncoding } from './TerrainEncoding';
 
 /**

@@ -24,7 +24,7 @@ import { Stats } from "@orillusion/stats";
 import { UrlTemplateImageryProvider } from "./Layer/ImageryLayer/UrlTemplateImageryProvider";
 import { TileCoordinatesImageryProvider } from "./Layer/ImageryLayer/TileCoordinatesImageryProvider";
 import { WebMapTileServiceImageryProvider } from "./Layer/ImageryLayer/WebMapTileServiceImageryProvider";
-import { GeographicTilingScheme } from "./ori_map/Core/GeographicTilingScheme";
+import { GeographicTilingScheme } from "./Core/Projection/GeographicTilingScheme";
 // 引擎全局配置设置
 //@ts-ignore
 Engine3D.setting.render.postProcessing.taa.jitterSeedCount = 8;

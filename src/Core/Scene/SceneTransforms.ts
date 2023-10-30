@@ -1,7 +1,7 @@
-import { FrameState } from '../../Core/Renderer/FrameState';
-import { OrthographicFrustumCamera } from '../../Core/Camera/OrthographicFrustumCamera';
-import { Scene } from '../../Core/Scene/CesiumScene';
-import { BoundingRectangle } from '../../Core/Bound/BoundingRectangle';
+import { FrameState } from '../Renderer/FrameState';
+import { OrthographicFrustumCamera } from '../Camera/OrthographicFrustumCamera';
+import { Scene } from './CesiumScene';
+import { BoundingRectangle } from '../Bound/BoundingRectangle';
 import { Cartesian2 } from '../../Math/Cartesian2';
 import { Cartesian3 } from '../../Math/Cartesian3';
 import { Cartesian4 } from '../../Math/Cartesian4';
@@ -9,7 +9,7 @@ import { Cartographic } from '../../Math/Cartographic';
 import { CesiumMath } from '../../Math/CesiumMath';
 import { CesiumMatrix4 } from '../../Math/CesiumMatrix4';
 import { defined } from '../../Util/defined';
-import { SceneMode } from '../../Core/Scene/SceneMode';
+import { SceneMode } from './SceneMode';
 import { Transforms } from '../../Math/Transforms';
 
 const SceneTransforms: any = {};

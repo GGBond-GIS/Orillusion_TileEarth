@@ -1,7 +1,7 @@
 
 import { cube } from '../Shader/CubeGlsl3Shader';
 import { BackSide, BoxGeometry, cloneUniforms, CubeTexture, CubeTextureLoader, GLSL3, Mesh, ShaderLib, ShaderMaterial, sRGBEncoding, TextureLoader } from 'three';
-import { Scene } from '../../Core/Scene/CesiumScene';
+import { Scene } from './CesiumScene';
 import * as THREE from 'three';
 
 ShaderLib.cube = cube;

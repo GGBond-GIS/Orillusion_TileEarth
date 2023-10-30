@@ -9,8 +9,8 @@ import { ComponentDatatype } from '../Geometry/ComponentDatatype';
 import { defaultValue } from '../../Util/defaultValue';
 import { defined } from '../../Util/defined';
 import { Ellipsoid } from '../../Math/Ellipsoid/Ellipsoid';
-import { TerrainExaggeration } from '../../ori_map/Core/TerrainExaggeration';
-import { TerrainQuantization } from '../../ori_map/Core/TerrainQuantization';
+import { TerrainExaggeration } from './TerrainExaggeration';
+import { TerrainQuantization } from './TerrainQuantization';
 
 const cartesian3Scratch = new Cartesian3();
 const cartesian3DimScratch = new Cartesian3();

@@ -4,7 +4,7 @@ import { Cartographic } from '../../Math/Cartographic';
 import { defaultValue } from '../../Util/defaultValue';
 import { Ellipsoid } from '../../Math/Ellipsoid/Ellipsoid';
 import { IntersectionTests } from '../Request/IntersectionTests';
-import { OrientedBoundingBox } from '../../ori_map/Core/OrientedBoundingBox';
+import { OrientedBoundingBox } from './OrientedBoundingBox';
 import { Plane } from './Plane';
 import { Ray } from '../../Math/Ray';
 import { Rectangle } from '../../Math/Rectangle';

@@ -1,9 +1,9 @@
 
-import HeightmapTessellator from '../../ori_map/Core/HeightmapTessellator';
+import HeightmapTessellator from '../Request/HeightmapTessellator';
 import Lerc from '../ThirdParty/LercDecode';
 import { Ellipsoid } from '../../Math/Ellipsoid/Ellipsoid';
 import { Rectangle } from '../../Math/Rectangle';
-import { HeightmapEncoding } from '../../ori_map/Core/HeightmapEncoding';
+import { HeightmapEncoding } from './HeightmapEncoding';
 import { DeveloperError } from '../../Util/DeveloperError';
 // import createTaskProcessorWorker from "./createTaskProcessorWorker";
 

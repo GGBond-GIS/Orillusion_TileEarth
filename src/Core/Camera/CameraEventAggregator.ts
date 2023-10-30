@@ -4,9 +4,9 @@ import { CesiumMath } from '../../Math/CesiumMath';
 import { defined } from '../../Util/defined';
 import { destroyObject } from '../../Util/destroyObject';
 import { DeveloperError } from '../../Util/DeveloperError';
-import { KeyboardEventModifier } from '../../ori_map/Core/KeyboardEventModifier';
+import { KeyboardEventModifier } from '../Scene/KeyboardEventModifier';
 import { ScreenSpaceEventHandler } from '../Controller/ScreenSpaceEventHandler';
-import { ScreenSpaceEventType } from '../../ori_map/Core/ScreenSpaceEventType';
+import { ScreenSpaceEventType } from '../Controller/ScreenSpaceEventType';
 
 function getKey (type: number | string, modifier?: number | undefined) {
     let key = type.toString();

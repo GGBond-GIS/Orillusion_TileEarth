@@ -4,10 +4,10 @@
 import { defaultValue } from '../../Util/defaultValue';
 import { defined } from '../../Util/defined';
 import { Event } from '../../Util/Event';
-import { Heap } from '../../ori_map/Core/Heap';
+import { Heap } from '../../Util/Heap';
 import { isBlobUri } from './isBlobUri';
 import { isDataUri } from './isDataUri';
-import { RequestState } from '../../ori_map/Core/RequestState';
+import { RequestState } from './RequestState';
 import { URI as Uri } from '../ThirdParty/Uri';
 import { when } from '../ThirdParty/when';
 import { Request } from './Request';

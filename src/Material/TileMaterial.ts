@@ -1,6 +1,6 @@
 
 import { Color, Engine3D, MaterialBase, Matrix4, MorphTarget_shader, RenderShader, ShaderLib, Texture, UUID, UnLit, UnLitMaterial, UniformGPUBuffer, Vector2, Vector3, Vector4 } from '@orillusion/core';
-import { defined } from '../../Util/defined';
+import { defined } from '../Util/defined';
 import { TileMaterialShader } from './TileMaterialShader';
 
 

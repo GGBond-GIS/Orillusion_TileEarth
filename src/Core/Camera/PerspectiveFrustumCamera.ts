@@ -6,7 +6,7 @@ import { CullingVolume } from './CullingVolume';
 import { defaultValue } from '../../Util/defaultValue';
 import { defined } from '../../Util/defined';
 import { DeveloperError } from '../../Util/DeveloperError';
-import { GeographicProjection } from '../../ori_map/Core/GeographicProjection';
+import { GeographicProjection } from '../Projection/GeographicProjection';
 import { PerspectiveOffCenterFrustum } from './PerspectiveOffCenterFrustum';
 import { SceneMode } from '../Scene/SceneMode';
 import { Frustum, MathUtils, Matrix4, Quaternion, Vector3 } from 'three';

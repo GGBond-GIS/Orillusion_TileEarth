@@ -6,7 +6,7 @@ import { defaultValue } from '../../Util/defaultValue';
 import { defined } from '../../Util/defined';
 import { DeveloperError } from '../../Util/DeveloperError';
 import { Rectangle } from '../Rectangle';
-import { scaleToGeodeticSurface } from '../../ori_map/Core/scaleToGeodeticSurface';
+import { scaleToGeodeticSurface } from '../scaleToGeodeticSurface';
 
 const abscissas = [
     0.14887433898163,

@@ -3,7 +3,7 @@ import { CesiumColor } from '../../Math/CesiumColor';
 import { defaultValue } from '../../Util/defaultValue';
 import { defined } from '../../Util/defined';
 import { Event } from '../../Util/Event';
-import { GeographicTilingScheme } from '../../ori_map/Core/GeographicTilingScheme';
+import { GeographicTilingScheme } from '../../Core/Projection/GeographicTilingScheme';
 import { Resource } from '../../Core/Request/Resource';
 import { when } from '../../Core/ThirdParty/when';
 import { CanvasTexture } from 'three';

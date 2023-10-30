@@ -1,12 +1,12 @@
 /* eslint-disable no-multi-str */
 import { defined } from '../../Util/defined';
 import { SceneMode } from '../Scene/SceneMode';
-import { TerrainQuantization } from '../../ori_map/Core/TerrainQuantization';
-import { GlobeSurfaceTileMaterial } from '../../ori_map/Material/GlobeSurfaceTileMaterial';
-import { ShaderProgram } from '../../ori_map/Renderer/ShaderProgram';
-import { ShaderSource } from '../../ori_map/Renderer/ShaderSource';
+import { TerrainQuantization } from '../Terrain/TerrainQuantization';
+import { GlobeSurfaceTileMaterial } from '../../Material/GlobeSurfaceTileMaterial';
 import { FrameState } from '../Renderer/FrameState';
 import { GlobeSurfaceTile } from './GlobeSurfaceTile';
+import { ShaderSource } from '../Renderer/ShaderSource';
+import { ShaderProgram } from '../Renderer/ShaderProgram';
 
 class GlobeSurfaceShader {
     numberOfDayTextures: number;

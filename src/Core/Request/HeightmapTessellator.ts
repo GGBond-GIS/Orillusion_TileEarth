@@ -1,5 +1,5 @@
-import { AxisAlignedBoundingBox } from '../../Core/Bound/AxisAlignedBoundingBox';
-import { BoundingSphere } from '../../Core/Bound/BoundingSphere';
+import { AxisAlignedBoundingBox } from '../Bound/AxisAlignedBoundingBox';
+import { BoundingSphere } from '../Bound/BoundingSphere';
 import { Cartesian2 } from '../../Math/Cartesian2';
 import { Cartesian3 } from '../../Math/Cartesian3';
 import { CesiumMath } from '../../Math/CesiumMath';
@@ -9,9 +9,9 @@ import { defined } from '../../Util/defined';
 import { DeveloperError } from '../../Util/DeveloperError';
 import { Ellipsoid } from '../../Math/Ellipsoid/Ellipsoid';
 import { EllipsoidalOccluder } from '../../Math/Ellipsoid/EllipsoidalOccluder';
-import { OrientedBoundingBox } from './OrientedBoundingBox';
+import { OrientedBoundingBox } from '../Bound/OrientedBoundingBox';
 import { Rectangle } from '../../Math/Rectangle';
-import { TerrainEncoding } from '../../Core/Terrain/TerrainEncoding';
+import { TerrainEncoding } from '../Terrain/TerrainEncoding';
 import { Transforms } from '../../Math/Transforms';
 import { WebMercatorProjection } from '../../Layer/ImageryLayer/WebMercatorProjection';
 

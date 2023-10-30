@@ -1,4 +1,4 @@
-import { defined } from '../../Util/defined';
+import { defined } from '../Util/defined';
 import { DoubleSide, RawShaderMaterial, Texture, Vector2 } from 'three';
 
 const vs = `

@@ -1,5 +1,5 @@
 import { DeveloperError } from '../Util/DeveloperError';
-import { QuadraticRealPolynomial } from '../ori_map/Core/QuadraticRealPolynomial';
+import { QuadraticRealPolynomial } from './QuadraticRealPolynomial';
 
 /**
  * Defines functions for 3rd order polynomial functions of one variable with only real coefficients.

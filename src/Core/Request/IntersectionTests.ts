@@ -8,10 +8,10 @@ import { defaultValue } from '../../Util/defaultValue';
 import { defined } from '../../Util/defined';
 import { DeveloperError } from '../../Util/DeveloperError';
 import { Ellipsoid } from '../../Math/Ellipsoid/Ellipsoid';
-import { Interval } from '../../ori_map/Core/Interval';
+import { Interval } from './Interval';
 import { Plane } from '../Bound/Plane';
-import { QuadraticRealPolynomial } from '../../ori_map/Core/QuadraticRealPolynomial';
-import QuarticRealPolynomial from '../../ori_map/Core/QuarticRealPolynomial';
+import { QuadraticRealPolynomial } from '../../Math/QuadraticRealPolynomial';
+import QuarticRealPolynomial from '../../Math/QuarticRealPolynomial';
 import { Ray } from '../../Math/Ray';
 
 /**

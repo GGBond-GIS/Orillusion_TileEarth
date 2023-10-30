@@ -1,7 +1,7 @@
 import { CesiumMath } from '../../Math/CesiumMath';
 import { defined } from '../../Util/defined';
 import { DeveloperError } from '../../Util/DeveloperError';
-import { WebGLConstants } from '../../ori_map/Core/WebGLConstants';
+import { WebGLConstants } from '../Renderer/WebGLConstants';
 
 const IndexDatatype = {
     /**

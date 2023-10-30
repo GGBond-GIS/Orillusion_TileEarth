@@ -18,8 +18,8 @@
 
 import { defaultValue } from '../../Util/defaultValue';
 import { defined } from '../../Util/defined';
-import { RequestState } from '../../ori_map/Core/RequestState';
-import { RequestType } from '../../ori_map/Core/RequestType';
+import { RequestState } from './RequestState';
+import { RequestType } from './RequestType';
 
 class Request {
     url: string;

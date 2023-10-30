@@ -2,7 +2,7 @@ import { defaultValue } from '../../Util/defaultValue';
 import { defined } from '../../Util/defined';
 import { destroyObject } from '../../Util/destroyObject';
 import { IndexDatatype } from '../Geometry/IndexDatatype';
-import { WebGLConstants } from '../../ori_map/Core/WebGLConstants';
+import { WebGLConstants } from './WebGLConstants';
 import { Context } from './Context';
 
 class Buffer {

@@ -2,7 +2,7 @@ import { CesiumMath } from '../../Math/CesiumMath';
 import { defined } from '../../Util/defined';
 import { DeveloperError } from '../../Util/DeveloperError';
 import { Ellipsoid } from '../../Math/Ellipsoid/Ellipsoid';
-import { IndexDatatype } from '../../Core/Geometry/IndexDatatype';
+import { IndexDatatype } from '../Geometry/IndexDatatype';
 
 const regularGridIndicesCache: any[] = [];
 const regularGridAndEdgeIndicesCache: any[] = [];

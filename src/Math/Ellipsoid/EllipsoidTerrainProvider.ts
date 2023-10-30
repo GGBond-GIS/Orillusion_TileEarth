@@ -2,12 +2,12 @@ import { defaultValue } from '../../Util/defaultValue';
 import { defined } from '../../Util/defined';
 import { Ellipsoid } from './Ellipsoid';
 import { Event } from '../../Util/Event';
-import { GeographicTilingScheme } from '../../ori_map/Core/GeographicTilingScheme';
+import { GeographicTilingScheme } from '../../Core/Projection/GeographicTilingScheme';
 
 import { when } from '../../Core/ThirdParty/when';
-import { TerrainProvider } from '../../ori_map/Core/TerrainProvider';
+import { TerrainProvider } from '../../Core/Terrain/TerrainProvider';
 import { Request } from '../../Core/Request/Request';
-import { HeightmapTerrainData } from '../../ori_map/Core/HeightmapTerrainData';
+import { HeightmapTerrainData } from '../../Core/Geometry/HeightmapTerrainData';
 
 interface EllipsoidTerrainProviderInterFace {
     tilingScheme?: GeographicTilingScheme | undefined;

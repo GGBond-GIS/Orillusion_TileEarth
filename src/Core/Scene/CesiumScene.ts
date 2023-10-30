@@ -11,7 +11,7 @@ import { CesiumColor } from '../../Math/CesiumColor';
 import { incrementWrap } from '../../Math/CesiumMath';
 import { defaultValue } from '../../Util/defaultValue';
 import { Event } from '../../Util/Event';
-import { GeographicProjection } from '../../ori_map/Core/GeographicProjection';
+import { GeographicProjection } from '../Projection/GeographicProjection';
 import { SceneMode } from './SceneMode';
 import { ComputeEngine } from '../../ori_map/Renderer/ComputeEngine';
 import { Camera } from '../Camera/Camera';
@@ -25,11 +25,11 @@ import { OrthographicFrustumCamera } from '../Camera/OrthographicFrustumCamera';
 // MapRenderer
 import { PerspectiveFrustumCamera } from '../Camera/PerspectiveFrustumCamera';
 import { Picking } from '../Pick/Picking';
-import { PrimitiveCollection } from '../PrimitiveCollection';
+import { PrimitiveCollection } from '../Renderer/PrimitiveCollection';
 import { RenderCollection } from '../Renderer/RenderCollection';
 import { ScreenSpaceCameraController } from '../Controller/ScreenSpaceCameraController';
-import { SkyAtmosphere } from '../../ori_map/Scene/SkyAtmosphere';
-import { SkyBox } from '../../ori_map/Scene/SkyBox';
+import { SkyAtmosphere } from './SkyAtmosphere';
+import { SkyBox } from './SkyBox';
 import { Engine3D, Scene3D, webGPUContext,Object3D } from '@orillusion/core';
 import { Ellipsoid } from '../../Math/Ellipsoid/Ellipsoid';
 

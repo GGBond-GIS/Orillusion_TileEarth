@@ -12,7 +12,7 @@ import { DeveloperError } from '../../Util/DeveloperError';
 import { Ellipsoid } from '../../Math/Ellipsoid/Ellipsoid';
 import { EllipsoidGeodesic } from '../../Math/Ellipsoid/EllipsoidGeodesic';
 import { Event } from '../../Util/Event';
-import { GeographicProjection } from '../../ori_map/Core/GeographicProjection';
+import { GeographicProjection } from '../Projection/GeographicProjection';
 import { getTimestamp } from '../../Util/getTimestamp';
 import { HeadingPitchRange } from '../../Math/HeadingPitchRange';
 import { HeadingPitchRoll } from '../../Math/HeadingPitchRoll';
