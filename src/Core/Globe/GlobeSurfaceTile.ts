@@ -32,7 +32,7 @@ import { Imagery } from '../../Layer/ImageryLayer/Imagery';
 import { Ellipsoid } from '../../Math/Ellipsoid/Ellipsoid';
 import { BufferUsage } from '../Renderer/BufferUsage';
 import { Buffer } from '../Renderer/Buffer';
-import {  GeometryBase, Matrix4, VertexAttributeData, VertexAttributeName } from '@orillusion/core';
+import {  GeometryBase, VertexAttributeData, VertexAttributeName } from '@orillusion/core';
 import { CustumGeometry } from '../Geometry/CustumGeometry';
 
 function disposeArray() {
@@ -470,7 +470,14 @@ class GlobeSurfaceTile {
     }
 
     static _createVertexArrayForMesh(context: Context, mesh: any) {
-        mesh.vm = new Matrix4()
+        const typedArray = mesh.vertices;
+        const buffer = Buffer.createVertexBuffer({
+            context: context,
+            typedArray: typedArray,
+            usage: BufferUsage.STATIC_DRAW
+        });
+        const attributes = mesh.encoding.getAttributes(buffer);
+
         const indexBuffers = mesh.indices.indexBuffers || {};
         let indexBuffer = indexBuffers[context.id];
         if (!defined(indexBuffer) || indexBuffer.isDestroyed()) {
@@ -491,7 +498,39 @@ class GlobeSurfaceTile {
 
         const geometry = new CustumGeometry();
 
-   
+        if ((mesh.encoding as TerrainEncoding).quantization === TerrainQuantization.BITS12) {
+            // const vertexBuffer = new Float32BufferAttribute(typedArray, 4).onUpload(disposeArray);
+            // geometry.setAttribute('compressed0', vertexBuffer);
+            const vertexBuffer = new InterleavedBuffer(typedArray, attributes[0].componentsPerAttribute);
+            vertexBuffer.setUsage(StaticDrawUsage);
+            const compressed0 = new InterleavedBufferAttribute(vertexBuffer, attributes[0].componentsPerAttribute, 0, false);
+            console.log(compressed0, vertexBuffer, mesh);
+            compressed0.data
+            // geometry.setAttribute('compressed0', compressed0);
+            let positon = [];
+            let uv = [];
+            let compressed = [];
+            for (let index = 0; index < compressed0.array.length; index += 4) {
+
+                const element0 = vertexBuffer.array[index];
+                const element1 = vertexBuffer.array[index + 1];
+                const element2 = vertexBuffer.array[index + 2];
+                const element3 = vertexBuffer.array[index + 3];
+                let xy = czm_decompressTextureCoordinates(element0);
+                let zh = czm_decompressTextureCoordinates(element1);
+                let position = [...xy, zh[0]]
+                let textureCoordinates = czm_decompressTextureCoordinates(element2);
+
+                uv.push(...textureCoordinates);
+                positon.push(...position);
+                compressed.push(...[element0, element1, element2, element3])
+            }
+            geometry.setAttribute(VertexAttributeName.position, new Float32Array(positon));
+            geometry.setAttribute(`compressed0`, new Float32Array(compressed));
+            geometry.setAttribute(VertexAttributeName.uv, new Float32Array(uv) as Float32Array);
+            mesh.show = true;
+            //压缩定点算法还没做这里取消渲染
+        } else {
             const vertexBuffer = mesh.vertices;
             let positon = [];
             let uv = [];
@@ -519,6 +558,7 @@ class GlobeSurfaceTile {
             positon = [];
             uv = [];
             // geometry.setAttribute('textureCoordAndEncodedNormals', textureCoordAndEncodedNormals);
+        }
 
         geometry.computeNormals();
         geometry.addSubGeometry({
@@ -531,6 +571,54 @@ class GlobeSurfaceTile {
         // debugger;
         return geometry;
 
+        // return new VertexArray({
+        //     context: context,
+        //     attributes: attributes,
+        //     indexBuffer: indexBuffer
+        // });
+
+        //! ----------------------------------------
+
+        // const typedArray = mesh.vertices;
+        // const geometry = new BufferGeometry();
+
+        // const attributes = (mesh.encoding as TerrainEncoding).getAttributes([]);
+
+        // const indexBuffers = (mesh.indices as any).indexBuffers || {};
+        // let indexBuffer = indexBuffers[context.id];
+
+        // if (!defined(indexBuffer)) {
+        //     const indexDatatype = IndexDatatype.fromSizeInBytes(mesh.indices.BYTES_PER_ELEMENT);
+        //     const bytesPerIndex = IndexDatatype.getSizeInBytes(indexDatatype) / 2;
+        //     indexBuffer = new Uint16BufferAttribute(mesh.indices, bytesPerIndex).onUpload(disposeArray);
+
+        //     indexBuffers[context.id] = indexBuffer;
+        //     (mesh.indices as any).indexBuffers = indexBuffers;
+        // } else {
+        //     ++indexBuffer.referenceCount;
+        // }
+
+        // geometry.setIndex(indexBuffer);
+
+        // if ((mesh.encoding as TerrainEncoding).quantization === TerrainQuantization.BITS12) {
+        //     const vertexBuffer = new Float32BufferAttribute(typedArray, 4).onUpload(disposeArray);
+        //     geometry.setAttribute('compressed0', vertexBuffer);
+        // } else {
+        //     const vertexBuffer = new InterleavedBuffer(typedArray, attributes[0].componentsPerAttribute + attributes[1].componentsPerAttribute);
+
+        //     vertexBuffer.setUsage(StaticDrawUsage);
+
+        //     const position3DAndHeight = new InterleavedBufferAttribute(vertexBuffer, attributes[0].componentsPerAttribute, 0, false);
+        //     const textureCoordAndEncodedNormals = new InterleavedBufferAttribute(vertexBuffer, attributes[1].componentsPerAttribute, attributes[0].componentsPerAttribute, false);
+
+        //     geometry.setAttribute('position3DAndHeight', position3DAndHeight);
+        //     geometry.setAttribute('textureCoordAndEncodedNormals', textureCoordAndEncodedNormals);
+        // }
+
+        // // tileTerrain.vertexArray = mesh.vertices;
+        // (mesh as any).geometry = geometry;
+
+        // return geometry;
     }
 
     static _freeVertexArray(geometry: CustumGeometry) {

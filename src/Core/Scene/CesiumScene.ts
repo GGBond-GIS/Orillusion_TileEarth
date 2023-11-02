@@ -278,6 +278,7 @@ class CesiumScene extends Scene3D {
     // effectComposerCollection: EffectComposerCollection;
     _picking: Picking;
     useDepthPicking: boolean;
+    skyBox: SkyBox;
     _globeTranslucencyState = new GlobeTranslucencyState();
     skyAtmosphere?: SkyAtmosphere;
     _environmentState: EnvironmentStateOptions;
@@ -340,6 +341,19 @@ class CesiumScene extends Scene3D {
         );
         this._lastRenderTime = undefined;
         this._frameRateMonitor = undefined;
+
+        this._removeRequestListenerCallback = RequestScheduler.requestCompletedEvent.addEventListener(
+            requestRenderAfterFrame(this)
+        );
+        // this._removeTaskProcessorListenerCallback = TaskProcessor.taskCompletedEvent.addEventListener(
+        //     requestRenderAfterFrame(this)
+        // );
+        this._removeGlobeCallbacks = [];
+
+        // this._context = new Context(this);
+        // const sceneFrameBuffer = this._context.sceneFrameBuffer;
+
+        // this._computeEngine = new ComputeEngine(this, this._context);
 
         this._globeHeight = undefined;
         this._cameraUnderground = false;
@@ -516,6 +530,12 @@ class CesiumScene extends Scene3D {
             this._shaderFrameCount = 0;
         }
         this._tweens.update();
+
+        // this.camera.update(this._mode);
+
+        // this._globeHeight = getGlobeHeight(this);
+        // this._cameraUnderground = isCameraUnderground(this);
+
         this._screenSpaceCameraController.update();
         this.camera.update(this._mode);
         this.camera._updateCameraChanged();
