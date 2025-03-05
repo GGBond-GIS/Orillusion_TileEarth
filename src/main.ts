@@ -87,43 +87,20 @@ scene3D._renderCollection.addComponent(InstanceDrawComponent);
 
 scene3D.addComponent(ControllerUpdate);
 const Sphere: Object3D = new Object3D();
-// add MeshRenderer to the object
 let mrs: MeshRenderer = Sphere.addComponent(MeshRenderer);
-// set a box geometry
 mrs.geometry = new SphereGeometry(6378137, 50, 50);
-// set a pbr lit material
 mrs.material = new LitMaterial();
-
-// let texture = await Engine3D.res.loadTexture('http://127.0.0.1:5173/earth.jpg');
-// mrs.material.baseMap = texture;
 Sphere.transform.x = 0;
 Sphere.transform.y = 0;
 Sphere.transform.z = 0;
 Sphere.transform.rotationX += 180;
-
-// Sphere.transform.rotationY += 90;
-// Sphere.transform.rotationZ += 180;
-// set location
 const rencoll: Object3D = new Object3D();
 rencoll.addChild(Sphere);
 
-// const urlTemplateImageryProvide = new UrlTemplateImageryProvider({
-//   // url: 'http://www.google.cn/maps/vt?lyrs=s@800&x={x}&y={y}&z={z}'
-//   // tilingScheme: new WebMercatorTilingScheme({}),
-//   // minimumLevel: 1,
-//   // maximumLevel: 20
-//   url: 'https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}'
-// });
-// scene3D.imageryLayers.addImageryProvider(
-//   urlTemplateImageryProvide
-// );
-const mapToken = "39d358c825ec7e59142958656c0a6864"; //
+const mapToken = ""; //
 
-// https://t1.tianditu.gov.cn/img_c/wmts?service=WMTS&version=1.0.0&request=GetTile&tilematrix=10&layer=img&style=default&tilerow=166&tilecol=851&tilematrixset=c&format=tiles&tk=1c3ff1358b17417f1782dd1ae7bdd00a
-//https://t4.tianditu.gov.cn/img_c/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=c&FORMAT=tiles&TILECOL={TileCol}&TILEROW={TileRow}&TILEMATRIX={TileMatrix}&tk=75f0434f240669f4a2df6359275146d2
 scene3D.imageryLayers.addImageryProvider(
   new WebMapTileServiceImageryProvider({
-    // url: 'https://{s}.tianditu.gov.cn/img_w/wmts?SERVICE=WMTS&REQUEST=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&tk=' + mapToken,
     url:
       "https://t2.tianditu.gov.cn/img_c/wmts?service=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=c&FORMAT=tiles&TILECOL={TileCol}&TILEROW={TileRow}&TILEMATRIX={TileMatrix}&tk=" +
       mapToken,
@@ -139,9 +116,7 @@ scene3D.imageryLayers.addImageryProvider(
     tileMatrixSetID: "EPSG:4326" // 使用谷歌的瓦片切片方式
   })
 );
-// scene3D.imageryLayers.addImageryProvider(new (TileCoordinatesImageryProvider as any)());
 
-// scene3D.addChild(rencoll)
 // create a object
 const obj: Object3D = new Object3D();
 // add MeshRenderer to the object
@@ -167,13 +142,3 @@ Engine3D.startRenderView(view);
 
 // 添加后处理组件
 let postProcessing = scene3D.addComponent(PostProcessingComponent);
-
-// // 添加TAAPost
-// let taaPost = postProcessing.addPost(TAAPost);
-
-// // 通过 taaPost 对象设置（引擎全局配置和此处基于 taaPost 对象设置，结果是等价的）
-// taaPost.jitterSeedCount = 8;
-// taaPost.blendFactor = 0.1;
-// taaPost.sharpFactor = 0.6;
-// taaPost.sharpPreBlurFactor = 0.5;
-// taaPost.temporalJitterScale = 0.6;
